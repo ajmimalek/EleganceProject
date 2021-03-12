@@ -27,7 +27,7 @@ yarn start
 
 This project was generated with [Express Application Generator](https://expressjs.com/en/starter/generator.html). 
 
-In order to launch the frontend server you need to : 
+In order to launch the backend server you need to : 
 - Launch this command :
 ```bash
 npm start
