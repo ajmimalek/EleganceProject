@@ -14,7 +14,7 @@ In addition to that, our application will give the user the possibility to have 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). 
 
-In order to launch the frontend server you need to : 
+In order to launch the backend server you need to : 
 - Launch this command :
 ```bash
 yarn start

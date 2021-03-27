@@ -1,21 +1,34 @@
 {
   "name": "frontend",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "main": "dist/index.js",
   "dependencies": {
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-scripts": "4.0.3",
-    "web-vitals": "^1.0.1"
+    "@material-ui/core": "^4.11.3",
+    "@material-ui/icons": "^4.11.2",
+    "chartist": "0.10.1",
+    "classnames": "2.2.6",
+    "history": "4.10.1",
+    "perfect-scrollbar": "1.5.0",
+    "prop-types": "15.7.2",
+    "react": "17.0.0",
+    "react-chartist": "0.14.4",
+    "react-dom": "17.0.0",
+    "react-helmet": "^6.1.0",
+    "react-router-dom": "5.2.0",
+    "react-scripts": "3.4.1",
+    "source-map-explorer": "^2.5.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint:check": "eslint . --ext=js,jsx;  exit 0",
+    "lint:fix": "eslint . --ext=js,jsx --fix;  exit 0",
+    "build-package-css": "cp src/assets/css/material-dashboard-react.css dist/material-dashboard-react.css",
+    "build-package": "yarn run build-package-css && babel src --out-dir dist",
+    "analyze": "source-map-explorer build/static/js/*.*"
   },
   "eslintConfig": {
     "extends": [
@@ -23,6 +36,7 @@
       "react-app/jest"
     ]
   },
+  "license": "MIT",
   "browserslist": {
     "production": [
       ">0.2%",
