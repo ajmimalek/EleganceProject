@@ -39,7 +39,7 @@ const dashboardRoutes = [
   },
   {
     path: "/localstore",
-    name: "Local Store",
+    name: "Local Store  ",
     icon: LocalGroceryStore,
     component: LocalStore,
     layout: "/admin",

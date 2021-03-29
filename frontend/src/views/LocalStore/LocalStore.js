@@ -23,7 +23,7 @@ export default function LocalStore() {
       <title>Elegance App - Local Store</title>
     </Helmet>
     <div>
-
+    
     </div>
     </>
   );

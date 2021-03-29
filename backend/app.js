@@ -8,6 +8,12 @@ var users = require('./routes/users');
 
 var app = express();
 
+//import database
+var mongoose = require('mongoose');
+var configDB=require('./database/mongodb.json');
+
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser())
@@ -29,5 +35,15 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
+
+//mongo config
+const connect = mongoose.connect(
+  configDB.mongo.uri ,
+  {
+  useNewUrlParser: true ,
+  useUnifiedTopology: true
+  },
+  ()=> console.log("Connected to DB !!")
+  );
 
 module.exports = app;
