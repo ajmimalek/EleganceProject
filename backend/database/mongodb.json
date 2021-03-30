@@ -1,6 +1,6 @@
 { 
     "mongo":
           { 
-              "uri":"mongodb://localhost:27017/mydbContact"
+              "uri":"mongodb://localhost:27017/Elegance"
           } 
 }
