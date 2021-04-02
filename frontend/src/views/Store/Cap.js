@@ -1,5 +1,6 @@
 import React from 'react';
-import cap from './cap.png';
+import cap from './cap.svg';
+
 
 const Cap = () => {
     return <img src={cap} alt=""/>

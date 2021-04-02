@@ -61,10 +61,10 @@ export default function Store() {
       <h4 class="valide">  <AttachMoney /> What is your budget ?</h4>
     </div> <br></br> <hr></hr>
     <Budget></Budget><hr></hr>
-    <Shoes></Shoes><hr></hr>
-    <Cap></Cap><hr></hr>
-    <Trousers></Trousers><hr></hr>
-    <Shirt></Shirt><hr></hr>
+    <Shoes></Shoes><br></br>
+    <Cap></Cap><br></br>
+    <Trousers></Trousers><br></br>
+    <Shirt></Shirt><br></br>
     
     <div onClick={showProducts} class="validate"><Button type="button" color="primary">Validate</Button></div>
     </>
