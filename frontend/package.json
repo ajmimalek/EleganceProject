@@ -4,6 +4,8 @@
   "private": false,
   "main": "dist/index.js",
   "dependencies": {
+    "@elastic/react-search-ui": "^1.5.1",
+    "@elastic/search-ui-app-search-connector": "^1.5.1",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "chartist": "0.10.1",
@@ -11,13 +13,19 @@
     "history": "4.10.1",
     "perfect-scrollbar": "1.5.0",
     "prop-types": "15.7.2",
+    "rc-slider": "^9.7.2",
     "react": "17.0.0",
     "react-chartist": "0.14.4",
     "react-dom": "17.0.0",
+    "react-dual-range-slider": "^1.0.4",
+    "react-dual-rangeslider": "^1.2.16",
     "react-helmet": "^6.1.0",
     "react-router-dom": "5.2.0",
     "react-scripts": "3.4.1",
-    "source-map-explorer": "^2.5.2"
+    "reactrangeslider": "^3.0.6",
+    "source-map-explorer": "^2.5.2",
+    "styled-components": "^5.2.2",
+    "styles": "^0.2.1"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -3,7 +3,18 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Helmet } from "react-helmet";
 // core components
+import AppSearchAPIConnector from "@elastic/search-ui-app-search-connector";
+import { SearchProvider, Results, SearchBox } from "@elastic/react-search-ui";
+import { Layout } from "@elastic/react-search-ui-views";
 
+import "@elastic/react-search-ui-views/lib/styles/styles.css";
+
+const connector = new AppSearchAPIConnector({
+  searchKey: "search-371auk61r2bwqtdzocdgutmg",
+  engineName: "search-ui-examples",
+  endpointBase: "http://127.0.0.1:3002",
+  cacheResponses: false
+});
 const styles = {
   typo: {
     paddingLeft: "25%",
@@ -50,9 +61,15 @@ export default function FamilyWardrobe() {
     <Helmet>
       <title>Elegance App - Family Wardrobe</title>
     </Helmet>
-    <div>
+    
+    <SearchProvider
+      >
+        
+            <SearchBox />
+            <Results
+            />
+      </SearchProvider>
 
-    </div>
     </>
   );
 }

@@ -4,7 +4,7 @@ const Genders = Object.freeze({
     Male: 'male',
     Female: 'female',
   });
-const 
+ 
 var User = new Schema (
     {
         FullName : String,
@@ -14,9 +14,12 @@ var User = new Schema (
             type: String,
             enum: Object.values(Genders),
           },
-        preferences:String,
-        image:String,
-        Phone : Number
+        preferences : String,
+        image : String,
+        Phone : Number,
+        size : String,
+        weight : Number,
+        height : Number,
     }
 );
 
