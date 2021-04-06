@@ -8,7 +8,10 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "enum": "^3.0.4",
     "express": "~4.16.1",
+    "express-fileupload": "^1.2.1",
     "http-errors": "~1.6.3",
     "mongoose": "^5.12.2",
     "morgan": "~1.9.1"

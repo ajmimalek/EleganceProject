@@ -5,9 +5,11 @@ import { Helmet } from "react-helmet";
 import AppSearchAPIConnector from "@elastic/search-ui-app-search-connector";
 import { SearchProvider, Results, SearchBox } from "@elastic/react-search-ui";
 import { Layout } from "@elastic/react-search-ui-views";
+import styled from "styled-component"
 
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Upload from "./Upload";
+import Clothes from "./Clothes"
 
 const useStyles = makeStyles(styles);
 const connector = new AppSearchAPIConnector({
@@ -38,8 +40,16 @@ function Wardrobe() {
         />
       </div>
     </SearchProvider>
+   
+);
+
+
+    
+
+
   
   </div>
+  
   </>
   );
   

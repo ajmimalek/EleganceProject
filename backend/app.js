@@ -3,8 +3,10 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+const fileuploder =require("express-fileupload");
+const cors = require("cors");
 var users = require('./routes/users');
+//var clothes = require('./routes/Clothes');
 
 var app = express();
 
@@ -13,13 +15,13 @@ var mongoose = require('mongoose');
 var configDB=require('./database/mongodb.json');
 
 
-
+app.use(cors({exposedHeader:"id"}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser())
-
+app.use(cookieParser());
+app.use(fileuploder());
 app.use('/api/v1/users', users);
-
+//app.use('/clothes',clothes)
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
