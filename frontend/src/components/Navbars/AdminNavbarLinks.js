@@ -96,7 +96,11 @@ export default function AdminNavbarLinks() {
                       className={classes.dropdownItem}
                     >
                       <div className={classes.messageInfo}>
-                        <Avatar alt="User Name" src={profile} className={classes.avatar} />
+                        <Avatar
+                          alt="User Name"
+                          src={profile}
+                          className={classes.avatar}
+                        />
                         <ListItemText
                           classes={{ secondary: classes.secondaryText }}
                           primary={dummyContents.text.subtitle}
@@ -110,7 +114,11 @@ export default function AdminNavbarLinks() {
                       className={classes.dropdownItem}
                     >
                       <div className={classes.messageInfo}>
-                        <Avatar alt="User Name" src={profile} className={classes.avatar} />
+                        <Avatar
+                          alt="User Name"
+                          src={profile}
+                          className={classes.avatar}
+                        />
                         <ListItemText
                           classes={{ secondary: classes.secondaryText }}
                           primary={dummyContents.text.subtitle}
@@ -124,7 +132,11 @@ export default function AdminNavbarLinks() {
                       className={classes.dropdownItem}
                     >
                       <div className={classes.messageInfo}>
-                        <Avatar alt="User Name" src={profile} className={classes.avatar} />
+                        <Avatar
+                          alt="User Name"
+                          src={profile}
+                          className={classes.avatar}
+                        />
                         <ListItemText
                           classes={{ secondary: classes.secondaryText }}
                           primary={dummyContents.text.subtitle}
@@ -138,7 +150,11 @@ export default function AdminNavbarLinks() {
                       className={classes.dropdownItem}
                     >
                       <div className={classes.messageInfo}>
-                        <Avatar alt="User Name" src={profile} className={classes.avatar} />
+                        <Avatar
+                          alt="User Name"
+                          src={profile}
+                          className={classes.avatar}
+                        />
                         <ListItemText
                           classes={{ secondary: classes.secondaryText }}
                           primary={dummyContents.text.subtitle}
@@ -157,7 +173,6 @@ export default function AdminNavbarLinks() {
         <IconButton
           aria-haspopup="true"
           aria-owns={openProfile ? "profile-menu-list-grow" : null}
-          aria-haspopup="true"
           onClick={handleClickProfile}
           className={classes.buttonLink}
           color="inherit"
@@ -192,6 +207,9 @@ export default function AdminNavbarLinks() {
               <Paper>
                 <ClickAwayListener onClickAway={handleCloseProfile}>
                   <MenuList role="menu">
+                    <div className={classes.dropdownItem}>
+                    First & Last Name
+                    </div>
                     <MenuItem
                       onClick={handleCloseProfile}
                       className={classes.dropdownItem}
@@ -204,7 +222,7 @@ export default function AdminNavbarLinks() {
                     >
                       <Settings /> &nbsp; Settings
                     </MenuItem>
-                    <a href="mailto:ajmi.malek@esprit.tn?subject=[Elegance App] Feedback&cc=achref.aguel@esprit.tn,mahmoud.hadidi1@esprit.tn,ibtissem.kraiem@esprit.tn">
+                    <a href="mailto:ajmi.malek@esprit.tn?subject=Elegance App - Feedbacks&cc=achref.aguel@esprit.tn,mahmoud.hadidi1@esprit.tn,ibtissem.kraiem@esprit.tn">
                       <MenuItem
                         onClick={handleCloseProfile}
                         className={classes.dropdownItem}

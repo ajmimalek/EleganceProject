@@ -4,8 +4,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
-import Email from "@material-ui/icons/Email";
-import People from "@material-ui/icons/People";
 // core components
 import Header from "components/HeaderLogin/Header.js";
 import HeaderLinks from "components/HeaderLogin/HeaderLinks.js";
@@ -22,13 +20,40 @@ import CustomInput from "components/CustomInput/CustomInput.js";
 import styles from "assets/jss/material-dashboard-react/views/loginPage";
 
 import image from "assets/img/bg7.jpg";
+import Sad from "assets/img/sad.png";
+import Wink from "assets/img/wink.png";
+import MailSent from "assets/img/mailsent.gif";
 import EleganceLogo from "../../assets/img/Elegance Logo.png";
 import { Helmet } from "react-helmet";
-import { Facebook } from "@material-ui/icons";
+import { AccountCircle, Facebook, Mail } from "@material-ui/icons";
+import CheckBox from "components/CheckBox/CheckBox";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControlLabel,
+  Slide,
+} from "@material-ui/core";
 
 const useStyles = makeStyles(styles);
 
+// Slide animation for forget Password
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 export default function LoginPage(props) {
+  // Open for dialog (forgot pwd)
+  const [open, setOpen] = React.useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  
   const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
   setTimeout(function () {
     setCardAnimation("");
@@ -45,7 +70,7 @@ export default function LoginPage(props) {
           absolute
           color="transparent"
           brand={EleganceLogo}
-          rightLinks={<HeaderLinks />}
+          rightLinks={<HeaderLinks page={"login"} />}
           {...rest}
         />
         <div
@@ -87,31 +112,19 @@ export default function LoginPage(props) {
                     <p className={classes.divider}>Or Be Classical</p>
                     <CardBody>
                       <CustomInput
-                        labelText="First Name..."
-                        id="first"
+                        labelText="Username..."
+                        id="username"
                         formControlProps={{
                           fullWidth: true,
+                          className: classes.mail,
                         }}
                         inputProps={{
                           type: "text",
                           endAdornment: (
                             <InputAdornment position="end">
-                              <People className={classes.inputIconsColor} />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                      <CustomInput
-                        labelText="Email..."
-                        id="email"
-                        formControlProps={{
-                          fullWidth: true,
-                        }}
-                        inputProps={{
-                          type: "email",
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <Email className={classes.inputIconsColor} />
+                              <AccountCircle
+                                className={classes.inputIconsColor}
+                              />
                             </InputAdornment>
                           ),
                         }}
@@ -121,6 +134,7 @@ export default function LoginPage(props) {
                         id="pass"
                         formControlProps={{
                           fullWidth: true,
+                          className: classes.mail,
                         }}
                         inputProps={{
                           type: "password",
@@ -134,6 +148,74 @@ export default function LoginPage(props) {
                           autoComplete: "off",
                         }}
                       />
+                      <div>
+                        <FormControlLabel
+                          control={<CheckBox name="checkedC" />}
+                          label="Remember Me"
+                          className={classes.remember}
+                        />
+                        <Button
+                          onClick={handleClickOpen}
+                          className={classes.forget}
+                          simple
+                          color="primary"
+                        >
+                          <img
+                            alt="thinking face"
+                            src="https://img.icons8.com/emoji/48/000000/thinking-face.png"
+                          />{" "}
+                          &nbsp; Forgot Password ?
+                        </Button>
+                        <Dialog
+                          open={open}
+                          TransitionComponent={Transition}
+                          keepMounted
+                          aria-labelledby="alert-dialog-slide-title"
+                          aria-describedby="alert-dialog-slide-description"
+                        >
+                          <DialogTitle id="alert-dialog-slide-title">
+                            Forgot your password ? &nbsp;
+                            <img alt="sad emoji" src={Sad} /> We've got your
+                            back <img alt="wink emoji" src={Wink} /> &nbsp;
+                          </DialogTitle>
+                          <DialogContent>
+                            <DialogContentText id="alert-dialog-slide-description">
+                              <img
+                                alt="Mail Sent animation"
+                                src={MailSent}
+                                className={classes.mailsent}
+                              />
+                              You need only to enter your email adress here and
+                              a reset password link will be sent to you.
+                            </DialogContentText>
+                            <CustomInput
+                              labelText="Email Address..."
+                              className={classes.mail}
+                              id="mail"
+                              formControlProps={{
+                                fullWidth: true,
+                                className: classes.mail,
+                              }}
+                              inputProps={{
+                                type: "email",
+                                endAdornment: (
+                                  <InputAdornment position="end">
+                                    <Mail className={classes.inputIconsColor} />
+                                  </InputAdornment>
+                                ),
+                              }}
+                            />
+                          </DialogContent>
+                          <DialogActions>
+                            <Button onClick={handleClose} color="danger">
+                              Back to Login
+                            </Button>
+                            <Button onClick={handleClose} color="success">
+                              Get New Password
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                      </div>
                     </CardBody>
                     <CardFooter className={classes.cardFooter}>
                       <Button simple color="primary" size="lg">
