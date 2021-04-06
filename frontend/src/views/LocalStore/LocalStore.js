@@ -31,18 +31,12 @@ export default function LocalStore() {
           <CardHeader color="primary">
             <h4 className={classes.cardTitleWhite}>UnderSized Clothes Management </h4>
             <p className={classes.cardCategoryWhite}>
-              
             </p>
           </CardHeader>
           <CardBody>
-
-
-
-
           </CardBody>
         </Card>
       </GridItem>
-
     </GridContainer>
     </div>
     </>
