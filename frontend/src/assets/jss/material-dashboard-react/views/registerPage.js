@@ -5,8 +5,13 @@ const signupPageStyle = (theme) => ({
   formControl: {
     marginLeft: theme.spacing(2),
     marginTop: "5px",
-    width: "35%",
+    width: "30%",
     float: "right!important",
+  },
+  phone: {
+    marginLeft: "45px",
+    marginTop: "5px",
+    width: "30%",
   },
   city: {
     display: "block",
@@ -30,7 +35,7 @@ const signupPageStyle = (theme) => ({
   },
   name: {
     marginTop: "10px",
-    width: "45%",
+    width: "30%",
   },
   mail: {
     marginTop: "10px",
@@ -42,9 +47,9 @@ const signupPageStyle = (theme) => ({
     marginLeft: "25px",
     float: "right!important",
     [theme.breakpoints.down("sm")]: {
-       display: "flex",
-       flexFlow: "row nowrap",
-       marginLeft: "15px",
+      display: "flex",
+      flexFlow: "row nowrap",
+      marginLeft: "15px",
     },
   },
   cardHidden: {

@@ -1,21 +1,18 @@
 // Import User model
-const User = require('../models/auth.model');
+const User = require("../models/auth.model");
 
 // Import Libraries
-const expressJwt = require('express-jwt');
-const _ = require('lodash');
-const { OAuth2Client } = require('google-auth-library');
-const fetch = require('node-fetch');
-const { validationResult } = require('express-validator');
-const jwt = require('jsonwebtoken');
-const sgMail = require('@sendgrid/mail');
+const expressJwt = require("express-jwt");
+const _ = require("lodash");
+const { OAuth2Client } = require("google-auth-library");
+const fetch = require("node-fetch");
+const { validationResult } = require("express-validator");
+const jwt = require("jsonwebtoken");
+const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.MAIL_KEY);
 
-
 // Custom error handler to get useful error from database errors
-const { errorHandler } = require('../helpers/dbErrorHandling');
-
-
+const { errorHandler } = require("../helpers/dbErrorHandling");
 
 exports.registerController = (req, res) => {
   const { FullName, email, password, Gender, city, Phone } = req.body;
@@ -23,20 +20,20 @@ exports.registerController = (req, res) => {
 
   if (!errors.isEmpty()) {
     // Getting the value of the first error
-    const firstError = errors.array().map(error => error.msg)[0];
+    const firstError = errors.array().map((error) => error.msg)[0];
     // réponse HTTP 422 : serveur a compris le type de contenu et que la syntaxe de la requête est correcte mais le serveur n'a pas été en mesure de réaliser les instructions demandées.
     return res.status(422).json({
-      errors: firstError
+      errors: firstError,
     });
   } else {
     // When no error -> mongoose query.
     User.findOne({
-      email
+      email,
     }).exec((err, user) => {
       // If user exists -> 400 Bad Request : we can't register an existant user
       if (user) {
         return res.status(400).json({
-          errors: 'Email is taken, Please choose another email address'
+          errors: "Email is taken, Please choose another email address",
         });
       }
     });
@@ -45,11 +42,11 @@ exports.registerController = (req, res) => {
       {
         FullName,
         email,
-        password
+        password,
       },
       process.env.JWT_ACCOUNT_ACTIVATION,
       {
-        expiresIn: '10m'
+        expiresIn: "10m",
       }
     );
 
@@ -58,7 +55,7 @@ exports.registerController = (req, res) => {
       //We will specify the adress from whom the email will be sent.
       from: process.env.EMAIL_FROM,
       to: email,
-      subject: 'Elegance App - Activate your account',
+      subject: "Elegance App - Activate your account",
       html: `
       <table border="0" cellpadding="0" cellspacing="0" width="100%">
       <tr>
@@ -129,23 +126,76 @@ exports.registerController = (req, res) => {
               </table>
           </td>
       </tr>
-      </table>`
+      </table>`,
     };
 
     // send mail and deliver a success message or error message
     sgMail
       .send(emailData)
-      .then(sent => {
+      .then((sent) => {
         return res.json({
-          message: `Email has been sent to ${email}`
+          message: `Email has been sent to ${email}`,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         return res.status(400).json({
           success: false,
           // errors: errorHandler(err)
           error: err,
         });
       });
+  }
+};
+
+// Activate Account and Save User to Database.
+exports.activationController = (req, res) => {
+  const { token } = req.body;
+
+  if (token) {
+    // Verify the token is valid or not or expired
+    jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION, (err, decoded) => {
+      if (err) {
+        console.log("Activation error");
+        return res.status(401).json({
+          errors: "Expired link. Register again",
+        });
+      } else {
+        //if valid save to database.
+        //Get details from token.
+        const { FullName, email, password, Gender, city, Phone } = jwt.decode(
+          token
+        );
+
+        console.log(email);
+        // Creating user object with inputs data
+        const user = new User({
+          FullName,
+          email,
+          password,
+          Gender,
+          city,
+          Phone,
+        });
+
+        //Saving user to DB : Mongoose API
+        user.save((err, user) => {
+          if (err) {
+            console.log("Save error", errorHandler(err));
+            return res.status(401).json({
+              errors: errorHandler(err),
+            });
+          } else {
+            return res.json({
+              success: true,
+              message: "Successful Registration", user
+            });
+          }
+        });
+      }
+    });
+  } else {
+    return res.json({
+      message: "Something wrong happened, Please try again.",
+    });
   }
 };

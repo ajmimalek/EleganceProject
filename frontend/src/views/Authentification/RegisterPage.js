@@ -24,7 +24,13 @@ import styles from "assets/jss/material-dashboard-react/views/registerPage";
 import image from "assets/img/bg7.jpg";
 import EleganceLogo from "../../assets/img/Elegance Logo.png";
 import { Helmet } from "react-helmet";
-import { AccountCircle, Email, Facebook, Room } from "@material-ui/icons";
+import {
+  AccountCircle,
+  Email,
+  Facebook,
+  Phone,
+  Room,
+} from "@material-ui/icons";
 import CheckBox from "components/CheckBox/CheckBox";
 import {
   FormControl,
@@ -37,7 +43,12 @@ import {
 import ReCAPTCHA from "react-google-recaptcha";
 import LocationIQ from "react-native-locationiq";
 import swal from "sweetalert";
+// minified version
+import "react-toastify/dist/ReactToastify.min.css";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import { isAuth } from "helpers/auth";
+import { Redirect } from "react-router";
 
 const useStyles = makeStyles(styles);
 
@@ -49,47 +60,77 @@ export default function RegisterPage(props) {
   const classes = useStyles();
   const { ...rest } = props;
 
-  // Gender prop
-  const [gender, setGender] = useState("male");
-  const handleChange = (event) => {
-    setGender(event.target.value);
+  // Form inputs
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    city: "",
+    mail: "",
+    pass: "",
+    passConfirm: "",
+    textChange: "Get Started",
+  });
+  const [gender, setGender] = useState("");
+
+  const { name, phone, city, mail, pass, passConfirm, textChange } = formData;
+  // handle change from input
+  const handleTextChange = (text) => (e) => {
+    setFormData({ ...formData, [text]: e.target.value });
   };
-
-  // Google Recaptcha API
-  const [token, setToken] = useState("");
-  const [error, setError] = useState("");
-  const reCaptcha = useRef();
-  const onSignup = () => {
-    if (!token) {
-      setError("You must verify the Captcha");
-      return;
+  const handleChange = (e) => {
+    setGender(e.target.value);
+  }
+  // Submit data to backend
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (name && mail && pass && gender && city && phone) {
+      if (pass === passConfirm) {
+        setFormData({ ...formData, textChange: "Starting" });
+        // pass values to backend.
+        axios
+          .post(`${process.env.REACT_APP_API_URL}/register`, {
+            Fullname: name,
+            email: mail,
+            password: pass,
+            Gender: gender,
+            city,
+            Phone: phone,
+          })
+          // Clear values after submitting form
+          .then((res) => {
+            setFormData({
+              ...formData,
+              name: "",
+              phone: "",
+              city: "",
+              mail: "",
+              pass: "",
+              passConfirm: "",
+              textChange: "Submitted",
+            });
+            toast.success(res.data.message);
+          })
+          .catch((err) => {
+            // Clear values after Error.
+            setFormData({
+              ...formData,
+              name: "",
+              phone: "",
+              city: "",
+              mail: "",
+              pass: "",
+              passConfirm: "",
+              textChange: "Get Started",
+            });
+            console.log(err.response);
+            toast.error(err.response.data.errors);
+          });
+      } else {
+        toast.error("Passwords don't matches");
+      }
+    } else {
+      toast.error("Please fill all fields");
     }
-    setError("");
-
-    axios
-      .post(
-        `${process.env.REACT_APP_API_URL}/` + "user/signup-with-recaptcha",
-        {
-          token,
-          email: "sfshd@sfsdf.sdf",
-        }
-      )
-      .then((resp) => {
-        swal(
-          "Registred",
-          "You are now officially part of Elegance members.",
-          "success"
-        );
-      })
-      .catch(({ response }) => {
-        // Get the response from data
-        setError(response.data.error);
-      })
-      .finally(() => {
-        // Reset the Captcha
-        reCaptcha.current.reset();
-        setToken("");
-      });
   };
 
   // GeoLocation
@@ -119,24 +160,25 @@ export default function RegisterPage(props) {
   const handleLocationErrors = (error) => {
     switch (error.code) {
       case error.PERMISSION_DENIED:
-        swal(
-          "Permission Denied",
-          "User denied the request for Geolocation!",
-          "error"
-        );
+        toast.error("User denied the request for Geolocation!", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+
         break;
       case error.POSITION_UNAVAILABLE:
-        swal(
-          "Position Unavailable",
-          "Location information is unavailable!",
-          "error"
-        );
+        toast.error("Location information is unavailable!", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
         break;
       case error.TIMEOUT:
-        swal("TimeOut", "The request to get user location timed out!", "error");
+        toast.error("The request to get user location timed out!", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
         break;
       case error.UNKNOWN_ERROR:
-        swal("Unknown", "An unknown error occurred!", "error");
+        toast.error("An unknown error occurred!", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
         break;
       default:
         console.log("Error: " + error);
@@ -180,6 +222,7 @@ export default function RegisterPage(props) {
           rightLinks={<HeaderLinks page={"register"} />}
           {...rest}
         />
+        <ToastContainer autoClose={5000} />
         <div
           className={classes.pageHeader}
           style={{
@@ -236,13 +279,29 @@ export default function RegisterPage(props) {
                           ),
                         }}
                       />
+                      <CustomInput
+                        labelText="Phone number..."
+                        id="phone"
+                        formControlProps={{
+                          fullWidth: false,
+                          className: classes.phone,
+                        }}
+                        inputProps={{
+                          type: "number",
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <Phone className={classes.inputIconsColor} />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
                       <FormControl className={classes.formControl}>
                         <InputLabel id="demo-simple-select-label">
                           Gender
                         </InputLabel>
                         <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
+                          labelId="gender-label"
+                          id="Gender"
                           value={gender}
                           onChange={handleChange}
                           color="secondary"
@@ -268,7 +327,7 @@ export default function RegisterPage(props) {
                       <div className={classes.city}>
                         <Autocomplete
                           {...defaultProps}
-                          id="selectCity"
+                          id="City"
                           value={value}
                           onChange={(event, newValue) => {
                             setValue(newValue);
@@ -347,10 +406,7 @@ export default function RegisterPage(props) {
                           display: "flex",
                           justifyContent: "center",
                         }}
-                        ref={reCaptcha}
                         sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
-                        onChange={(token) => setToken(token)}
-                        onExpired={(e) => setToken("")}
                       />
                       <FormControlLabel
                         control={<CheckBox name="checkedC" />}
@@ -359,12 +415,7 @@ export default function RegisterPage(props) {
                       />
                     </CardBody>
                     <CardFooter className={classes.cardFooter}>
-                      <Button
-                        simple
-                        color="primary"
-                        size="lg"
-                        onClick={() => onSignup()}
-                      >
+                      <Button simple color="primary" size="lg">
                         Get started
                       </Button>
                     </CardFooter>
