@@ -37,6 +37,11 @@ const localStoreStyle = {
     "margin-right": "15px",
     marginTop: "20px"
   },
+  ClothesItemStore: {
+    width: "250px",
+    "margin-right": "15px",
+    marginTop: "20px"
+  },
   filterLocalStore: {
     width: "345px",
     "margin-right": "15px",
@@ -53,13 +58,18 @@ clothes:{
   display: "flex",
   flexWrap: "no wrap",
   flexDirection: "row",
-}
-  ,sliderFilter:{
+},
+sliderFilter:{
     width: "290px",
     display: "flex",
     flexWrap: "no wrap",
     flexDirection: "row",
+  },
+addStore:{
+    display: "flex",
+    justifyContent: "space-between",
   }
+
 
 
   

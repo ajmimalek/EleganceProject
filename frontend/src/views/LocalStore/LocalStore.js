@@ -1,6 +1,6 @@
 import Slider, { Range } from 'rc-slider';
 import 'rc-slider/assets/index.css';
-
+import Button from 'components/CustomButtons/Button.js';
 import React, { Suspense, useState } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -12,8 +12,8 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import Clothes from "components/LocalStore/Clothes.js";
+import MyStore from "components/LocalStore/MyStore.js";
 
-import Input from '@material-ui/core/Input';
 
 import styles from "assets/jss/material-dashboard-react/views/localStoreStyle.js";
 import Cardstyles from "assets/jss/material-dashboard-react/cardImagesStyles.js";
@@ -25,13 +25,26 @@ import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
 
 
 
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import IconButton from "@material-ui/core/IconButton";
+// @material-ui/icons
+import Close from "@material-ui/icons/Close";
+// core components
+import Slide from "@material-ui/core/Slide";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="down" ref={ref} {...props} />;
+});
 const useStyless = makeStyles(styles);
 const useCardStyles = makeStyles(Cardstyles);
 
 export default function LocalStore() {
   const [valueMin, setValueMin] = useState(50);
   const [valueMax, setValueMax] = useState(150);
-
+  const [modal, setModal] = useState(false);
 
   const handleInputChange = (value) => {
     setValueMin(value[0]);
@@ -64,10 +77,58 @@ export default function LocalStore() {
           <GridItem xs={12} sm={12} md={12}>
             <Card>
               <CardHeader color="primary">
-                <h4 className={Cardclasses.cardTitleWhite}>Ariana's Store </h4>
-                <p className={Cardclasses.cardCategoryWhite}>
+                <div className={classes.addStore}>
+                  <h4 className={Cardclasses.cardTitleWhite}>Ariana's Store </h4>
+                  <p >
 
-                </p>
+                    <Button color="primary" round onClick={() => setModal(true)}> my store</Button>
+                    <Dialog
+                      classes={{
+                        root: classes.center,
+                        paper: classes.modal
+                      }}
+                      open={modal}
+                      TransitionComponent={Transition}
+                      keepMounted
+                      onClose={() => setModal(false)}
+                      aria-labelledby="modal-slide-title"
+                      aria-describedby="modal-slide-description"
+                    >
+                      <DialogTitle
+                        id="classic-modal-slide-title"
+                        disableTypography
+                        className={classes.modalHeader}
+                      >
+
+                        <div className={classes.addStore}>
+                          <h4 className={classes.modalTitle}>My store</h4>
+                          <b>to add clothing to your store click on the link</b>
+                          <IconButton
+                            className={classes.modalCloseButton}
+                            key="close"
+                            aria-label="Close"
+                            color="inherit"
+                            onClick={() => setModal(false)}
+                          >
+                            <Close className={classes.modalClose} />
+                          </IconButton>
+                        </div>
+                      </DialogTitle>
+                      <DialogContent
+                        id="modal-slide-description"
+                        className={classes.modalBody}
+                      >
+                         <div className={classes.ClothesList}>
+
+{Store.map((clothes, index) => (
+  <MyStore clothes={clothes} key={index}></MyStore>
+))}
+</div>
+
+                      </DialogContent>
+                    </Dialog>
+
+                  </p></div>
               </CardHeader>
               <div className={classes.clothes}>
 
@@ -139,7 +200,7 @@ export default function LocalStore() {
                       }}
                     />XXL
 {"Radio:", console.log(selectedValue)}
-{"Checkbox:", console.log(checked)}
+                    {"Checkbox:", console.log(checked)}
 
                     <Radio
                       checked={selectedValue === "xxxl"}
@@ -166,8 +227,9 @@ export default function LocalStore() {
                         max={500}
                         defaultValue={[50, 150]}
                         ariaLabelGroupForHandles
-                        tabIndex={[20, 50]}
+
                         onChange={handleInputChange}
+
                       />
                       <b>{valueMax}DT </b>
                     </div>
