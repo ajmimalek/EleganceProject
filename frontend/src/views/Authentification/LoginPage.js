@@ -25,7 +25,7 @@ import Wink from "assets/img/wink.png";
 import MailSent from "assets/img/mailsent.gif";
 import EleganceLogo from "../../assets/img/Elegance Logo.png";
 import { Helmet } from "react-helmet";
-import { AccountCircle, Facebook, Mail } from "@material-ui/icons";
+import { Facebook, Mail } from "@material-ui/icons";
 import CheckBox from "components/CheckBox/CheckBox";
 import {
   Dialog,
@@ -112,8 +112,8 @@ export default function LoginPage(props) {
                     <p className={classes.divider}>Or Be Classical</p>
                     <CardBody>
                       <CustomInput
-                        labelText="Username..."
-                        id="username"
+                        labelText="Email Address..."
+                        id="mail"
                         formControlProps={{
                           fullWidth: true,
                           className: classes.mail,
@@ -122,7 +122,7 @@ export default function LoginPage(props) {
                           type: "text",
                           endAdornment: (
                             <InputAdornment position="end">
-                              <AccountCircle
+                              <Mail
                                 className={classes.inputIconsColor}
                               />
                             </InputAdornment>

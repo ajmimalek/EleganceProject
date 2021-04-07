@@ -187,7 +187,8 @@ exports.activationController = (req, res) => {
           } else {
             return res.json({
               success: true,
-              message: "Successful Registration", user
+              message: "Successful Registration",
+              user,
             });
           }
         });
@@ -197,5 +198,142 @@ exports.activationController = (req, res) => {
     return res.json({
       message: "Something wrong happened, Please try again.",
     });
+  }
+};
+
+//Login Controller
+exports.signinController = (req, res) => {
+  const { email, password } = req.body;
+  //Verifing input Validators (valid.js)
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    // Getting the value of the first error
+    const firstError = errors.array().map((error) => error.msg)[0];
+    // réponse HTTP 422 : serveur a compris le type de contenu et que la syntaxe de la requête est correcte mais le serveur n'a pas été en mesure de réaliser les instructions demandées.
+    return res.status(422).json({
+      errors: firstError,
+    });
+  } else {
+    // check if user exist
+    User.findOne({
+      email,
+    }).exec((err, user) => {
+      // if error or user not found,
+      if (err || !user) {
+        return res.status(400).json({
+          errors: "User with that email does not exist. Please create an account",
+        });
+      }
+      // authenticate : function defined in the model
+      if (!user.authenticate(password)) {
+        return res.status(400).json({
+          errors: "Email and password do not match",
+        });
+      }
+      // generate a token and send to client
+      const token = jwt.sign(
+        {
+          _id: user._id,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "30d", //Token valid in 30 days ( 30 days for Remember Me).
+        }
+      );
+      const { _id, FullName, email, role } = user;
+
+      return res.json({
+        token,
+        user: {
+          _id,
+          FullName,
+          email,
+          role,
+        },
+      });
+    });
+  }
+};
+
+exports.requireSignin = expressJwt({
+  secret: process.env.JWT_SECRET, // req.user._id
+});
+
+//Forget Password Controller
+exports.forgotPasswordController = (req, res) => {
+  const { email } = req.body;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const firstError = errors.array().map(error => error.msg)[0];
+    return res.status(422).json({
+      errors: firstError
+    });
+  } else {
+    User.findOne(
+      {
+        email
+      },
+      (err, user) => {
+        if (err || !user) {
+          return res.status(400).json({
+            error: 'User with that email does not exist'
+          });
+        }
+
+        const token = jwt.sign(
+          {
+            _id: user._id
+          },
+          process.env.JWT_RESET_PASSWORD,
+          {
+            expiresIn: '10m'
+          }
+        );
+
+        const emailData = {
+          from: process.env.EMAIL_FROM,
+          to: email,
+          subject: `Password Reset link`,
+          html: `
+                    <h1>Please use the following link to reset your password</h1>
+                    <p>${process.env.CLIENT_URL}/users/password/reset/${token}</p>
+                    <hr />
+                    <p>This email may contain sensetive information</p>
+                    <p>${process.env.CLIENT_URL}</p>
+                `
+        };
+
+        return user.updateOne(
+          {
+            resetPasswordLink: token
+          },
+          (err, success) => {
+            if (err) {
+              console.log('RESET PASSWORD LINK ERROR', err);
+              return res.status(400).json({
+                error:
+                  'Database connection error on user password forgot request'
+              });
+            } else {
+              sgMail
+                .send(emailData)
+                .then(sent => {
+                  // console.log('SIGNUP EMAIL SENT', sent)
+                  return res.json({
+                    message: `Email has been sent to ${email}. Follow the instruction to activate your account`
+                  });
+                })
+                .catch(err => {
+                  // console.log('SIGNUP EMAIL SENT ERROR', err)
+                  return res.json({
+                    message: err.message
+                  });
+                });
+            }
+          }
+        );
+      }
+    );
   }
 };

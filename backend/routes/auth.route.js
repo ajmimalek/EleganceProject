@@ -22,21 +22,21 @@ const {
 
 router.post("/register", validSign, registerController);
 
-//router.post("/login", validLogin, signinController);
+router.post("/login", validLogin, signinController);
 
 // activating account after registration.
 router.post("/activation", activationController);
 
 // forgot reset password
-/*router.put(
+router.put(
   "/forgotpassword",
   forgotPasswordValidator,
   forgotPasswordController
 );
-router.put("/resetpassword", resetPasswordValidator, resetPasswordController);
+//router.put("/resetpassword", resetPasswordValidator, resetPasswordController);
 
 // Google and Facebook Login
-router.post("/googlelogin", googleController);
-router.post("/facebooklogin", facebookController);*/
+//router.post("/googlelogin", googleController);
+//router.post("/facebooklogin", facebookController);
 
 module.exports = router;
