@@ -5,16 +5,7 @@ import {
   hexToRgb
 } from "assets/jss/material-dashboard-react.js";
 
-const iconsStyle = {
-  iframe: {
-    width: "100%",
-    height: "500px",
-    border: "0",
-    ...boxShadow
-  },
-  iframeContainer: {
-    margin: "0 -20px 0"
-  },
+const localStoreStyle = {
   cardCategoryWhite: {
     "&,& a,& a:hover,& a:focus": {
       color: "rgba(" + hexToRgb(whiteColor) + ",.62)",
@@ -40,7 +31,38 @@ const iconsStyle = {
       fontWeight: "400",
       lineHeight: "1"
     }
+  },
+  ClothesItem: {
+    width: "180px",
+    "margin-right": "15px",
+    marginTop: "20px"
+  },
+  filterLocalStore: {
+    width: "345px",
+    "margin-right": "15px",
+    marginTop: "20px"
+   
+  },
+  ClothesList: {
+    
+    display: "flex",
+    flexWrap: "wrap",
+    flexDirection: "row",
+  },
+clothes:{
+  display: "flex",
+  flexWrap: "no wrap",
+  flexDirection: "row",
+}
+  ,sliderFilter:{
+    width: "290px",
+    display: "flex",
+    flexWrap: "no wrap",
+    flexDirection: "row",
   }
+
+
+  
 };
 
-export default iconsStyle;
+export default localStoreStyle;

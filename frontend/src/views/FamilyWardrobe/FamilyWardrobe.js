@@ -3,6 +3,12 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Helmet } from "react-helmet";
 // core components
+import AppSearchAPIConnector from "@elastic/search-ui-app-search-connector";
+import { SearchProvider, Results, SearchBox } from "@elastic/react-search-ui";
+import { Layout } from "@elastic/react-search-ui-views";
+
+import "@elastic/react-search-ui-views/lib/styles/styles.css";
+
 
 const styles = {
   typo: {
@@ -50,9 +56,9 @@ export default function FamilyWardrobe() {
     <Helmet>
       <title>Elegance App - Family Wardrobe</title>
     </Helmet>
-    <div>
+    
+    
 
-    </div>
     </>
   );
 }
