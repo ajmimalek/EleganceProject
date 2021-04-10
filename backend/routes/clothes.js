@@ -15,6 +15,6 @@ router.get("/:id",async(req,res)=> {
     if (!user) return res.sendStatus(400);
     res.send(user);
 });
-modeule.exports = router;
+module.exports = router;
 
 }
