@@ -17,7 +17,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 In order to launch the frontend server you need to : 
 - Launch this command :
 ```bash
-yarn start
+npm start
 ```
 - Enter this URL : [localhost:3000](https://localhost:3000). 
 

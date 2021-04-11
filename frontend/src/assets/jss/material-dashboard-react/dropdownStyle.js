@@ -120,6 +120,9 @@ const dropdownStyle = theme => ({
     },
     "& > a":{
       color: "inherit",
+    },
+    [theme.breakpoints.down("md")]:{
+      color: "white",
     }
   }
 });
