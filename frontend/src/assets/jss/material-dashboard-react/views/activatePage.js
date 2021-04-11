@@ -1,6 +1,6 @@
 import { container } from "assets/jss/material-dashboard-react.js";
 
-const signupPageStyle = {
+const activatePageStyle = {
   container: {
     ...container,
     zIndex: "2",
@@ -50,22 +50,27 @@ const signupPageStyle = {
   cardHeader: {
     width: "auto",
     textAlign: "center",
-    marginLeft: "20px",
-    marginRight: "20px",
+    marginLeft: "10px",
+    marginRight: "10px",
     marginTop: "-40px",
     padding: "20px 0",
     marginBottom: "15px"
   },
-  socialIcons: {
-    maxWidth: "44px",
+  cardCategoryWhite: {
+    color: "rgba(255,255,255,.62)",
+    margin: "0",
+    fontSize: "14px",
     marginTop: "0",
-    width: "100%",
-    transform: "none",
-    left: "0",
-    top: "0",
-    height: "100%",
-    lineHeight: "41px",
-    fontSize: "20px"
+    marginBottom: "0",
+  },
+  cardTitleWhite: {
+    color: "#FFFFFF",
+    marginTop: "0px",
+    minHeight: "auto",
+    fontWeight: "300",
+    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+    marginBottom: "3px",
+    textDecoration: "none",
   },
   divider: {
     marginTop: "30px",
@@ -76,39 +81,19 @@ const signupPageStyle = {
     paddingTop: "0rem",
     border: "0",
     borderRadius: "6px",
-    justifyContent: "center !important"
+    justifyContent: "center !important",
+    flexFlow: "column wrap",
   },
-  socialLine: {
-    marginTop: "1rem",
-    textAlign: "center",
-    padding: "0",
-
-  },
-  inputIconsColor: {
-    color: "#495057"
-  },
-  remember: {
-    color: "#495057",
-    marginTop: "17px",
-  },
-  mailsent: {
+  activate: {
     display: "block",
     marginLeft: "auto",
     marginRight: "auto",
     paddingBottom: "40px",
+    width: "50%",
   },
-  mail:{
-    marginTop: "10px",
-  },
-  forget: {
-    marginTop: "17px",
-    float: "right!important",
-    marginRight: "-20px",
-    "& img": {
-      height: "25px",
-      weight: "25px",
-    }
+  button: {
+    width: "50%"
   }
 };
 
-export default signupPageStyle;
+export default activatePageStyle;
