@@ -1,37 +1,60 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Slider from '@material-ui/core/Slider';
-const useStyles = makeStyles({
-  root: {
-    width: 300,
+import Slider, { Range } from 'rc-slider';
+
+const styles = {
+  cardCategoryWhite: {
+    "&,& a,& a:hover,& a:focus": {
+      color: "rgba(255,255,255,.62)",
+      margin: "0",
+      fontSize: "14px",
+      marginTop: "0",
+      marginBottom: "0"
+    },
+    "& a,& a:hover,& a:focus": {
+      color: "#FFFFFF"
+    }
   },
-});
-
-function valuetext(value) {
-  return `${value}°C`;
-}
-
-export default function RangeSlider() {
+  cardTitleWhite: {
+    color: "#FFFFFF",
+    marginTop: "0px",
+    minHeight: "auto",
+    fontWeight: "300",
+    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+    marginBottom: "3px",
+    textDecoration: "none",
+    "& small": {
+      color: "#777",
+      fontSize: "65%",
+      fontWeight: "400",
+      lineHeight: "1"
+    }
+  }
+};
+const useStyles = makeStyles(styles);
+function Budget() {
   const classes = useStyles();
-  const [value, setValue] = React.useState([20, 37]);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const [valueMin, setValueMin]=useState(50);
+  const [valueMax, setValueMax]=useState(150);
+  const handleInputChange = (value) => {
+    setValueMin(value[0]);
+    setValueMax(value[1]);
   };
-
   return (
-    <div className={classes.root}>
-      <Typography id="range-slider" gutterBottom>
-        Price
-      </Typography>
-      <Slider
-        value={value}
-        onChange={handleChange}
-        valueLabelDisplay="auto"
-        aria-labelledby="range-slider"
-        getAriaValueText={valuetext}
-      />
-    </div>
+    <>
+      <div>
+        <b>{valueMin} DT</b>
+          <Range
+            min={0}
+            max={500}
+            defaultValue={[50 , 150]}
+            ariaLabelGroupForHandles
+            onChange={handleInputChange}
+          />
+        <b>{valueMax} DT</b>
+      </div>
+
+    </>
   );
 }
+export { Budget as default };

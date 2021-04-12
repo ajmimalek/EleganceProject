@@ -49,8 +49,8 @@ const tileData = [
   {
     img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ10g0ghYRDZ8Lk3ZHjT8EozD2SgmIxkAQQSA&usqp=CAU',
     title: 'Dali'
-  },
-  {
+
+    },  {
     img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRUyPVcIDmUC_W3wQ5Hz-TNKdY0Z0oqvOPtg&usqp=CAU',
     title: 'Moha'
   },
@@ -68,17 +68,6 @@ const tileData = [
   {
     img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRUyPVcIDmUC_W3wQ5Hz-TNKdY0Z0oqvOPtg&usqp=CAU',
     title: 'mahmoud'
-  },{
-    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRUyPVcIDmUC_W3wQ5Hz-TNKdY0Z0oqvOPtg&usqp=CAU',
-    title: 'Hrouz'
-  },
-  {
-    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRUyPVcIDmUC_W3wQ5Hz-TNKdY0Z0oqvOPtg&usqp=CAU',
-    title: 'hsouna'
-  },
-  {
-    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ10g0ghYRDZ8Lk3ZHjT8EozD2SgmIxkAQQSA&usqp=CAU',
-    title: 'Bohmid'
   }
   ];
 const useStyles = makeStyles(styles);
@@ -156,7 +145,7 @@ export default function FamilyWardrobe() {
 
 
           </GridItem>
-
+        
         </GridContainer>
  
     </>

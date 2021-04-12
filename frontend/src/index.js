@@ -11,7 +11,13 @@ import ActivatePage from "views/Authentification/ActivatePage";
 import LoginPage from "views/Authentification/LoginPage";
 import RegisterPage from "views/Authentification/RegisterPage";
 
+
+const hist = createBrowserHistory();
+
+
+
 //const hist = createBrowserHistory();
+
 
 
 ReactDOM.render(

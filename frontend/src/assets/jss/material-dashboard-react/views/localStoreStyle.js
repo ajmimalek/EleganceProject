@@ -33,7 +33,7 @@ const localStoreStyle = {
     }
   },
   ClothesItem: {
-    width: "180px",
+    width: "176px",
     "margin-right": "15px",
     marginTop: "20px"
   },

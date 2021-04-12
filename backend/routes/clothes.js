@@ -1,3 +1,4 @@
+
 var express = require('express');
 var router = express.Router();
 var mongoose=require("mongoose")
@@ -35,9 +36,9 @@ const upload = multer({
 router.post('/sellClothes', async (req, res) => {
   
   try {
-    const { id, sell } = req.body;
+    const { Id, sell } = req.body;
     Clothes.findByIdAndUpdate(
-      id,
+      Id,
        { sell:  sell },   
       function(err) {  
        if (err) {  
@@ -60,7 +61,7 @@ router.post('/sellClothes', async (req, res) => {
 
 router.get('/getAllClothes', async (req, res) => {
   try {
-    const files = await Clothes.find({});
+    const files = await Clothes.find({$or:[{sell: null}]});
     const sortedByCreationDate = files.sort(
       (a, b) => b.createdAt - a.createdAt
     );
@@ -75,11 +76,10 @@ router.post(
   upload.single('file'),
   async (req, res) => {
     try {
-      const { title, description } = req.body;
+      
       const { path, mimetype } = req.file;
       const file = new Clothes({
-        title,
-        description,
+       
         clothes_path: path,
         clothes_mimetype: mimetype
       });
@@ -110,3 +110,4 @@ router.get('/download/:id', async (req, res) => {
 
 
 module.exports = router;
+

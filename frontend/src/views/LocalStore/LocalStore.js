@@ -69,6 +69,9 @@ export default function LocalStore() {
   };
   return (
     <>
+
+    
+
       <Helmet>
         <title>Elegance App - Local Store</title>
       </Helmet>
@@ -305,6 +308,7 @@ export default function LocalStore() {
 
         </GridContainer>
       </div>
+
     </>
   );
 }

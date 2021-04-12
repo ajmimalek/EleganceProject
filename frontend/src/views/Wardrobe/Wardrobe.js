@@ -1,10 +1,69 @@
-import React, { useState, useRef ,useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Dropzone from 'react-dropzone';
 import axios from 'axios';
-import { Form, Row, Col, Button } from 'react-bootstrap';
-import Radio from "@material-ui/core/Radio";
+import { Form, Row, Col } from 'react-bootstrap';
 
+
+import Check from "@material-ui/icons/Check";
+import Radio from "@material-ui/core/Radio";
+import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
+
+import Cardstyles from "assets/jss/material-dashboard-react/cardImagesStyles.js";
+
+import { makeStyles } from "@material-ui/core/styles";
+
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+
+import { Helmet } from "react-helmet";
+import AppSearchAPIConnector from "@elastic/search-ui-app-search-connector";
+import { SearchProvider, Results, SearchBox } from "@elastic/react-search-ui";
+import { Layout } from "@elastic/react-search-ui-views";
+
+import Clothes from "components/wardrobe/clothes.js"
+import GridItem from "components/Grid/GridItem.js";
+import GridContainer from "components/Grid/GridContainer.js";
+import Card from "components/Card/Card.js";
+import CardHeader from "components/Card/CardHeader.js";
+import CardBody from "components/Card/CardBody.js";
+import styles from "assets/jss/material-dashboard-react/views/localStoreStyle.js";
+
+import "@elastic/react-search-ui-views/lib/styles/styles.css";
+import Upload from "./Upload";
+import Store from "../Store.json"
+import IconButton from "@material-ui/core/IconButton";
+// @material-ui/icons
+import Close from "@material-ui/icons/Close";
+// core components
+import Slide from "@material-ui/core/Slide";
+import Button from 'components/CustomButtons/Button.js';
+
+
+const useStyles = makeStyles(styles);
+const connector = new AppSearchAPIConnector({
+  searchKey: "search-371auk61r2bwqtdzocdgutmg",
+  engineName: "search-ui-examples",
+  hostIdentifier: "host-2376rb"
+});
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="down" ref={ref} {...props} />;
+});
+const useCardStyles = makeStyles(Cardstyles);
 const Wardrobe = (props) => {
+  const Cardclasses = useCardStyles();
+  const classes = useStyles();
+  const [modal, setModal] = useState(false);
+  const [modalType, setModalType] = useState(false);
+  const [modalColor, setModalColor] = useState(false);
+  const [modalUpload, setModalUpload] = useState(false);
+  const [modalSell, setModalSell] = useState(false);
+  const [Id,setID]=useState(null);
+  
+
+  const [checked, setChecked] = React.useState([]);
+  const [selectedValue, setSelectedValue] = useState(null);
+
   const [file, setFile] = useState(null); // state for storing actual image
   const [previewSrc, setPreviewSrc] = useState(''); // state for storing previewImage
   const [state, setState] = useState({
@@ -47,46 +106,45 @@ const Wardrobe = (props) => {
     event.preventDefault();
 
     try {
-      const { title, description } = state;
-      const formData = new FormData();
-      console.log("description",description);
-      formData.append('file', file);
-          formData.append('title', title);
-          formData.append('description', description);
 
-          setErrorMsg('');
-          await axios.post(`http://localhost:9000/clothes/upload`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          });
-          props.history.push('/list');
+      const formData = new FormData();
+
+      formData.append('file', file);
+
+
+      setErrorMsg('');
+      await axios.post(`http://localhost:9000/clothes/upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      props.history.push('/list');
 
     } catch (error) {
       error.response && setErrorMsg(error.response.data);
     }
   };
-  const [id, setID] = useState(null);
- 
-  
+  const [id, setId] = useState(null);
+
+
   const handleSelSubmit = async (event) => {
     event.preventDefault();
 
     try {
-     
+
 
       const { sell } = state;
+
+
+      const data = {
+        sell,
+        Id
+      };
       
-      
-          const data = {
-            sell,
-            id
-        };
-        console.log("dd",data);
-          setErrorMsg('');
-          await axios.post(`http://localhost:9000/clothes/sellClothes`, data);
-       
-          props.history.push('/list');
+      setErrorMsg('');
+      await axios.post(`http://localhost:9000/clothes/sellClothes`, data);
+
+      props.history.push('/list');
 
     } catch (error) {
       error.response && setErrorMsg(error.response.data);
@@ -112,143 +170,463 @@ const Wardrobe = (props) => {
 
   return (
     <React.Fragment>
-      <Form className="search-form" onSubmit={handleOnSubmit}>
-        {errorMsg && <p className="errorMsg">{errorMsg}</p>}
-        <Row>
-          <Col>
-            <Form.Group controlId="title">
-              <Form.Control
-                type="text"
-                name="title"
-                value={state.title || ''}
-                placeholder="Enter title"
-                onChange={handleInputChange}
-              />
-            </Form.Group>
+      <Helmet>
+        <title>Elegance App - My Wardrobe</title>
+      </Helmet>
+      <div>
+
+
+
+
+
+
+        <GridContainer>
+          <GridItem xs={12} sm={12} md={12}>
+            <Card>
+              <CardHeader color="primary">
+                <div className={classes.addStore}>
+                  <h4 className={classes.cardTitleWhite}> <b>i want to classify my clothes by</b>
+                  <Button color="primary" round onClick={() => setModal(true)}> size</Button>
+                  <Button color="primary" round onClick={() => setModalType(true)}> type</Button>
+                  <Button color="primary" round onClick={() => setModalColor(true)}> color</Button></h4>
+                  <Button color="primary" round onClick={() => setModalUpload(true)}> Add Clothes</Button>
+                </div>
+
+                <Dialog
+                  classes={{
+                    root: classes.center,
+                    paper: classes.modalUpload
+                  }}
+                  open={modalUpload}
+                  TransitionComponent={Transition}
+                  keepMounted
+                  onClose={() => setModalUpload(false)}
+                  aria-labelledby="modal-slide-title"
+                  aria-describedby="modal-slide-description"
+                >
+                  <DialogTitle
+                    id="classic-modal-slide-title"
+                    disableTypography
+                    className={classes.modalHeader}
+                  >
+
+                    <div className={classes.addStore}>
+
+                      <IconButton
+                        className={classes.modalCloseButton}
+                        key="close"
+                        aria-label="Close"
+                        color="inherit"
+                        onClick={() => setModalUpload(false)}
+                      >
+                        <Close className={classes.modalClose} />
+                      </IconButton>
+                    </div>
+                  </DialogTitle>
+                  <DialogContent
+                    id="modal-slide-description"
+                    className={classes.modalBody}
+                  >
+
+
+
+                    <Form className="search-form" onSubmit={handleOnSubmit}>
+                      {errorMsg && <p className="errorMsg">{errorMsg}</p>}
+
+                      <div className="upload-section">
+                        <Dropzone
+                          onDrop={onDrop}
+                          onDragEnter={() => updateBorder('over')}
+                          onDragLeave={() => updateBorder('leave')}
+                        >
+                          {({ getRootProps, getInputProps }) => (
+                            <div {...getRootProps({ className: 'drop-zone' })} ref={dropRef}>
+                              <input {...getInputProps()} />
+                              <p>Drag and drop a file OR click here to select a file</p>
+                              {file ? (
+                                <div>
+                                  <strong>Selected file</strong>: {file.name}
+                                </div>
+                              ) : (<div>
+                                <strong>-----------------------------------------------------</strong>
+                              </div>)}
+                            </div>
+                          )}
+                        </Dropzone>
+                        {previewSrc ? (
+                          isPreviewAvailable ? (
+                            <div className="image-preview">
+                              <img className="preview-image" src={previewSrc} alt="Preview" />
+                            </div>
+                          ) : (
+                            <div className="preview-message">
+                              <p>No preview available for this file</p>
+                            </div>
+                          )
+                        ) : (
+                          <div className="preview-message">
+                            <p></p>
+                          </div>
+                        )}
+                      </div>
+                      <Button variant="primary" type="submit">
+                        Submit
+        </Button>
+                    </Form>
+
+
+
+
+                  </DialogContent>
+                </Dialog>
+
+
+
+
+              </CardHeader>
+              <SearchProvider
+
+              >
+
+                <CardBody>
+
+
+                  <SearchBox />
+
+                  
+
+                  <Dialog
+                    classes={{
+                      root: classes.center,
+                      paper: classes.modal
+                    }}
+                    open={modal}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={() => setModal(false)}
+                    aria-labelledby="modal-slide-title"
+                    aria-describedby="modal-slide-description"
+                  >
+                    <DialogTitle
+                      id="classic-modal-slide-title"
+                      disableTypography
+                      className={classes.modalHeader}
+                    >
+
+                      <div className={classes.addStore}>
+
+                        <IconButton
+                          className={classes.modalCloseButton}
+                          key="close"
+                          aria-label="Close"
+                          color="inherit"
+                          onClick={() => setModal(false)}
+                        >
+                          <Close className={classes.modalClose} />
+                        </IconButton>
+                      </div>
+                    </DialogTitle>
+                    <DialogContent
+                      id="modal-slide-description"
+                      className={classes.modalBody}
+                    >
+
+
+                      <Radio
+                        checked={selectedValue === "s"}
+                        onChange={() => setSelectedValue("s")}
+                        value="s"
+                        name="radio button demo"
+                        aria-label="S"
+                        icon={<FiberManualRecord className={classes.radioUnchecked} />}
+                        checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                        classes={{
+                          checked: classes.radio
+                        }}
+                      />S
+        <Radio
+                        checked={selectedValue === "m"}
+                        onChange={() => setSelectedValue("m")}
+                        value="m"
+                        name="radio button demo"
+                        aria-label="M"
+                        icon={<FiberManualRecord className={classes.radioUnchecked} />}
+                        checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                        classes={{
+                          checked: classes.radio
+                        }}
+                      />M
+      <Radio
+                        checked={selectedValue === "l"}
+                        onChange={() => setSelectedValue("l")}
+                        value="l"
+                        name="radio button demo"
+                        aria-label="L"
+                        icon={<FiberManualRecord className={classes.radioUnchecked} />}
+                        checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                        classes={{
+                          checked: classes.radio
+                        }}
+                      />L
+        <Radio
+                        checked={selectedValue === "xl"}
+                        onChange={() => setSelectedValue("xl")}
+                        value="xl"
+                        name="radio button demo"
+                        aria-label="XL"
+                        icon={<FiberManualRecord className={classes.radioUnchecked} />}
+                        checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                        classes={{
+                          checked: classes.radio
+                        }}
+                      />XL
+      <Radio
+                        checked={selectedValue === "xxl"}
+                        onChange={() => setSelectedValue("xxl")}
+                        value="xxl"
+                        name="radio button demo"
+                        aria-label="XXL"
+                        icon={<FiberManualRecord className={classes.radioUnchecked} />}
+                        checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                        classes={{
+                          checked: classes.radio
+                        }}
+                      />XXL
+{"Radio:", console.log(selectedValue)}
+                      {"Checkbox:", console.log(checked)}
+
+                      <Radio
+                        checked={selectedValue === "xxxl"}
+                        onChange={() => setSelectedValue("xxxl")}
+                        value="xxxl"
+                        name="radio button demo"
+                        aria-label="XXXL"
+                        icon={<FiberManualRecord className={classes.radioUnchecked} />}
+                        checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                        classes={{
+                          checked: classes.radio
+                        }}
+                      />XXXL
+
+
+
+
+
+                      </DialogContent>
+                  </Dialog>
+
+
+
+                  <Dialog
+                    classes={{
+                      root: classes.center,
+                      paper: classes.modalType
+                    }}
+                    open={modalType}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={() => setModalType(false)}
+                    aria-labelledby="modal-slide-title"
+                    aria-describedby="modal-slide-description"
+                  >
+                    <DialogTitle
+                      id="classic-modal-slide-title"
+                      disableTypography
+                      className={classes.modalHeader}
+                    >
+
+                      <div className={classes.addStore}>
+
+                        <IconButton
+                          className={classes.modalCloseButton}
+                          key="close"
+                          aria-label="Close"
+                          color="inherit"
+                          onClick={() => setModalType(false)}
+                        >
+                          <Close className={classes.modalClose} />
+                        </IconButton>
+                      </div>
+                    </DialogTitle>
+                    <DialogContent
+                      id="modal-slide-description"
+                      className={classes.modalBody}
+                    >
+
+
+                      Type
+
+
+
+                      </DialogContent>
+                  </Dialog>
+
+
+
+                  <Dialog
+                    classes={{
+                      root: classes.center,
+                      paper: classes.modalColor
+                    }}
+                    open={modalColor}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={() => setModalColor(false)}
+                    aria-labelledby="modal-slide-title"
+                    aria-describedby="modal-slide-description"
+                  >
+                    <DialogTitle
+                      id="classic-modal-slide-title"
+                      disableTypography
+                      className={classes.modalHeader}
+                    >
+
+                      <div className={classes.addStore}>
+
+                        <IconButton
+                          className={classes.modalCloseButton}
+                          key="close"
+                          aria-label="Close"
+                          color="inherit"
+                          onClick={() => setModalColor(false)}
+                        >
+                          <Close className={classes.modalClose} />
+                        </IconButton>
+                      </div>
+                    </DialogTitle>
+                    <DialogContent
+                      id="modal-slide-description"
+                      className={classes.modalBody}
+                    >
+
+
+
+
+                      color
+
+
+
+
+                      </DialogContent>
+                  </Dialog>
+
+
+                  <div className={classes.ClothesList}>
+
+
+                    {filesList.length > 0 ? (
+                      filesList.map(
+                        ({ _id }) => (
+                          <Card className={classes.ClothesItem}>
+                            <img
+                              className={Cardclasses.cardImgTop}
+                              data-src="holder.js/100px180/"
+                              alt="100%x180"
+                              style={{ height: "175px", width: "100%", display: "block" }}
+                              src={'http://localhost:9000/clothes/download/' + _id}
+                              data-holder-rendered="true"
+                            />
+                            <CardBody>
+                              <h4>name</h4>
+                              <button>Details</button>
+                              <button>lend</button><br></br>
+                              <b>Add to store                    <button  onClick={() => setModalSell(true)}> <button
+                          
+                          
+                          
+                          onClick={() => setID(_id)}
+                        >Sell</button></button>
+         </b>
+                      
+                              
+                  <Dialog
+                    classes={{
+                      root: classes.center,
+                      paper: classes.modalSell
+                    }}
+                    open={modalSell}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={() => setModalSell(false)}
+                    aria-labelledby="modal-slide-title"
+                    aria-describedby="modal-slide-description"
+                  >
+                    <DialogTitle
+                      id="classic-modal-slide-title"
+                      disableTypography
+                      className={classes.modalHeader}
+                    >
+
+                      <div className={classes.addStore}>
+
+                        <IconButton
+                          className={classes.modalCloseButton}
+                          key="close"
+                          aria-label="Close"
+                          color="inherit"
+                          onClick={() => setModalColor(false)}
+                        >
+                          <Close className={classes.modalClose} />
+                        </IconButton>
+                      </div>
+                    </DialogTitle>
+                    <DialogContent
+                      id="modal-slide-description"
+                      className={classes.modalBody}
+                    >
+
+
+<Form className="search-form" onSubmit={handleSelSubmit}>
+                        <Row>
+                          <Col>
+                            <Form.Group controlId="title">
+                              <Form.Control
+                                type="text"
+                                name="sell"
+                                value={state.sell || ''}
+                                placeholder="add your sell"
+                                onChange={handleInputChange}
+                              />
+                            </Form.Group>
           </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Form.Group controlId="description">
-              <Form.Control
-                type="text"
-                name="description"
-                value={state.description || ''}
-                placeholder="Enter description"
-                onChange={handleInputChange}
-              />
-            </Form.Group>
-          </Col>
-        </Row>
-        <div className="upload-section">
-          <Dropzone
-            onDrop={onDrop}
-            onDragEnter={() => updateBorder('over')}
-            onDragLeave={() => updateBorder('leave')}
-          >
-            {({ getRootProps, getInputProps }) => (
-              <div {...getRootProps({ className: 'drop-zone' })} ref={dropRef}>
-                <input {...getInputProps()} />
-                <p>Drag and drop a file OR click here to select a file</p>
-                {file && (
-                  <div>
-                    <strong>Selected file:</strong> {file.name}
+                        </Row>
+                        <Button variant="primary" type="submit">
+                          Submit
+        </Button>
+                      </Form>
+
+
+
+
+                      </DialogContent>
+                  </Dialog>
+
+
+                             
+
+                            </CardBody>
+                          </Card>
+
+                        )
+                      )
+                    ) : (
+                      <b>                   No files found. Please add some.</b>
+                    )}
+
+
                   </div>
-                )}
-              </div>
-            )}
-          </Dropzone>
-          {previewSrc ? (
-            isPreviewAvailable ? (
-              <div className="image-preview">
-                <img className="preview-image" src={previewSrc} alt="Preview" />
-              </div>
-            ) : (
-              <div className="preview-message">
-                <p>No preview available for this file</p>
-              </div>
-            )
-          ) : (
-            <div className="preview-message">
-              <p>Image preview will be shown here after selection</p>
-            </div>
-          )}
-        </div>
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
-      </Form>
 
-      <div className="files-container">
-      {errorMsg && <p className="errorMsg">{errorMsg}</p>}
-      <table className="files-table">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Download File</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filesList.length > 0 ? (
-            filesList.map(
-              ({ _id, title, description, file_path, file_mimetype }) => (
-                <tr key={_id}>
-                  <td className="file-title">{title}</td>
-                  <td className="file-description">{description}</td>
-                  <td>
-                    <img  src={'http://localhost:9000/clothes/download/'+_id} />
-                    <Form className="search-form" onSubmit={handleSelSubmit}>
-        <Row>
-          <Col>
-            <Form.Group controlId="title">
-              <Form.Control
-                type="text"
-                name="sell"
-                value={state.sell || ''}
-                placeholder="add your sell"
-                onChange={handleInputChange}
-              />
-              </Form.Group>
-              <Radio
-                      checked={id === _id}
-                      onChange={() => setID(_id)}
-                      
-                      name="radio button demo"
-                      
-                     
-                    />I'm sure to sell this clothes!
-          </Col>
-        </Row>
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
-      </Form>
+                </CardBody>
+              </SearchProvider>
+            </Card>
+          </GridItem>
+        </GridContainer>
 
 
 
 
 
-
-
-
-
-                  </td>
-                </tr>
-              )
-            )
-          ) : (
-            <tr>
-              <td colSpan={3} style={{ fontWeight: '300' }}>
-                No files found. Please add some.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
-
-
+      </div>
 
 
 
