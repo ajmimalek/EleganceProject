@@ -67,8 +67,7 @@ const Wardrobe = (props) => {
   const [file, setFile] = useState(null); // state for storing actual image
   const [previewSrc, setPreviewSrc] = useState(''); // state for storing previewImage
   const [state, setState] = useState({
-    title: '',
-    description: ''
+    sell: '',
   });
   const [errorMsg, setErrorMsg] = useState('');
   const [isPreviewAvailable, setIsPreviewAvailable] = useState(false); // state to show preview only for images
@@ -118,7 +117,7 @@ const Wardrobe = (props) => {
           'Content-Type': 'multipart/form-data'
         }
       });
-      props.history.push('/list');
+      props.history.push('/DetailsClothes');
 
     } catch (error) {
       error.response && setErrorMsg(error.response.data);
@@ -248,7 +247,7 @@ const Wardrobe = (props) => {
                                   <strong>Selected file</strong>: {file.name}
                                 </div>
                               ) : (<div>
-                                <strong>-----------------------------------------------------</strong>
+                                <strong>----------------------------------------------------------------</strong>
                               </div>)}
                             </div>
                           )}
@@ -474,7 +473,7 @@ const Wardrobe = (props) => {
                     onClose={() => setModalColor(false)}
                     aria-labelledby="modal-slide-title"
                     aria-describedby="modal-slide-description"
-                  >
+                  >0
                     <DialogTitle
                       id="classic-modal-slide-title"
                       disableTypography
@@ -529,15 +528,20 @@ const Wardrobe = (props) => {
                             <CardBody>
                               <h4>name</h4>
                               <button>Details</button>
-                              <button>lend</button><br></br>
-                              <b>Add to store                    <button  onClick={() => setModalSell(true)}> <button
+                             
+                              
+             
+
+                             
+
+                            </CardBody>
+                            <b>Add to local store<button  onClick={() => setModalSell(true)}> <button
                           
                           
                           
                           onClick={() => setID(_id)}
                         >Sell</button></button>
          </b>
-                      
                               
                   <Dialog
                     classes={{
@@ -564,7 +568,7 @@ const Wardrobe = (props) => {
                           key="close"
                           aria-label="Close"
                           color="inherit"
-                          onClick={() => setModalColor(false)}
+                          onClick={() => setModalSell(false)}
                         >
                           <Close className={classes.modalClose} />
                         </IconButton>
@@ -584,7 +588,7 @@ const Wardrobe = (props) => {
                                 type="text"
                                 name="sell"
                                 value={state.sell || ''}
-                                placeholder="add your sell"
+                                placeholder="add your price"
                                 onChange={handleInputChange}
                               />
                             </Form.Group>
@@ -601,16 +605,12 @@ const Wardrobe = (props) => {
                       </DialogContent>
                   </Dialog>
 
-
-                             
-
-                            </CardBody>
                           </Card>
 
                         )
                       )
                     ) : (
-                      <b>                   No files found. Please add some.</b>
+                      <b>                   No clothes found. Please add some.</b>
                     )}
 
 

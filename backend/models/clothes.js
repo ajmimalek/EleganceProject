@@ -1,8 +1,8 @@
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-let Clothes =new Schema (
-{
+let Clothes = new Schema(
+  {
     title: {
       type: String,
       required: false,
@@ -12,31 +12,37 @@ let Clothes =new Schema (
       type: String,
       required: false,
       trim: false
-    },type: {
-        type: String,
-        required: false,
-        trim: false
-      },
-      color: {
-        type: String,
-        required: false,
-        trim: false
-      },
-      brand: {
-        type: String,
-        required: false,
-        trim: false
-      },
-      sell: {
-        type: String,
-        required: false,
-        trim: false
-      },
-      user: [{
-        type: Schema.Types.ObjectId,
-        ref: "User",
-        
-      }],
+    },
+    type: {
+      type: String,
+      required: false,
+      trim: false
+    },
+    color: {
+      type: String,
+      required: false,
+      trim: false
+    },
+    size: {
+      type: String,
+      required: false,
+      trim: false
+    },
+    brand: {
+      type: String,
+      required: false,
+      trim: false
+    },
+    sell: {
+      type: Number,
+      required: false,
+      trim: false
+    },
+    user: [{
+      type: Schema.Types.ObjectId,
+      ref: "User",
+
+    }],
     clothes_path: {
       type: String,
       required: true

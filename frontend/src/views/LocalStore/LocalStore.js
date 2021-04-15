@@ -1,7 +1,8 @@
 import Slider, { Range } from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import Button from 'components/CustomButtons/Button.js';
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState, useEffect } from "react";
+import axios from 'axios';
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import Store from "../Store.json"
@@ -45,10 +46,26 @@ export default function LocalStore() {
   const [valueMin, setValueMin] = useState(50);
   const [valueMax, setValueMax] = useState(150);
   const [modal, setModal] = useState(false);
-
+  const [errorMsg, setErrorMsg] = useState('');
   const handleInputChange = (value) => {
     setValueMin(value[0]);
     setValueMax(value[1]);
+   
+      const getFilesList = async () => {
+        try {
+          const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin);
+          setErrorMsg('');
+          setFilesList(data);
+          console.log("valueMax",valueMax,"valueMin",valueMin);
+          console.log("data",data);
+        } catch (error) {
+          error.response && setErrorMsg(error.response.data);
+        }
+      };
+  
+      getFilesList();
+   
+  
   };
 
 
@@ -67,6 +84,22 @@ export default function LocalStore() {
     }
     setChecked(newChecked);
   };
+  
+  const [filesList, setFilesList] = useState([]);
+  useEffect(() => {
+    const getFilesList = async () => {
+      try {
+        const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin);
+        setErrorMsg('');
+        setFilesList(data);
+      } catch (error) {
+        error.response && setErrorMsg(error.response.data);
+      }
+    };
+
+    getFilesList();
+  }, []);
+
   return (
     <>
 
@@ -223,7 +256,7 @@ export default function LocalStore() {
 
 <h3>Price Range</h3>
 
-                    <div className={classes.sliderFilter}>
+                   
                       <b>{valueMin}DT </b>
                       <Range
                         min={0}
@@ -235,7 +268,7 @@ export default function LocalStore() {
 
                       />
                       <b>{valueMax}DT </b>
-                    </div>
+                   
 
                     <h3>Clothing</h3>
                     <Checkbox
@@ -288,9 +321,33 @@ export default function LocalStore() {
 
                   <div className={classes.ClothesList}>
 
-                    {Store.map((clothes, index) => (
-                      <Clothes clothes={clothes} key={index}></Clothes>
-                    ))}
+                  {filesList.length > 0 ? (
+                      filesList.map(
+                        ({ _id,sell}) => (
+                          <Card className={classes.ClothesItem}>
+                            <img
+                              className={Cardclasses.cardImgTop}
+                              data-src="holder.js/100px180/"
+                              alt="100%x180"
+                              style={{ height: "175px", width: "100%", display: "block" }}
+                              src={'http://localhost:9000/clothes/download/' + _id}
+                              data-holder-rendered="true"
+                            />
+                            <CardBody>
+                               
+                              <p>Price: {sell}DT</p>
+                              <b>25148752</b>
+                            </CardBody>
+
+                          </Card>
+
+                        )
+                      )
+                    ) : (
+                      <b>                   No clothes found. Please add some.</b>
+                    )}
+
+
                   </div>
 
 

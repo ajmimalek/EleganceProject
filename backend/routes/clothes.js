@@ -71,6 +71,20 @@ router.get('/getAllClothes', async (req, res) => {
   }
 });
 
+
+router.get('/getAllSellClothes/:max/:min', async (req, res) => {
+  try {
+    const files = await Clothes.find({sell: { $gte: req.params.min, $lte: req.params.max }});
+    const sortedByCreationDate = files.sort(
+      (a, b) => b.createdAt - a.createdAt
+    );
+    res.send(sortedByCreationDate);
+  } catch (error) {
+    res.status(400).send('Error while getting list of files. Try again later.');
+  }
+});
+
+
 router.post(
   '/upload',
   upload.single('file'),
