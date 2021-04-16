@@ -1,63 +1,13 @@
-import { primaryColor } from "assets/jss/material-dashboard-react";
-import { grayColor } from "assets/jss/material-dashboard-react";
 import { container } from "assets/jss/material-dashboard-react.js";
 
-const signupPageStyle = (theme) => ({
-  formControl: {
-    marginLeft: theme.spacing(2),
-    marginTop: "5px",
-    width: "30%",
-    float: "right!important",
-  },
-  phone: {
-    marginLeft: "45px",
-    marginTop: "5px",
-    width: "30%",
-  },
-  city: {
-    display: "block",
-    marginLeft: "auto",
-    marginRight: "auto",
-    marginTop: "5px",
-    width: "50%",
-  },
+const signupPageStyle = {
   container: {
     ...container,
     zIndex: "2",
-    width: "90%",
     position: "relative",
     paddingTop: "20vh",
     color: "#FFFFFF",
     paddingBottom: "200px",
-  },
-  name: {
-    marginTop: "10px",
-    width: "30%",
-  },
-  primary: {
-    "&& .MuiInput-underline:after": {
-      borderBottom: "2px solid #bf1922",
-    },
-  },
-  select: {
-    "&:after": {
-      borderColor: "#bf1922"
-    }
-  },
-  mail: {
-    marginTop: "10px",
-    width: "30%",
-  },
-  password: {
-    marginTop: "10px",
-    width: "30%",
-    marginLeft: "25px",
-    float: "right!important",
-    [theme.breakpoints.down("sm")]: {
-      display: "flex",
-      flexFlow: "row nowrap",
-      marginLeft: "15px",
-    },
   },
   cardHidden: {
     opacity: "0",
@@ -127,15 +77,21 @@ const signupPageStyle = (theme) => ({
     border: "0",
     borderRadius: "6px",
     justifyContent: "center !important",
-  },
-  socialLine: {
-    marginTop: "1rem",
-    textAlign: "center",
-    padding: "0",
+    flexDirection: "column",
   },
   inputIconsColor: {
     color: "#495057",
   },
-});
+  mail: {
+    marginTop: "10px",
+  },
+  button: {
+    margin: "0 auto",
+    display: "block",
+  },
+  buttonFooter:{
+    width: "50%",
+  }
+};
 
 export default signupPageStyle;

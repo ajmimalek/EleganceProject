@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -24,13 +24,7 @@ import styles from "assets/jss/material-dashboard-react/views/registerPage";
 import image from "assets/img/bg7.jpg";
 import EleganceLogo from "../../assets/img/Elegance Logo.png";
 import { Helmet } from "react-helmet";
-import {
-  AccountCircle,
-  Email,
-  Facebook,
-  Phone,
-  Room,
-} from "@material-ui/icons";
+import { AccountCircle, Email, Facebook, Phone } from "@material-ui/icons";
 import CheckBox from "components/CheckBox/CheckBox";
 import {
   FormControl,
@@ -42,13 +36,10 @@ import {
 } from "@material-ui/core";
 import ReCAPTCHA from "react-google-recaptcha";
 import LocationIQ from "react-native-locationiq";
-import swal from "sweetalert";
-// minified version
-import "react-toastify/dist/ReactToastify.min.css";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { isAuth } from "helpers/auth";
-import { Redirect } from "react-router";
+import { Redirect } from "react-router-dom";
 
 const useStyles = makeStyles(styles);
 
@@ -75,17 +66,23 @@ export default function RegisterPage(props) {
   const { name, phone, city, mail, pass, passConfirm, textChange } = formData;
   // handle change from input
   const handleTextChange = (text) => (e) => {
+    e.persist();
     setFormData({ ...formData, [text]: e.target.value });
+    console.log("New value : ", e.target.value);
   };
   const handleChange = (e) => {
+    e.preventDefault();
     setGender(e.target.value);
-  }
+    console.log(e.target.value);
+  };
   // Submit data to backend
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(name, phone, gender, city, mail, pass, passConfirm);
     if (name && mail && pass && gender && city && phone) {
       if (pass === passConfirm) {
         setFormData({ ...formData, textChange: "Starting" });
+        console.log(textChange);
         // pass values to backend.
         axios
           .post(`${process.env.REACT_APP_API_URL}/register`, {
@@ -108,6 +105,7 @@ export default function RegisterPage(props) {
               passConfirm: "",
               textChange: "Submitted",
             });
+            setGender("");
             toast.success(res.data.message);
           })
           .catch((err) => {
@@ -122,92 +120,61 @@ export default function RegisterPage(props) {
               passConfirm: "",
               textChange: "Get Started",
             });
+            setGender("");
             console.log(err.response);
             toast.error(err.response.data.errors);
           });
       } else {
-        toast.error("Passwords don't matches");
+        toast.error("Passwords don't matches 😭");
       }
     } else {
-      toast.error("Please fill all fields");
+      toast.error("🤔 I think you've forgot something, Check your form");
     }
-  };
-
-  // GeoLocation
-  const [open, setOpen] = useState(false);
-
-  const getCity = (lat, lng) => {
-    var state;
-    // Initialize the module (needs to be done only once)
-    LocationIQ.init("pk.8bcb38d71951a48b4ae9c937cc42afe0");
-    LocationIQ.reverse(lat, lng)
-      .then((json) => {
-        state = json.address.state;
-        swal("You live in...", state.substring(12, state.length), "info");
-        return state;
-      })
-      .catch((error) => console.warn(error));
-    return state;
-  };
-
-  const getCordinates = (position) => {
-    const lat = position.coords.latitude + "";
-    const lng = position.coords.longitude + "";
-    console.log("Latitude: " + lat + " Longitude: " + lng);
-    getCity(lat, lng);
-  };
-
-  const handleLocationErrors = (error) => {
-    switch (error.code) {
-      case error.PERMISSION_DENIED:
-        toast.error("User denied the request for Geolocation!", {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-
-        break;
-      case error.POSITION_UNAVAILABLE:
-        toast.error("Location information is unavailable!", {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-        break;
-      case error.TIMEOUT:
-        toast.error("The request to get user location timed out!", {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-        break;
-      case error.UNKNOWN_ERROR:
-        toast.error("An unknown error occurred!", {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-        break;
-      default:
-        console.log("Error: " + error);
-    }
-  };
-
-  const getLocation = () => {
-    var msg;
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        getCordinates,
-        handleLocationErrors
-      );
-      msg = getCity();
-      console.log(`msg = `, msg);
-    } else {
-      msg = "Geolocation is not supported by this browser.";
-    }
-    return msg;
   };
 
   // City prop
   const defaultProps = {
     options: Cities,
     getOptionLabel: (option) => option.value,
+    getOptionSelected: (option) => (option ? option : ""),
   };
-  const index = Cities.indexOf(getLocation);
-  console.log(`index of Location `, index);
-  const [value, setValue] = useState(Cities[index]);
+  const [value, setValue] = useState(Cities[5]);
+  const [inputValue, setInputValue] = React.useState("");
+
+  // GeoLocation
+  useEffect(() => {
+    var msg;
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          var state;
+          // Initialize the module (needs to be done only once)
+          LocationIQ.init("pk.8bcb38d71951a48b4ae9c937cc42afe0");
+          LocationIQ.reverse(lat, lng)
+            .then((json) => {
+              state = json.address.state;
+              msg = state.substring(12, state.length);
+              toast.info("📍 You live in " + msg, {
+                position: toast.POSITION.TOP_RIGHT,
+              });
+              console.log(`state : `, msg);
+              setInputValue(msg);
+            })
+            .catch((error) => console.warn(error));
+        },
+        function (error) {
+          console.error("Error Code = " + error.code + " - " + error.message);
+          toast.error(error.message, {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        }
+      );
+    } else {
+      msg = "Geolocation is not supported by this browser.";
+    }
+  }, []);
 
   return (
     <>
@@ -215,6 +182,7 @@ export default function RegisterPage(props) {
         <title>Elegance App - Register</title>
       </Helmet>
       <div>
+        {isAuth() ? <Redirect to="/admin/wardrobe" /> : null}
         <Header
           absolute
           color="transparent"
@@ -235,7 +203,7 @@ export default function RegisterPage(props) {
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={8}>
                 <Card className={classes[cardAnimaton]}>
-                  <form className={classes.form}>
+                  <form className={classes.form} onSubmit={handleSubmit}>
                     <CardHeader color="primary" className={classes.cardHeader}>
                       <h4>Register</h4>
                       <div className={classes.socialLine}>
@@ -264,6 +232,8 @@ export default function RegisterPage(props) {
                       <CustomInput
                         labelText="Full Name..."
                         id="name"
+                        onChange={handleTextChange("name")}
+                        value={name}
                         formControlProps={{
                           fullWidth: false,
                           className: classes.name,
@@ -282,6 +252,8 @@ export default function RegisterPage(props) {
                       <CustomInput
                         labelText="Phone number..."
                         id="phone"
+                        onChange={handleTextChange("phone")}
+                        value={phone}
                         formControlProps={{
                           fullWidth: false,
                           className: classes.phone,
@@ -304,7 +276,7 @@ export default function RegisterPage(props) {
                           id="Gender"
                           value={gender}
                           onChange={handleChange}
-                          color="secondary"
+                          className={classes.select}
                         >
                           <MenuItem value={"male"}>
                             {" "}
@@ -329,26 +301,31 @@ export default function RegisterPage(props) {
                           {...defaultProps}
                           id="City"
                           value={value}
+                          inputValue={inputValue}
+                          onInputChange={(event, newInputValue) => {
+                            setInputValue(newInputValue);
+                            handleTextChange("city");
+                          }}
                           onChange={(event, newValue) => {
                             setValue(newValue);
+                            handleTextChange("city");
                           }}
                           renderInput={(params) => (
-                            <TextField {...params} label="City" />
+                            <TextField
+                              {...params}
+                              label="City"
+                              className={classes.primary}
+                              onChange={handleTextChange("city")}
+                              value={value}
+                            />
                           )}
                         />
-                        <Button
-                          justIcon
-                          round
-                          color="primary"
-                          id="gps"
-                          onClick={getLocation}
-                        >
-                          <Room />
-                        </Button>
                       </div>
                       <CustomInput
                         labelText="Email..."
                         id="mail"
+                        onChange={handleTextChange("mail")}
+                        value={mail}
                         formControlProps={{
                           fullWidth: false,
                           className: classes.mail,
@@ -364,7 +341,9 @@ export default function RegisterPage(props) {
                       />
                       <CustomInput
                         labelText="Confirm Password"
-                        id="passConfim"
+                        id="passConfirm"
+                        onChange={handleTextChange("passConfirm")}
+                        value={passConfirm}
                         formControlProps={{
                           fullWidth: false,
                           className: classes.password,
@@ -384,6 +363,8 @@ export default function RegisterPage(props) {
                       <CustomInput
                         labelText="Password"
                         id="pass"
+                        onChange={handleTextChange("pass")}
+                        value={pass}
                         formControlProps={{
                           fullWidth: false,
                           className: classes.password,
@@ -408,15 +389,10 @@ export default function RegisterPage(props) {
                         }}
                         sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
                       />
-                      <FormControlLabel
-                        control={<CheckBox name="checkedC" />}
-                        label="I agree to the terms and conditions."
-                        className={classes.remember}
-                      />
                     </CardBody>
                     <CardFooter className={classes.cardFooter}>
-                      <Button simple color="primary" size="lg">
-                        Get started
+                      <Button type="submit" simple color="primary" size="lg">
+                        {textChange}
                       </Button>
                     </CardFooter>
                   </form>

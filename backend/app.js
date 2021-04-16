@@ -13,9 +13,7 @@ var mongoose = require("mongoose");
 var configDB = require("./database/mongodb.json");
 
 // Config dotev
-require("dotenv").config({
-  path: "./config/config.env",
-});
+require("dotenv").config();
 
 // Dev Logginf Middleware
 if (process.env.NODE_ENV === "development") {

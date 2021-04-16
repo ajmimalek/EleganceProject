@@ -21,14 +21,9 @@ import EleganceLogo from "../../assets/img/Elegance Logo.png";
 import Activating from "../../assets/img/activate.gif";
 import { Helmet } from "react-helmet";
 import { Check, PersonAdd } from "@material-ui/icons";
-import { Slide } from "@material-ui/core";
 
 const useStyles = makeStyles(styles);
 
-// Slide animation for forget Password
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
 export default function LoginPage(props) {
   const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
@@ -65,10 +60,10 @@ export default function LoginPage(props) {
                   <form className={classes.form}>
                     <CardHeader color="primary" className={classes.cardHeader}>
                       <h4 className={classes.cardTitleWhite}>
-                        Activate Your Account
+                      Activate Your Account
                       </h4>
                       <p className={classes.cardCategoryWhite}>
-                        Last Step before entering your magical "Fashion Space"
+                      Last Step before entering your magical "Fashion Space"
                       </p>
                     </CardHeader>
                     <CardBody>
@@ -86,6 +81,7 @@ export default function LoginPage(props) {
                       <Button
                         color="primary"
                         className={classes.button}
+                        href="/register"
                       >
                         <PersonAdd /> Register
                       </Button>

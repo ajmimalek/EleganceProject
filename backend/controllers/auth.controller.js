@@ -94,7 +94,7 @@ exports.registerController = (req, res) => {
                   </tr> <!-- COPY -->
                   <tr>
                       <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 0px 30px; color: #666666; text-align: 'center'; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                          <p style="margin: 0;">This link will expire after 10 minutes.</p>
+                          <p style="margin: 0;">This link will expire after <b>10 minutes.</b></p>
                       </td>
                   </tr> <!-- COPY -->
                   <tr>
@@ -261,46 +261,124 @@ exports.requireSignin = expressJwt({
 
 //Forget Password Controller
 exports.forgotPasswordController = (req, res) => {
+  //Getting Email passed from user
   const { email } = req.body;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    const firstError = errors.array().map(error => error.msg)[0];
+    // Getting the value of the first error
+    const firstError = errors.array().map((error) => error.msg)[0];
+    // réponse HTTP 422 : serveur a compris le type de contenu et que la syntaxe de la requête est correcte mais le serveur n'a pas été en mesure de réaliser les instructions demandées.
     return res.status(422).json({
-      errors: firstError
+      errors: firstError,
     });
   } else {
+    //find if the mail passed by user is his own mail (stored in our DB).
     User.findOne(
       {
         email
       },
       (err, user) => {
+        //if error or the mail is not the same.
         if (err || !user) {
           return res.status(400).json({
-            error: 'User with that email does not exist'
+            error: 'User with that email does not exist. Enter your email address used in this application'
           });
         }
 
+        // If exist generate a token.
         const token = jwt.sign(
           {
-            _id: user._id
+            //token with this ID
+            _id: user._id,
           },
           process.env.JWT_RESET_PASSWORD,
           {
-            expiresIn: '10m'
+            expiresIn: '10m' //token expires in 10 minutes
           }
         );
-
+        // Send email with this token
         const emailData = {
           from: process.env.EMAIL_FROM,
           to: email,
-          subject: `Password Reset link`,
+          subject: `Elegance App - Password Reset link`,
           html: `
-                    <h1>Please use the following link to reset your password</h1>
-                    <p>${process.env.CLIENT_URL}/users/password/reset/${token}</p>
-                    <hr />
-                    <p>This email may contain sensetive information</p>
-                    <p>${process.env.CLIENT_URL}</p>
+          <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+              <td bgcolor="#02174C" align="center" style="padding: 0px 10px 0px 10px;">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                      <tr>
+                          <td bgcolor="#02174C" align="center" valign="top" style="padding: 10px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: white; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; letter-spacing: 4px; line-height: 48px;">
+                              <h1 style="font-size: 48px; font-weight: 400; margin: 2;">Welcome AGAIN!</h1> <img src=" http://cdn.mcauto-images-production.sendgrid.net/a9fd540df47a93d6/c7bc4c1e-fe84-45b2-a4bc-609c78775478/332x127.png" width="230" height="100" style="display: block; border: 0px;" />
+                          </td>
+                      </tr>
+                  </table>
+              </td>
+          </tr>
+          <tr>
+              <td bgcolor="#BF1922" align="center" style="padding: 0px 10px 0px 10px;">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                      <tr>
+                          <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                              <p style="margin: 0;">Trouble signing in? <br><br>
+                            Resetting your password is easy. <br><br> Just press the button below and follow the instructions. We’ll have you up and running in no time. </p>
+                          </td>
+                      </tr>
+                      <tr>
+                          <td bgcolor="#ffffff" align="left">
+                              <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                  <tr>
+                                      <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
+                                          <table border="0" cellspacing="0" cellpadding="0">
+                                              <tr>
+                                                  <td align="center" style="border-radius: 3px;" bgcolor="#BF1922"><a href=${process.env.CLIENT_URL}/passwordReset/${token} target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px;  display: inline-block;">Reset Your Password</a></td>
+                                              </tr>
+                                          </table>
+                                      </td>
+                                  </tr>
+                              </table>
+                          </td>
+                      </tr> <!-- COPY -->
+                      <tr>
+                          <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 0px 30px; color: #666666; text-align: 'center'; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                            <p style="margin: 0;">This link will expire after <b>10 minutes.</b></p>
+                          </td>
+                      </tr> <!-- COPY -->
+                      <tr>
+                          <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                              <p style="margin: 0;">If that doesn't work, copy and paste the following link in your browser:</p>
+                          </td>
+                      </tr> <!-- COPY -->
+                      <tr>
+                          <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                              <p style="margin: 0;"><a href="#" target="_blank" style="color: #BF1922;">${process.env.CLIENT_URL}/reset/${token}</a></p>
+                          </td>
+                      </tr>
+                                      <tr>
+                          <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                              <p style="margin: 0;">This email may contain sensetive information. <br><br> If you did not make this request then please ignore this email.<br><br></p>
+                          </td>
+                      </tr> <!-- COPY -->
+                      <tr>
+                          <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 40px 30px; border-radius: 0px 0px 4px 4px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                              <p style="margin: 0;">Cheers,<br>Rebirth Team</p>
+                          </td>
+                      </tr>
+                  </table>
+              </td>
+          </tr>
+          
+          <tr>
+              <td bgcolor="#BF1922" align="center" style="padding: 0px 10px 0px 10px;">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                      <tr>
+                          <td bgcolor="#BF1922" align="left" style="padding: 0px 30px 30px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;"> <br>
+                          </td>
+                      </tr>
+                  </table>
+              </td>
+          </tr>
+          </table>    
                 `
         };
 
@@ -325,7 +403,7 @@ exports.forgotPasswordController = (req, res) => {
                   });
                 })
                 .catch(err => {
-                  // console.log('SIGNUP EMAIL SENT ERROR', err)
+                   console.log('SIGNUP EMAIL SENT ERROR', err)
                   return res.json({
                     message: err.message
                   });
