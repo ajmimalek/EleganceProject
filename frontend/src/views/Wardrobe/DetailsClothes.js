@@ -31,28 +31,66 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 
 
+function getParametresRequete(requeteNavigateur)
+{
+ //On transforme les + en espaces
+ requeteNavigateur = requeteNavigateur.split('+').join(' ');
+ var parametres = {};
+ var elements;
+ var expressionReguliere = /[?&]?([^=]+)=([^&]*)/g;
+ while (elements = expressionReguliere.exec(requeteNavigateur))
+ {
+ parametres[decodeURIComponent(elements[1])] = decodeURIComponent(elements[2]);
+ }
+ return parametres;
+}
+//Utilisation
+var requete = getParametresRequete(document.location.search);
 
 
 export default function DetailsClothes() {
-  
+  console.log(requete.id);
   const classes = useStyles();
   const [title, setTitle] = useState(null);
+  const [description, setDescription] = useState(null);
+  const [type, setType] = useState(null);
+  const [size, setSize] = useState(null);
+  const [brand, setBrand] = useState(null);
   const handleChange = e => {
     const {title, value} = e.currentTarget;
     setTitle({[title]: value});
 };
-  
- 
+const handleChangeDescription = e => {
+  const {description, value} = e.currentTarget;
+  setDescription({[description]: value});
+};
+const handleChangeType = e => {
+  const {type, value} = e.currentTarget;
+  setType({[type]: value});
+};
+const handleChangeSize = e => {
+  const {size, value} = e.currentTarget;
+  setSize({[size]: value});
+};
+const handleChangeBrand = e => {
+  const {brand, value} = e.currentTarget;
+  setBrand({[brand]: value});
+};
   const handleOnSubmit = async (event) => {
     event.preventDefault();
     console.log("test", title);
     try {
 
 
-
+const id=requete.id;
 
       const data = {
         title,
+        description,
+        type,
+        size,
+        brand,
+        id
 
       };
       console.log("test", data);
@@ -108,7 +146,7 @@ export default function DetailsClothes() {
                           fullWidth: true
                         }}
                         inputProps={{
-                          onChange: (e) => handleChange(e)
+                          onChange: (e) => handleChangeBrand(e)
                         }}
 
                       />
@@ -120,6 +158,9 @@ export default function DetailsClothes() {
                         
                         formControlProps={{
                           fullWidth: true
+                        }}
+                        inputProps={{
+                          onChange: (e) => handleChangeSize(e)
                         }}
                       />
                     </GridItem>
@@ -133,6 +174,9 @@ export default function DetailsClothes() {
                         formControlProps={{
                           fullWidth: true
                         }}
+                        inputProps={{
+                          onChange: (e) => handleChangeType(e)
+                        }}
                       />
                     </GridItem>
                     <GridItem xs={12} sm={12} md={8}>
@@ -144,6 +188,7 @@ export default function DetailsClothes() {
                           fullWidth: true
                         }}
                         inputProps={{
+                          onChange: (e) => handleChangeDescription(e),
                           multiline: true,
                           rows: 3
                         }}

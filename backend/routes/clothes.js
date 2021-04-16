@@ -90,16 +90,27 @@ router.post(
   upload.single('file'),
   async (req, res) => {
     try {
-      
+      var sortedByCreationDate=null;
       const { path, mimetype } = req.file;
       const file = new Clothes({
        
         clothes_path: path,
         clothes_mimetype: mimetype
       });
-      await file.save();
-      res.send('file uploaded successfully.');
+      await file.save((err, newContact) => {
+        if (err)
+          console.log("Error message : "+err);
+        else{
+          console.log("111",newContact);
+     sortedByCreationDate=newContact;    
+     console.log("ddd",sortedByCreationDate);
+      res.send(sortedByCreationDate);
+        }
+      });
+      console.log("bbb");
+     
     } catch (error) {
+      console.log("error");
       res.status(400).send('Error while uploading file. Try fff again later.');
     }
   },

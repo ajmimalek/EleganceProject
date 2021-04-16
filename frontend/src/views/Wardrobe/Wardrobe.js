@@ -112,13 +112,14 @@ const Wardrobe = (props) => {
 
 
       setErrorMsg('');
-      await axios.post(`http://localhost:9000/clothes/upload`, formData, {
+      const { data } = await axios.post(`http://localhost:9000/clothes/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-      props.history.push('/DetailsClothes');
-
+      console.log("test const { data } = ",data);
+      props.history.push('/DetailsClothes?id='+data._id);
+      
     } catch (error) {
       error.response && setErrorMsg(error.response.data);
     }
