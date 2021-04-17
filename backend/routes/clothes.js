@@ -58,6 +58,34 @@ router.post('/sellClothes', async (req, res) => {
     }
   );
 
+/* PUT API sell clothes */
+router.post('/CompleteNewClothes', async (req, res) => {
+  
+  try {
+    console.log("vvv",req.body);
+    const {title,description,type,size,brand,id } = req.body;
+      console.log("jjjj",title,description,type,size,brand);
+    Clothes.findByIdAndUpdate(
+      id,
+       { title: title,description: description,type: type,size: size,brand: brand},   
+      function(err){  
+       if (err) {  
+       res.send(err);  
+       return;  
+       }  
+       res.send({data:"Record has been Updated..!!"});  
+       });
+      } catch (error) {
+        res.status(400).send('Error while uploading file. Try fff again later.');
+      }
+    },
+    (error, req, res, next) => {
+      if (error) {
+        res.status(500).send(error.message);
+      }
+    }
+  );
+
 
 router.get('/getAllClothes', async (req, res) => {
   try {
@@ -93,17 +121,18 @@ router.post(
       var sortedByCreationDate=null;
       const { path, mimetype } = req.file;
       const file = new Clothes({
-       
+        
         clothes_path: path,
         clothes_mimetype: mimetype
       });
+      
       await file.save((err, newContact) => {
         if (err)
           console.log("Error message : "+err);
         else{
-          console.log("111",newContact);
-     sortedByCreationDate=newContact;    
-     console.log("ddd",sortedByCreationDate);
+         
+     sortedByCreationDate=newContact;   
+     console.log(sortedByCreationDate); 
       res.send(sortedByCreationDate);
         }
       });
@@ -133,6 +162,15 @@ router.get('/download/:id', async (req, res) => {
   }
 });
 
-
+/* DELETE API clothes */
+router.post('/delete/:id', function(req, res, next) {
+  Clothes.findByIdAndRemove(
+    req.params.id,
+    function (err, data ) {
+      if (err) console.log(err);
+      else res.send('clothes deleted.');
+    }
+  )
+});
 module.exports = router;
 
