@@ -6,6 +6,8 @@ var bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
 
+require("./models/clothes");
+const clothesRoutes = require("./routes/clothes");
 var app = express();
 
 //import database
@@ -17,19 +19,21 @@ require("dotenv").config();
 
 // Dev Logginf Middleware
 if (process.env.NODE_ENV === "development") {
-  app.use(cors());
+  app.use(
+    cors()
+  );
   app.use(morgan("dev"));
   //Morgan give information about each request.
   //Cors it's allow to deal with react for localhost at port 3000 without any problem
 }
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // Load routes
 const authRouter = require("./routes/auth.route");
-
+//clothes Routes
+app.use("/clothes", clothesRoutes);
 // Use Routes
 app.use("/api", authRouter);
 

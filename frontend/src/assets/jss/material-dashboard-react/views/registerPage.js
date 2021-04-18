@@ -15,7 +15,7 @@ const signupPageStyle = (theme) => ({
     width: "30%",
   },
   city: {
-    display: "block",
+    display: "grid",
     marginLeft: "auto",
     marginRight: "auto",
     marginTop: "5px",
@@ -34,14 +34,13 @@ const signupPageStyle = (theme) => ({
     marginTop: "10px",
     width: "30%",
   },
-  primary: {
-    "&& .MuiInput-underline:after": {
-      borderBottom: "2px solid #bf1922",
-    },
-  },
   select: {
     "&:after": {
       borderColor: "#bf1922"
+    },
+    "&:hover:not(.Mui-disabled):not(.Mui-focused):not(.Mui-error):before": {
+      // hover
+      borderBottom: `2px solid #bf1922`
     }
   },
   mail: {

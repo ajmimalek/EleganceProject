@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Cities } from "../../variables/city";
 import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
@@ -25,10 +24,8 @@ import image from "assets/img/bg7.jpg";
 import EleganceLogo from "../../assets/img/Elegance Logo.png";
 import { Helmet } from "react-helmet";
 import { AccountCircle, Email, Facebook, Phone } from "@material-ui/icons";
-import CheckBox from "components/CheckBox/CheckBox";
 import {
   FormControl,
-  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
@@ -40,6 +37,8 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { isAuth } from "helpers/auth";
 import { Redirect } from "react-router-dom";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import SelectInput from "@material-ui/core/Select/SelectInput";
 
 const useStyles = makeStyles(styles);
 
@@ -55,15 +54,17 @@ export default function RegisterPage(props) {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    city: "",
     mail: "",
     pass: "",
     passConfirm: "",
     textChange: "Get Started",
   });
   const [gender, setGender] = useState("");
+  const [city, setCity] = useState("");
+  const [token, setToken] = useState("");
+  const reCaptcha = useRef();
 
-  const { name, phone, city, mail, pass, passConfirm, textChange } = formData;
+  const { name, phone, mail, pass, passConfirm, textChange } = formData;
   // handle change from input
   const handleTextChange = (text) => (e) => {
     e.persist();
@@ -73,13 +74,18 @@ export default function RegisterPage(props) {
   const handleChange = (e) => {
     e.preventDefault();
     setGender(e.target.value);
-    console.log(e.target.value);
+    console.log("New Gender : ", e.target.value);
+  };
+  const handleCityChange = (e) => {
+    e.preventDefault();
+    setCity(e.target.value);
+    console.log("City is ", e.target.value);
   };
   // Submit data to backend
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(name, phone, gender, city, mail, pass, passConfirm);
-    if (name && mail && pass && gender && city && phone) {
+    console.log(name, phone, gender, city, mail, pass, passConfirm, token);
+    if (name && mail && pass && gender && city && phone && token) {
       if (pass === passConfirm) {
         setFormData({ ...formData, textChange: "Starting" });
         console.log(textChange);
@@ -92,6 +98,7 @@ export default function RegisterPage(props) {
             Gender: gender,
             city,
             Phone: phone,
+            token,
           })
           // Clear values after submitting form
           .then((res) => {
@@ -99,13 +106,16 @@ export default function RegisterPage(props) {
               ...formData,
               name: "",
               phone: "",
-              city: "",
               mail: "",
               pass: "",
               passConfirm: "",
               textChange: "Submitted",
             });
             setGender("");
+            setCity("");
+            // reset the captcha and delete token.
+            reCaptcha.current.reset();
+            setToken("");
             toast.success(res.data.message);
           })
           .catch((err) => {
@@ -114,32 +124,28 @@ export default function RegisterPage(props) {
               ...formData,
               name: "",
               phone: "",
-              city: "",
               mail: "",
               pass: "",
               passConfirm: "",
               textChange: "Get Started",
             });
             setGender("");
+            setCity("");
+            // reset the captcha and delete token.
+            reCaptcha.current.reset();
+            setToken("");
             console.log(err.response);
             toast.error(err.response.data.errors);
           });
       } else {
         toast.error("Passwords don't matches 😭");
       }
+    } else if (!token) {
+      toast.error("✔ You must verify the captcha");
     } else {
       toast.error("🤔 I think you've forgot something, Check your form");
     }
   };
-
-  // City prop
-  const defaultProps = {
-    options: Cities,
-    getOptionLabel: (option) => option.value,
-    getOptionSelected: (option) => (option ? option : ""),
-  };
-  const [value, setValue] = useState(Cities[5]);
-  const [inputValue, setInputValue] = React.useState("");
 
   // GeoLocation
   useEffect(() => {
@@ -160,7 +166,7 @@ export default function RegisterPage(props) {
                 position: toast.POSITION.TOP_RIGHT,
               });
               console.log(`state : `, msg);
-              setInputValue(msg);
+              setCity(msg);
             })
             .catch((error) => console.warn(error));
         },
@@ -296,31 +302,24 @@ export default function RegisterPage(props) {
                           </MenuItem>
                         </Select>
                       </FormControl>
-                      <div className={classes.city}>
-                        <Autocomplete
-                          {...defaultProps}
-                          id="City"
-                          value={value}
-                          inputValue={inputValue}
-                          onInputChange={(event, newInputValue) => {
-                            setInputValue(newInputValue);
-                            handleTextChange("city");
-                          }}
-                          onChange={(event, newValue) => {
-                            setValue(newValue);
-                            handleTextChange("city");
-                          }}
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              label="City"
-                              className={classes.primary}
-                              onChange={handleTextChange("city")}
-                              value={value}
-                            />
-                          )}
-                        />
-                      </div>
+                      <FormControl className={classes.city}>
+                        <InputLabel id="demo-simple-select-label">
+                          City
+                        </InputLabel>
+                        <Select
+                          labelId="city-label"
+                          id="city"
+                          value={city}
+                          onChange={handleCityChange}
+                          className={classes.select}
+                        >
+                          {Cities.map((option) => (
+                            <MenuItem value={option.value} key={option.id}>
+                              {option.value}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                       <CustomInput
                         labelText="Email..."
                         id="mail"
@@ -382,6 +381,9 @@ export default function RegisterPage(props) {
                         }}
                       />
                       <ReCAPTCHA
+                        ref={reCaptcha}
+                        onChange={(token) => setToken(token)}
+                        onExpired={(e) => setToken("")}
                         style={{
                           marginTop: "20px",
                           display: "flex",

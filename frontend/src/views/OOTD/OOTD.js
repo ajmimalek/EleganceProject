@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import { Helmet } from "react-helmet";
@@ -62,6 +62,18 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function OOTD(props) {
+  //Quotes
+  const [quote, setQuote] = useState("");
+  const [author, setAuthor] = useState("");
+  useEffect(() => {
+    fetch("http://quotes.rest/qod.json?category=inspire")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setQuote(data.contents.quotes[0].quote);
+        setAuthor(data.contents.quotes[0].author);
+      });
+  }, []);
   // Open for dialog
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = () => {
@@ -182,19 +194,23 @@ export default function OOTD(props) {
               aria-describedby="alert-dialog-slide-description"
             >
               <DialogTitle id="alert-dialog-slide-title">
-                Choose your field of work...
+                Choose your field of work <span role="img" aria-labelledby="money">
+                🤑
+              </span>...
               </DialogTitle>
               <DialogContent></DialogContent>
             </Dialog>
           </CardBody>
         </Card>
         <Card>
-          <CardHeader color="success">Morning Quote</CardHeader>
+          <CardHeader color="success">
+            <span role="img" aria-labelledby="sun">
+              🌞
+            </span>{" "}
+            Morning Quote
+          </CardHeader>
           <CardBody>
-            <Quote
-              text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante."
-              author="Someone famous in Source Title"
-            />
+            <Quote text={quote} author={author} />
           </CardBody>
         </Card>
       </div>

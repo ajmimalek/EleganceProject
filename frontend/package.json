@@ -17,18 +17,26 @@
     "jsonwebtoken": "^8.5.1",
     "perfect-scrollbar": "1.5.0",
     "prop-types": "15.7.2",
-    "react": "^17.0.0",
+    "rc-slider": "^9.7.2",
+    "react": "17.0.0",
+    "react-bootstrap": "^1.5.2",
     "react-chartist": "0.14.4",
-    "react-dom": "^17.0.0",
+    "react-cookie": "^4.0.3",
+    "react-dom": "17.0.0",
+    "react-dropzone": "^11.3.2",
     "react-facebook-login": "^4.1.1",
     "react-google-login": "^5.2.2",
     "react-google-recaptcha": "^2.1.0",
     "react-helmet": "^6.1.0",
+    "react-horizontal-scrolling-menu": "^0.7.10",
     "react-native-locationiq": "^0.2.0",
     "react-router-dom": "5.2.0",
     "react-scripts": "3.4.1",
     "react-toastify": "^7.0.3",
+    "reactrangeslider": "^3.0.6",
     "source-map-explorer": "^2.5.2",
+    "styled-components": "^5.2.2",
+    "styles": "^0.2.1",
     "sweetalert": "^2.1.2"
   },
   "scripts": {
@@ -42,6 +50,7 @@
     "build-package": "npm run build-package-css && babel src --out-dir dist",
     "analyze": "source-map-explorer build/static/js/*.*"
   },
+  "proxy": "http://localhost:9000",
   "eslintConfig": {
     "extends": [
       "react-app",

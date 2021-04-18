@@ -1,0 +1,25 @@
+.valide{
+    font-family: 'Josefin Sans', cursive;
+    margin-left: 30%;
+    margin-right: 30%;
+
+}
+.validate{
+    font-size: 48px;
+    margin-left: 40%;
+    justify-content: center;
+}
+.container{
+    padding: 17px;
+    display: flex;
+    justify-content: space-between;
+}
+.Store{
+    background-image: url("../../assets/img/sss.jpg");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: 90vh;
+    padding: 130px 25px;
+
+}
