@@ -111,7 +111,19 @@ router.get('/getAllSellClothes/:max/:min', async (req, res) => {
     res.status(400).send('Error while getting list of files. Try again later.');
   }
 });
-
+//  
+router.get('/getAllSellClothes/:max/:min/:size', async (req, res) => {
+  try {
+    const files = await Clothes.find({$and:[{sell: { $gte: req.params.min, $lte: req.params.max }},{size: req.params.size}]});
+    
+    const sortedByCreationDate = files.sort(
+      (a, b) => b.createdAt - a.createdAt
+    );
+    res.send(sortedByCreationDate);
+  } catch (error) {
+    res.status(400).send('Error while getting list of files. Try again later.');
+  }
+});
 
 router.post(
   '/upload',

@@ -267,7 +267,7 @@ const Wardrobe = (props) => {
                                   <strong>Selected clothes</strong>: {file.name}
                                 </div>
                               ) : (<div>
-                                <strong>------------------------------------------------------</strong>
+                                <strong>-----------------------------------------------------</strong>
                               </div>)}
                             </div>
                           )}
