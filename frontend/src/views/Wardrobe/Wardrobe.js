@@ -151,8 +151,27 @@ const Wardrobe = (props) => {
       error.response && setErrorMsg(error.response.data);
     }
   };
+  
+  function deleteClothes(Id){
+  axios.post('http://localhost:9000/clothes/delete/' + Id);
+  props.history.push('/list');
+}
+
+/*  const handleDelete = async (event) => {
+    event.preventDefault();
+
+    try {
 
 
+
+
+      await axios.post(`http://localhost:9000/clothes/sellClothes`, data);
+      props.history.push('/list');
+    } catch (error) {
+      error.response && setErrorMsg(error.response.data);
+    }
+  };
+*/
 
   const [filesList, setFilesList] = useState([]);
   useEffect(() => {
@@ -243,13 +262,13 @@ const Wardrobe = (props) => {
                           {({ getRootProps, getInputProps }) => (
                             <div {...getRootProps({ className: 'drop-zone' })} ref={dropRef}>
                               <input {...getInputProps()} />
-                              <p>Drag and drop a file OR click here to select a file</p>
+                              <p>Drag and drop a clothes OR click here to select a clothes</p>
                               {file ? (
                                 <div>
-                                  <strong>Selected file</strong>: {file.name}
+                                  <strong>Selected clothes</strong>: {file.name}
                                 </div>
                               ) : (<div>
-                                <strong>----------------------------------------------------------------</strong>
+                                <strong>-----------------------------------------------------</strong>
                               </div>)}
                             </div>
                           )}
@@ -261,7 +280,7 @@ const Wardrobe = (props) => {
                             </div>
                           ) : (
                             <div className="preview-message">
-                              <p>No preview available for this file</p>
+                              <p>No preview available for this clothes</p>
                             </div>
                           )
                         ) : (
@@ -517,7 +536,7 @@ const Wardrobe = (props) => {
 
                     {filesList.length > 0 ? (
                       filesList.map(
-                        ({ _id }) => (
+                        ({ _id,title }) => (
                           <Card className={classes.ClothesItem}>
                             <img
                               className={Cardclasses.cardImgTop}
@@ -528,8 +547,8 @@ const Wardrobe = (props) => {
                               data-holder-rendered="true"
                             />
                             <CardBody>
-                              <h4>name</h4>
-                              <button>Details</button>
+                              <h4>{title}</h4>
+                              <button>Details</button><button onClick={() => deleteClothes(_id)} >Delete</button>
                              
                               
              
