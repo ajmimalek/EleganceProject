@@ -43,21 +43,40 @@ const useStyless = makeStyles(styles);
 const useCardStyles = makeStyles(Cardstyles);
 
 export default function LocalStore() {
+  
+  const [selectedValue, setSelectedValue] = useState(null);
   const [valueMin, setValueMin] = useState(50);
   const [valueMax, setValueMax] = useState(150);
   const [modal, setModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  
+  const [checked, setChecked] = React.useState([]);
+  //handle slidre range price
   const handleInputChange = (value) => {
     setValueMin(value[0]);
     setValueMax(value[1]);
-   
+   console.log(value[0],value[1]);
       const getFilesList = async () => {
         try {
-          const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin);
+          
+          if(selectedValue!=null && checked!=0){
+            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+selectedValue,checked);
+            setErrorMsg('');
+            setFilesList(data);
+          }else if(checked!=null){
+            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothing/`+valueMax+'/'+valueMin,checked);
+            setErrorMsg('');
+            setFilesList(data);    
+        }else if(selectedValue!=null){
+            const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+value[1]+'/'+value[0]+'/'+selectedValue);
+            setErrorMsg('');
+            setFilesList(data);
+        }else{
+          const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+value[1]+'/'+value[0]);
           setErrorMsg('');
           setFilesList(data);
-          console.log("valueMax",valueMax,"valueMin",valueMin);
-          console.log("data",data);
+        }
+          
         } catch (error) {
           error.response && setErrorMsg(error.response.data);
         }
@@ -71,20 +90,40 @@ export default function LocalStore() {
 
   const classes = useStyless();
   const Cardclasses = useCardStyles();
-  const [selectedValue, setSelectedValue] = useState(null);
-  const [checked, setChecked] = React.useState([]);
   const handleToggle = value => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
     if (currentIndex === -1) {
       newChecked.push(value);
-
+    console.log("checked",checked);
     } else {
       newChecked.splice(currentIndex, 1);
+      console.log("nochecked",checked);
     }
     setChecked(newChecked);
+console.log(newChecked);
+    const getFilesList = async () => {
+      try {
+        if(selectedValue!=null){
+        const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+selectedValue,newChecked);
+        setErrorMsg('');
+        setFilesList(data);
+      }else{
+        const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothing/`+valueMax+'/'+valueMin,newChecked);
+        setErrorMsg('');
+        setFilesList(data);
+      }
+        
+      } catch (error) {
+        error.response && setErrorMsg(error.response.data);
+      }
+    };
+
+    getFilesList();
   };
   
+
+
   const [filesList, setFilesList] = useState([]);
   useEffect(() => {
     const getFilesList = async () => {
@@ -177,7 +216,27 @@ export default function LocalStore() {
 
                     <Radio
                       checked={selectedValue === "s"}
-                      onChange={() => setSelectedValue("s")}
+                      onChange={() => {setSelectedValue("s");
+                      const getFilesList = async () => {
+         try {
+           const Value="s";
+           
+           if(checked.length!=0){
+            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
+            setErrorMsg('');
+            setFilesList(data);
+          }else{
+           const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
+           setErrorMsg('');
+           setFilesList(data);
+          }
+         } catch (error) {
+           error.response && setErrorMsg(error.response.data);
+         }
+       };
+   
+       getFilesList();
+                                  }           }
                       value="s"
                       name="radio button demo"
                       aria-label="S"
@@ -189,7 +248,27 @@ export default function LocalStore() {
                     />S
         <Radio
                       checked={selectedValue === "m"}
-                      onChange={() => setSelectedValue("m")}
+                      onChange={() => {setSelectedValue("m");
+                      const getFilesList = async () => {
+         try {
+           const Value="m";
+           console.log("vvvalue",Value);
+           if(checked.length!=0){
+            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
+            setErrorMsg('');
+            setFilesList(data);
+          }else{
+           const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
+           setErrorMsg('');
+           setFilesList(data);
+          }
+         } catch (error) {
+           error.response && setErrorMsg(error.response.data);
+         }
+       };
+   
+       getFilesList();
+                                  }           }
                       value="m"
                       name="radio button demo"
                       aria-label="M"
@@ -201,7 +280,26 @@ export default function LocalStore() {
                     />M
       <Radio
                       checked={selectedValue === "l"}
-                      onChange={() => setSelectedValue("l")}
+                      onChange={() => {setSelectedValue("l");
+                      const getFilesList = async () => {
+         try {
+           const Value="l";
+           if(checked.length!=0){
+            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
+            setErrorMsg('');
+            setFilesList(data);
+          }else{
+           const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
+           setErrorMsg('');
+           setFilesList(data);
+          }
+         } catch (error) {
+           error.response && setErrorMsg(error.response.data);
+         }
+       };
+   
+       getFilesList();
+                                  }           }
                       value="l"
                       name="radio button demo"
                       aria-label="L"
@@ -213,7 +311,28 @@ export default function LocalStore() {
                     />L
         <Radio
                       checked={selectedValue === "xl"}
-                      onChange={() => setSelectedValue("xl")}
+                      onChange={() => {setSelectedValue("xl");
+                      const getFilesList = async () => {
+         try {
+           const Value="xl";
+           console.log("vvvalue",Value);   
+            if(checked.length!=0){
+            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
+            setErrorMsg('');
+            setFilesList(data);
+          }else{
+           const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
+           setErrorMsg('');
+           setFilesList(data);
+          }
+      
+         } catch (error) {
+           error.response && setErrorMsg(error.response.data);
+         }
+       };
+   
+       getFilesList();
+                                  }           }
                       value="xl"
                       name="radio button demo"
                       aria-label="XL"
@@ -225,7 +344,28 @@ export default function LocalStore() {
                     />XL
       <Radio
                       checked={selectedValue === "xxl"}
-                      onChange={() => setSelectedValue("xxl")}
+                      onChange={() => {setSelectedValue("xxl");
+                     const getFilesList = async () => {
+        try {
+          const Value="xxl";
+          console.log("vvvalue",checked.length);
+          if(checked.length!=0){
+            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
+            setErrorMsg('');
+            setFilesList(data);
+          }else{
+           const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
+           setErrorMsg('');
+           setFilesList(data);
+          }
+      
+        } catch (error) {
+          error.response && setErrorMsg(error.response.data);
+        }
+      };
+  
+      getFilesList();
+                                 }           }
                       value="xxl"
                       name="radio button demo"
                       aria-label="XXL"
@@ -235,12 +375,31 @@ export default function LocalStore() {
                         checked: classes.radio
                       }}
                     />XXL
-{"Radio:", console.log(selectedValue)}
-                    {"Checkbox:", console.log(checked)}
 
                     <Radio
                       checked={selectedValue === "xxxl"}
-                      onChange={() => setSelectedValue("xxxl")}
+                      onChange={() => {setSelectedValue("xxxl");
+                      const getFilesList = async () => {
+         try {
+           const Value="xxxl";
+           console.log("vvvalue",Value);
+           if(checked.length!=0){
+            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
+            setErrorMsg('');
+            setFilesList(data);
+          }else{
+           const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
+           setErrorMsg('');
+           setFilesList(data);
+          }    console.log("valueMax",valueMax,"valueMin",valueMin);
+           
+         } catch (error) {
+           error.response && setErrorMsg(error.response.data);
+         }
+       };
+   
+       getFilesList();
+                                  }           }
                       value="xxxl"
                       name="radio button demo"
                       aria-label="XXXL"
@@ -293,13 +452,13 @@ export default function LocalStore() {
 <br></br>
                     <Checkbox
                       tabIndex={-1}
-                      onClick={() => handleToggle("shart")}
+                      onClick={() => handleToggle("Shirt")}
                       checkedIcon={<Check className={classes.checkedIcon} />}
                       icon={<Check className={classes.uncheckedIcon} />}
                       classes={{
                         checked: classes.checked
                       }}
-                    /> shart
+                    /> Shirt
 <br></br>
                     <Checkbox
                       tabIndex={-1}
@@ -323,7 +482,7 @@ export default function LocalStore() {
 
                   {filesList.length > 0 ? (
                       filesList.map(
-                        ({ _id,sell}) => (
+                        ({ _id,sell,title,size}) => (
                           <Card className={classes.ClothesItem}>
                             <img
                               className={Cardclasses.cardImgTop}
@@ -334,8 +493,10 @@ export default function LocalStore() {
                               data-holder-rendered="true"
                             />
                             <CardBody>
-                               
-                              <p>Price: {sell}DT</p>
+                            <p> {title}<br></br>
+                              Price: {sell}DT<br></br>
+                              Size: {size}</p>
+                              
                               <b>25148752</b>
                             </CardBody>
 
@@ -344,7 +505,7 @@ export default function LocalStore() {
                         )
                       )
                     ) : (
-                      <b>                   No clothes found. Please add some.</b>
+                      <b>                   No clothes found in local store!</b>
                     )}
 
 
