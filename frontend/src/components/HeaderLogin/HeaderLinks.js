@@ -1,19 +1,16 @@
 /*eslint-disable*/
 import React from "react";
-// react components for routing our app without refresh
-import { Link } from "react-router-dom";
-
+// nodejs library to set properties for components
+import PropTypes from "prop-types";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import Tooltip from "@material-ui/core/Tooltip";
 
 // @material-ui/icons
-import { Apps, CloudDownload } from "@material-ui/icons";
+import { Fingerprint, PersonAdd } from "@material-ui/icons";
 
 // core components
-import CustomDropdown from "components/CustomDropdown/CustomDropdown.js";
 import Button from "components/CustomButtons/Button.js";
 
 import styles from "assets/jss/material-dashboard-react/components/login/headerLinksStyle.js";
@@ -22,41 +19,28 @@ const useStyles = makeStyles(styles);
 
 export default function HeaderLinks(props) {
   const classes = useStyles();
+  const { page } = props;
   return (
     <List className={classes.list}>
       <ListItem className={classes.listItem}>
-        <CustomDropdown
-          noLiPadding
-          buttonText="Components"
-          buttonProps={{
-            className: classes.navLink,
-            color: "transparent"
-          }}
-          buttonIcon={Apps}
-          dropdownList={[
-            <Link to="/" className={classes.dropdownLink}>
-              All components
-            </Link>,
-            <a
-              href="https://creativetimofficial.github.io/material-kit-react/#/documentation?ref=mkr-navbar"
-              target="_blank"
-              className={classes.dropdownLink}
-            >
-              Documentation
-            </a>
-          ]}
-        />
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Button
-          href="https://www.creative-tim.com/product/material-kit-react?ref=mkr-navbar"
-          color="transparent"
-          target="_blank"
-          className={classes.navLink}
-        >
-          <CloudDownload className={classes.icons} /> Download
-        </Button>
+        {page === "login" ? (
+          <Button
+            href="/register"
+            color="transparent"
+            className={classes.navLink}
+          >
+            <PersonAdd className={classes.icons} /> Register
+          </Button>
+        ) : (
+          <Button href="/login" color="transparent" className={classes.navLink}>
+            <Fingerprint className={classes.icons} /> Login
+          </Button>
+        )}
       </ListItem>
     </List>
   );
 }
+
+HeaderLinks.propTypes = {
+  page: PropTypes.oneOf(["login", "register"]),
+};
