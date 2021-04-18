@@ -30,7 +30,8 @@
     "react-scripts": "3.4.1",
     "react-toastify": "^7.0.3",
     "source-map-explorer": "^2.5.2",
-    "sweetalert": "^2.1.2"
+    "sweetalert": "^2.1.2",
+    "react-spring": "^9.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -54,6 +55,7 @@
     "production": [
       ">0.2%",
       "not dead",
+      "not ie <= 11",
       "not op_mini all"
     ],
     "development": [

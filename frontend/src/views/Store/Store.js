@@ -75,11 +75,27 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const useStyles = makeStyles(styles);
+const history = createBrowserHistory();
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 
 export default function Store(props) {
-   
-    
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+    setOpen(true);
+    };
+
+    const handleClose = () => {
+    setOpen(false);
+    };
+    const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
+    setTimeout(function () {
+    setCardAnimation("");
+    }, 700);
     const classes = useStyles();
     const { ...rest } = props;
   return (
