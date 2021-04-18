@@ -40,6 +40,7 @@ import Slide from "@material-ui/core/Slide";
 import Button from 'components/CustomButtons/Button.js';
 
 
+
 const useStyles = makeStyles(styles);
 const connector = new AppSearchAPIConnector({
   searchKey: "search-371auk61r2bwqtdzocdgutmg",
