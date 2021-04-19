@@ -98,7 +98,19 @@ router.get('/getAllClothes', async (req, res) => {
     res.status(400).send('Error while getting list of files. Try again later.');
   }
 });
+//getAllSellClothes
 
+router.get('/getAllSellClothes', async (req, res) => {
+  try {
+    const files = await Clothes.find({sell: { $exists: true}});
+    const sortedByCreationDate = files.sort(
+      (a, b) => b.createdAt - a.createdAt
+    );
+    res.send(sortedByCreationDate);
+  } catch (error) {
+    res.status(400).send('Error while getting list of files. Try again later.');
+  }
+});
 
 router.get('/getAllSellClothes/:max/:min', async (req, res) => {
   try {

@@ -29,7 +29,6 @@ import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
@@ -45,6 +44,7 @@ const useCardStyles = makeStyles(Cardstyles);
 export default function LocalStore() {
   
   const [selectedValue, setSelectedValue] = useState(null);
+  const [selectedValueALL, setSelectedValueALL] = useState(null);
   const [valueMin, setValueMin] = useState(50);
   const [valueMax, setValueMax] = useState(150);
   const [modal, setModal] = useState(false);
@@ -53,6 +53,7 @@ export default function LocalStore() {
   const [checked, setChecked] = React.useState([]);
   //handle slidre range price
   const handleInputChange = (value) => {
+    setSelectedValueALL(500);
     setValueMin(value[0]);
     setValueMax(value[1]);
    console.log(value[0],value[1]);
@@ -60,11 +61,11 @@ export default function LocalStore() {
         try {
           
           if(selectedValue!=null && checked!=0){
-            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+selectedValue,checked);
+            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+value[1]+'/'+value[0]+'/'+selectedValue,checked);
             setErrorMsg('');
             setFilesList(data);
-          }else if(checked!=null){
-            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothing/`+valueMax+'/'+valueMin,checked);
+          }else if(checked!=0){
+            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothing/`+value[1]+'/'+value[0],checked);
             setErrorMsg('');
             setFilesList(data);    
         }else if(selectedValue!=null){
@@ -91,6 +92,7 @@ export default function LocalStore() {
   const classes = useStyless();
   const Cardclasses = useCardStyles();
   const handleToggle = value => {
+    setSelectedValueALL(500);
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
     if (currentIndex === -1) {
@@ -128,7 +130,7 @@ console.log(newChecked);
   useEffect(() => {
     const getFilesList = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin);
+        const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`);
         setErrorMsg('');
         setFilesList(data);
       } catch (error) {
@@ -208,8 +210,35 @@ console.log(newChecked);
               <div className={classes.clothes}>
 
                 <Card>
-                  <h2>Find what you need</h2>
-                  <CardBody>
+                  <h2>Find what you need: ALL<Radio
+                    checked={selectedValueALL === null}
+                    onChange={() => {
+                    setSelectedValueALL(null);
+                    setSelectedValue(null);
+                    const getFilesList = async () => {
+       try { 
+          const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes`);
+          setErrorMsg('');
+          setFilesList(data);
+        
+       } catch (error) {
+         error.response && setErrorMsg(error.response.data);
+       }
+     };
+ 
+     getFilesList();
+                                }           }
+                    value="ALL"
+                    name="radio button demo"
+                    aria-label="ALL"
+                    icon={<FiberManualRecord className={classes.radioUnchecked} />}
+                    checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                    classes={{
+                      checked: classes.radio
+                    }}
+                  />
+               </h2>
+                   <CardBody>
 
                     <h3>Size</h3>
 
@@ -217,6 +246,7 @@ console.log(newChecked);
                     <Radio
                       checked={selectedValue === "s"}
                       onChange={() => {setSelectedValue("s");
+                      setSelectedValueALL(500);
                       const getFilesList = async () => {
          try {
            const Value="s";
@@ -249,6 +279,7 @@ console.log(newChecked);
         <Radio
                       checked={selectedValue === "m"}
                       onChange={() => {setSelectedValue("m");
+                      setSelectedValueALL(500);
                       const getFilesList = async () => {
          try {
            const Value="m";
@@ -281,6 +312,7 @@ console.log(newChecked);
       <Radio
                       checked={selectedValue === "l"}
                       onChange={() => {setSelectedValue("l");
+                      setSelectedValueALL(500);
                       const getFilesList = async () => {
          try {
            const Value="l";
@@ -312,6 +344,7 @@ console.log(newChecked);
         <Radio
                       checked={selectedValue === "xl"}
                       onChange={() => {setSelectedValue("xl");
+                      setSelectedValueALL(500);
                       const getFilesList = async () => {
          try {
            const Value="xl";
@@ -345,6 +378,7 @@ console.log(newChecked);
       <Radio
                       checked={selectedValue === "xxl"}
                       onChange={() => {setSelectedValue("xxl");
+                      setSelectedValueALL(500);
                      const getFilesList = async () => {
         try {
           const Value="xxl";
@@ -379,6 +413,7 @@ console.log(newChecked);
                     <Radio
                       checked={selectedValue === "xxxl"}
                       onChange={() => {setSelectedValue("xxxl");
+                      setSelectedValueALL(500);
                       const getFilesList = async () => {
          try {
            const Value="xxxl";
