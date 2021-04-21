@@ -26,7 +26,7 @@ exports.validSign = [
   check("Gender")
     .notEmpty()
     .withMessage("Gender field cannot be empty")
-    .isIn(["Male", "Female"])
+    .isIn(['Male', 'Female'])
     .withMessage("Gender field must be Male or female."),
   check("city")
     .notEmpty()

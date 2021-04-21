@@ -19,9 +19,7 @@ require("dotenv").config();
 
 // Dev Logginf Middleware
 if (process.env.NODE_ENV === "development") {
-  app.use(
-    cors()
-  );
+  app.use(cors());
   app.use(morgan("dev"));
   //Morgan give information about each request.
   //Cors it's allow to deal with react for localhost at port 3000 without any problem
@@ -53,14 +51,13 @@ app.use(function (err, req, res, next) {
   res.json({ message: err.message });
 });
 
-//mongo config
-const connect = mongoose.connect(
-  configDB.mongo.uri,
-  {
+//connection mongoose
+const connect = mongoose
+  .connect(configDB.mongo.uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  },
-  () => console.log("Connected to DB !!")
-);
+  })
+  .then(() => console.log("Connected to db "))
+  .catch((err) => console.log("catched error " + err));
 
 module.exports = app;

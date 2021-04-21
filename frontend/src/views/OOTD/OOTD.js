@@ -10,6 +10,7 @@ import Casual from "../../assets/img/Context/casual.jpeg";
 import Party from "../../assets/img/Context/party.jpg";
 import Seminar from "../../assets/img/Context/Seminar.jpg";
 import Work from "../../assets/img/Context/Work.jpg";
+import { rotateIn } from "react-animations";
 import {
   Dialog,
   DialogContent,
@@ -41,6 +42,9 @@ const styles = (theme) => ({
   contextImage: {
     marginRight: "6%",
     marginLeft: "5%",
+    "&:hover": {
+      animation : "$rotateIn 2s",
+    },
     [theme.breakpoints.up("lg")]: {
       marginRight: "140px",
       marginLeft: "5%",
@@ -50,6 +54,7 @@ const styles = (theme) => ({
       marginLeft: "0px",
     },
   },
+  "@keyframes rotateIn": rotateIn,
 });
 
 const useToolsStyles = makeStyles(Toolstyles);
@@ -194,9 +199,11 @@ export default function OOTD(props) {
               aria-describedby="alert-dialog-slide-description"
             >
               <DialogTitle id="alert-dialog-slide-title">
-                Choose your field of work <span role="img" aria-labelledby="money">
-                🤑
-              </span>...
+                Choose your field of work{" "}
+                <span role="img" aria-labelledby="money">
+                  🤑
+                </span>
+                ...
               </DialogTitle>
               <DialogContent></DialogContent>
             </Dialog>

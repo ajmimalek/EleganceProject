@@ -22,7 +22,6 @@ import styles from "assets/jss/material-dashboard-react/views/resetPwdPage";
 import image from "assets/img/bg7.jpg";
 import EleganceLogo from "../../assets/img/Elegance Logo.png";
 import { Helmet } from "react-helmet";
-import { Slide } from "@material-ui/core";
 import { Fingerprint, PersonAdd } from "@material-ui/icons";
 
 const useStyles = makeStyles(styles);

@@ -1,6 +1,5 @@
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
-import EleganceBlack from "assets/img/Elegance Black.png";
 import { Route, Switch, Redirect, BrowserRouter } from "react-router-dom";
 // minified version
 import "react-toastify/dist/ReactToastify.min.css";
@@ -14,15 +13,42 @@ const ResetPasswordPage = React.lazy(() =>
 //styles
 const Loader = styled.div`
   margin-top: 50%;
-  & > img {
-    width: 200px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
   & > p {
     text-align: center;
     font-weight: bold;
+  }
+`;
+const Spinner = styled.svg`
+  animation: rotate 2s linear infinite;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  align-self: center;
+  width: 50px;
+  height: 50px;
+  & .path {
+    stroke: black;
+    stroke-linecap: round;
+    animation: dash 1.5s ease-in-out infinite;
+  }
+  @keyframes rotate {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes dash {
+    0% {
+      stroke-dasharray: 1, 150;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -35;
+    }
+    100% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -124;
+    }
   }
 `;
 
@@ -45,7 +71,16 @@ ReactDOM.render(
     <Suspense
       fallback={
         <Loader>
-          <img src={EleganceBlack} alt="Logo Elegance Black" />
+          <Spinner viewBox="0 0 50 50">
+            <circle
+              className="path"
+              cx="25"
+              cy="25"
+              r="20"
+              fill="none"
+              strokeWidth="2"
+            />
+          </Spinner>
           <p>Loading page please wait...</p>
         </Loader>
       }
@@ -54,9 +89,8 @@ ReactDOM.render(
         <Route path="/DetailsClothes" component={DetailsClothes} />
         <Route path="/admin" component={Admin} />
         <Route path="/login" component={LoginPage} />
-        {/* Add :token after /activate/ */}
         <Route path="/register" component={RegisterPage} />
-        <Route path="/activate/" component={ActivatePage} />
+        <Route path="/activate/:token" component={ActivatePage} />
         <Route path="/reset/" component={ResetPasswordPage} />
         <Redirect from="/" to="/admin/wardrobe" />
       </Switch>

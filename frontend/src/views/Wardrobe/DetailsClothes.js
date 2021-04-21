@@ -14,14 +14,17 @@ import CardFooter from "components/Card/CardFooter.js";
 import axios from 'axios';
 import Footer from "components/FooterLogin/Footer.js";
 
-
-import styles from "assets/jss/material-dashboard-react/views/loginPage";
-
+import styles from "assets/jss/material-dashboard-react/views/registerPage";
 import image from "assets/img/bg7.jpg";
-import {
-  Slide,
-} from "@material-ui/core";
 
+import {
+  FormControl,
+  Slide,
+  InputLabel,
+  MenuItem,
+  Select,
+
+} from "@material-ui/core";
 const useStyles = makeStyles(styles);
 
 // Slide animation for forget Password
@@ -31,26 +34,28 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 
 
-function getParametresRequete(requeteNavigateur)
-{
- //On transforme les + en espaces
- requeteNavigateur = requeteNavigateur.split('+').join(' ');
- var parametres = {};
- var elements;
- var expressionReguliere = /[?&]?([^=]+)=([^&]*)/g;
- while (elements = expressionReguliere.exec(requeteNavigateur))
- {
- parametres[decodeURIComponent(elements[1])] = decodeURIComponent(elements[2]);
- }
- return parametres;
-}
-//Utilisation
-var requete = getParametresRequete(document.location.search);
-
-
-export default function DetailsClothes() {
-  console.log(requete.id);
+export default function DetailsClothes(props) {
   const classes = useStyles();
+  function getParametresRequete(requeteNavigateur)
+  {
+   //On transforme les + en espaces
+   requeteNavigateur = requeteNavigateur.split('+').join(' ');
+   var parametres = {};
+   var elements;
+   var expressionReguliere = /[?&]?([^=]+)=([^&]*)/g;
+   while (elements = expressionReguliere.exec(requeteNavigateur))
+   {
+   parametres[decodeURIComponent(elements[1])] = decodeURIComponent(elements[2]);
+   }
+   return parametres;
+  }
+  //Utilisation
+  var requete = getParametresRequete(document.location.search);
+  
+  
+  const id=requete.id;
+  console.log("hhh",id);
+  //props.history.push('/DetailsClothes');
   const [title, setTitle] = useState(null);
   const [description, setDescription] = useState(null);
   const [type, setType] = useState(null);
@@ -58,32 +63,31 @@ export default function DetailsClothes() {
   const [brand, setBrand] = useState(null);
   const handleChange = e => {
     const {title, value} = e.currentTarget;
-    setTitle({[title]: value});
+    setTitle(value);
 };
 const handleChangeDescription = e => {
   const {description, value} = e.currentTarget;
-  setDescription({[description]: value});
+  setDescription(value);
 };
-const handleChangeType = e => {
-  const {type, value} = e.currentTarget;
-  setType({[type]: value});
+const handleChangeType= (e) => {
+  e.preventDefault();
+  setType(e.target.value);
+  console.log("Type",e.target.value);
 };
-const handleChangeSize = e => {
-  const {size, value} = e.currentTarget;
-  setSize({[size]: value});
+const handleChangeSize = (e) => {
+  e.preventDefault();
+  setSize(e.target.value);
+  console.log("size",e.target.value);
 };
 const handleChangeBrand = e => {
   const {brand, value} = e.currentTarget;
-  setBrand({[brand]: value});
+  setBrand(value);
 };
   const handleOnSubmit = async (event) => {
     event.preventDefault();
     console.log("test", title);
     try {
-
-
-const id=requete.id;
-
+console.log("sss",id);
       const data = {
         title,
         description,
@@ -93,10 +97,10 @@ const id=requete.id;
         id
 
       };
-      console.log("test", data);
+     
 
-      await axios.post(`http://localhost:9000/clothes/sellClothes`, data);
-
+      await axios.post(`http://localhost:9000/clothes/CompleteNewClothes`, data);
+      props.history.push('/admin/wardrobe');
     } catch (error) {
       console.log(error.response);
     }
@@ -151,35 +155,71 @@ const id=requete.id;
 
                       />
                     </GridItem>
-                    <GridItem xs={12} sm={12} md={4}>
-                      <CustomInput
-                        labelText="Size"
-                        name="size"
-                        
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        inputProps={{
-                          onChange: (e) => handleChangeSize(e)
-                        }}
-                      />
-                    </GridItem>
-                  </GridContainer>
+                    
+                    <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-label">
+                          Size
+                        </InputLabel>
+                        <Select
+                          labelId="gender-label"
+                          id="size"
+                          value={size}
+                          onChange={handleChangeSize}
+                          className={classes.select}
+                        >
+                          <MenuItem value={"s"}>
+                            S
+                          </MenuItem>
+                          <MenuItem value={"m"}>
+                            M
+                          </MenuItem>
+                          <MenuItem value={"l"}>
+                            L
+                          </MenuItem>
+                          <MenuItem value={"xl"}>
+                            XL
+                          </MenuItem>
+                          <MenuItem value={"xxl"}>
+                            XXL
+                          </MenuItem>
+                          <MenuItem value={"xxxl"}>
+                            XXXL
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+
+
+                    </GridContainer>
                   <GridContainer>
-                    <GridItem xs={12} sm={12} md={4}>
-                      <CustomInput
-                        labelText="Type"
-                        name="type"
-                       
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        inputProps={{
-                          onChange: (e) => handleChangeType(e)
-                        }}
-                      />
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={8}>
+                    
+                  <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-label">
+                          Type
+                        </InputLabel>
+                        <Select
+                          labelId="gender-label"
+                          id="type"
+                          value={type}
+                          onChange={handleChangeType}
+                          className={classes.select}
+                        >
+                          <MenuItem value={"Jacket"}>
+                          Jacket
+                          </MenuItem>
+                          <MenuItem value={"Jeane"}>
+                          Jeane
+                          </MenuItem>
+                        
+                          <MenuItem value={"Sweater"}>
+                          Sweater
+                          </MenuItem>
+                          <MenuItem value={"Shirt"}>
+                          Shirt
+                          </MenuItem>
+                         
+                        </Select>
+                      </FormControl>
+ <GridItem xs={12} sm={12} md={8}>
                       <CustomInput
                         labelText="Description"
                         name="description"

@@ -12,6 +12,7 @@
     "axios": "^0.21.1",
     "chartist": "0.10.1",
     "classnames": "2.2.6",
+    "formik": "^2.2.6",
     "history": "4.10.1",
     "js-cookie": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
@@ -19,6 +20,7 @@
     "prop-types": "15.7.2",
     "rc-slider": "^9.7.2",
     "react": "17.0.0",
+    "react-animations": "^1.0.0",
     "react-bootstrap": "^1.5.2",
     "react-chartist": "0.14.4",
     "react-cookie": "^4.0.3",
@@ -37,7 +39,8 @@
     "source-map-explorer": "^2.5.2",
     "styled-components": "^5.2.2",
     "styles": "^0.2.1",
-    "sweetalert": "^2.1.2"
+    "sweetalert": "^2.1.2",
+    "yup": "^0.32.9"
   },
   "scripts": {
     "start": "react-scripts start",

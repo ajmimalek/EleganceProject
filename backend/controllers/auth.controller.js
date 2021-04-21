@@ -16,10 +16,10 @@ sgMail.setApiKey(process.env.MAIL_KEY);
 const { errorHandler } = require("../helpers/dbErrorHandling");
 
 exports.registerController = async (req, res) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   const { FullName, email, password, Gender, city, Phone, token } = req.body;
+  console.log(req.body);
   const errors = validationResult(req);
+  console.log("errors : ", errors);
 
   if (!token) {
     return res.status(400).json({ error: "reCaptcha token is missing" });
@@ -56,6 +56,9 @@ exports.registerController = async (req, res) => {
             FullName,
             email,
             password,
+            Gender,
+            city,
+            Phone,
           },
           process.env.JWT_ACCOUNT_ACTIVATION,
           {
@@ -184,8 +187,7 @@ exports.activationController = (req, res) => {
         const { FullName, email, password, Gender, city, Phone } = jwt.decode(
           token
         );
-
-        console.log(email);
+        console.log(`city : `, city);
         // Creating user object with inputs data
         const user = new User({
           FullName,
@@ -195,10 +197,12 @@ exports.activationController = (req, res) => {
           city,
           Phone,
         });
+        console.log("user : ", user);
 
         //Saving user to DB : Mongoose API
         user.save((err, user) => {
           if (err) {
+            console.log(err);
             console.log("Save error", errorHandler(err));
             return res.status(401).json({
               errors: errorHandler(err),
@@ -260,7 +264,8 @@ exports.signinController = (req, res) => {
           expiresIn: "30d", //Token valid in 30 days ( 30 days for Remember Me).
         }
       );
-      const { _id, FullName, email, role } = user;
+      const { _id, FullName, email, role, image, city, Phone } = user;
+      console.log(user);
 
       return res.json({
         token,
@@ -269,6 +274,9 @@ exports.signinController = (req, res) => {
           FullName,
           email,
           role,
+          image,
+          city,
+          Phone,
         },
       });
     });
@@ -352,7 +360,7 @@ exports.forgotPasswordController = (req, res) => {
                                       <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                           <table border="0" cellspacing="0" cellpadding="0">
                                               <tr>
-                                                  <td align="center" style="border-radius: 3px;" bgcolor="#BF1922"><a href=${process.env.CLIENT_URL}/passwordReset/${token} target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px;  display: inline-block;">Reset Your Password</a></td>
+                                                  <td align="center" style="border-radius: 3px;" bgcolor="#BF1922"><a href=${process.env.CLIENT_URL}passwordReset/${token} target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px;  display: inline-block;">Reset Your Password</a></td>
                                               </tr>
                                           </table>
                                       </td>
@@ -372,7 +380,7 @@ exports.forgotPasswordController = (req, res) => {
                       </tr> <!-- COPY -->
                       <tr>
                           <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                              <p style="margin: 0;"><a href="#" target="_blank" style="color: #BF1922;">${process.env.CLIENT_URL}/reset/${token}</a></p>
+                              <p style="margin: 0;"><a href="#" target="_blank" style="color: #BF1922;">${process.env.CLIENT_URL}reset/${token}</a></p>
                           </td>
                       </tr>
                                       <tr>

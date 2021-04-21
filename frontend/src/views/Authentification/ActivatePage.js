@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 // @material-ui/icons
@@ -21,23 +21,78 @@ import EleganceLogo from "../../assets/img/Elegance Logo.png";
 import Activating from "../../assets/img/activate.gif";
 import { Helmet } from "react-helmet";
 import { Check, PersonAdd } from "@material-ui/icons";
+import jwt from "jsonwebtoken";
+import axios from "axios";
+import { isAuth } from "helpers/auth";
+import { Redirect, useParams } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 const useStyles = makeStyles(styles);
 
-
-export default function LoginPage(props) {
+export default function ActivatePage(props) {
   const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
   setTimeout(function () {
     setCardAnimation("");
   }, 700);
   const classes = useStyles();
   const { ...rest } = props;
+
+  // retrieve params into a variable
+  const params = useParams();
+
+  // print params to console
+  console.log("params :", params);
+
+  const [formData, setFormData] = useState({
+    FullName: "",
+    token: "",
+    show: true,
+  });
+
+  useEffect(() => {
+    /* get token from params like /activate/token
+       then decode this token and get name
+    */
+    let token = params.token;
+    let { FullName } = jwt.decode(token);
+
+    if (token) {
+      setFormData({ ...formData, FullName, token });
+    }
+
+    console.log("data : ", token, FullName);
+  }, [params]);
+  const { FullName, token, show } = formData;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    axios
+      .post(`${process.env.REACT_APP_API_URL}/activation`, {
+        token,
+      })
+      .then((res) => {
+        setFormData({
+          ...formData,
+          show: false,
+        });
+        console.log(res.data.message);
+        toast.success("✔ " + res.data.message);
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+        toast.error("⚠️ " + err.response.data.errors);
+      });
+  };
+
   return (
     <>
       <Helmet>
         <title>Elegance App - Activate Your Account</title>
       </Helmet>
       <div>
+        {isAuth() ? <Redirect to="/" /> : null}
+        <ToastContainer autoClose={5000}/>
         <Header
           absolute
           color="transparent"
@@ -57,15 +112,15 @@ export default function LoginPage(props) {
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={6}>
                 <Card className={classes[cardAnimaton]}>
-                  <form className={classes.form}>
-                    <CardHeader color="primary" className={classes.cardHeader}>
-                      <h4 className={classes.cardTitleWhite}>
-                      Activate Your Account
-                      </h4>
-                      <p className={classes.cardCategoryWhite}>
+                  <CardHeader color="primary" className={classes.cardHeader}>
+                    <h4 className={classes.cardTitleWhite}>
+                      Hey {FullName}, Activate Your Account
+                    </h4>
+                    <p className={classes.cardCategoryWhite}>
                       Last Step before entering your magical "Fashion Space"
-                      </p>
-                    </CardHeader>
+                    </p>
+                  </CardHeader>
+                  <form className={classes.form} onSubmit={handleSubmit}>
                     <CardBody>
                       <img
                         alt="Activating Account animation"
@@ -74,10 +129,16 @@ export default function LoginPage(props) {
                       />
                     </CardBody>
                     <CardFooter className={classes.cardFooter}>
-                    <Button type="button" color="success" className={classes.button}><Check />
+                      <Button
+                        type="button"
+                        color="success"
+                        className={classes.button}
+                        type="submit"
+                      >
+                        <Check />
                         Activate Your Account
                       </Button>
-                    <p className={classes.divider}>or REGISTER again</p>
+                      <p className={classes.divider}>or REGISTER again</p>
                       <Button
                         color="primary"
                         className={classes.button}
