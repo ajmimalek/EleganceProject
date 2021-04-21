@@ -297,7 +297,7 @@ export default function RegisterPage(props) {
                       <CustomInput
                         labelText="Email..."
                         id="mail"
-                        {formik.errors.mail ? true : false}
+                        error={formik.errors.mail ? true : false}
                         formControlProps={{
                           fullWidth: false,
                         }}
