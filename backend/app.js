@@ -7,7 +7,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 
 require("./models/clothes");
-const clothesRoutes=require("./routes/clothes");
+const clothesRoutes = require("./routes/clothes");
 var app = express();
 
 //import database
@@ -15,9 +15,7 @@ var mongoose = require("mongoose");
 var configDB = require("./database/mongodb.json");
 
 // Config dotev
-require("dotenv").config({
-  path: "./config/config.env",
-});
+require("dotenv").config();
 
 // Dev Logginf Middleware
 if (process.env.NODE_ENV === "development") {
@@ -33,7 +31,7 @@ app.use(cookieParser());
 // Load routes
 const authRouter = require("./routes/auth.route");
 //clothes Routes
-app.use("/clothes",clothesRoutes);
+app.use("/clothes", clothesRoutes);
 // Use Routes
 app.use("/api", authRouter);
 
@@ -54,14 +52,13 @@ app.use(function (err, req, res, next) {
 });
 
 //connection mongoose
-const connect = mongoose.connect(
-  configDB.mongo.uri,
-  {
-    useNewUrlParser: true ,
-    useUnifiedTopology: true
-  }
-)
-.then( () => console.log('Connected to db '))
-.catch((err)=> console.log('catched error '+ err));
+const connect = mongoose
+  .connect(configDB.mongo.uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("Connected to db "))
+  .catch((err) => console.log("catched error " + err));
+
 
 module.exports = app;

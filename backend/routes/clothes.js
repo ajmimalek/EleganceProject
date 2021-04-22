@@ -192,12 +192,11 @@ router.post(
     try {
       var sortedByCreationDate = null;
       const { path, mimetype } = req.file;
+      console.log("idUser",req.body.idUser);
       const file = new Clothes({
         user: {
-          "_id": "607d9a859a2f7e09344ffb1b",
-          "FullName": "Mahmoud Hadidi",
-          "email": "mahmoud.hadidi1@esprit.tn",
-          "role": "user"
+          "_id": req.body.idUser
+         
         },
         clothes_path: path,
         clothes_mimetype: mimetype

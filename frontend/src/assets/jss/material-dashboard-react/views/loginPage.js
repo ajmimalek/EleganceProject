@@ -44,6 +44,19 @@ const signupPageStyle = {
       width: "100%"
     }
   },
+  helperText: {
+    color: "rgba(0, 0, 0, 0.54)",
+    fontSize: "0.75rem",
+    marginTop: "-7px",
+    marginRight: "-6px",
+    textAlign: "left",
+    fontFamily: "Roboto",
+    fontWeight: "400",
+    lineHeight: "1.66",
+    letterSpacing: "0.03333em",
+    width: "100%",
+    maxWidth: "100%",
+  },
   form: {
     margin: "0"
   },
@@ -73,6 +86,8 @@ const signupPageStyle = {
     textAlign: "center"
   },
   cardFooter: {
+    display: "flex",
+    marginTop: "30px",
     paddingTop: "0rem",
     border: "0",
     borderRadius: "6px",
@@ -87,10 +102,6 @@ const signupPageStyle = {
   inputIconsColor: {
     color: "#495057"
   },
-  remember: {
-    color: "#495057",
-    marginTop: "17px",
-  },
   mailsent: {
     display: "block",
     marginLeft: "auto",
@@ -100,8 +111,11 @@ const signupPageStyle = {
   mail:{
     marginTop: "10px",
   },
+  submit: {
+    marginLeft: "200px",
+  },
   forget: {
-    marginTop: "17px",
+    marginTop: "12px",
     float: "right!important",
     marginRight: "-20px",
     "& img": {

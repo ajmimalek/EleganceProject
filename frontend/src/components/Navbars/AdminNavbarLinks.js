@@ -22,6 +22,7 @@ import {
   Settings,
 } from "@material-ui/icons";
 import dummyContents from "variables/dummyContents";
+import { isAuth } from "helpers/auth";
 
 const useStyles = makeStyles(styles);
 
@@ -29,6 +30,7 @@ export default function AdminNavbarLinks() {
   const classes = useStyles();
   const [openNotification, setOpenNotification] = React.useState(null);
   const [openProfile, setOpenProfile] = React.useState(null);
+ // console.log(isAuth().FullName);
   const handleClickNotification = (event) => {
     if (openNotification && openNotification.contains(event.target)) {
       setOpenNotification(null);
@@ -208,7 +210,7 @@ export default function AdminNavbarLinks() {
                 <ClickAwayListener onClickAway={handleCloseProfile}>
                   <MenuList role="menu">
                     <div className={classes.dropdownItem}>
-                    First & Last Name
+                      {isAuth() ? isAuth().FullName : "First & Last Name"}
                     </div>
                     <MenuItem
                       onClick={handleCloseProfile}

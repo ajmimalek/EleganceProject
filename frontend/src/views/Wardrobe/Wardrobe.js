@@ -26,7 +26,7 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import styles from "assets/jss/material-dashboard-react/views/localStoreStyle.js";
-
+import { isAuth } from "helpers/auth";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import IconButton from "@material-ui/core/IconButton";
 // @material-ui/icons
@@ -109,7 +109,10 @@ const Wardrobe = (props) => {
       const formData = new FormData();
 
       formData.append("file", file);
-
+      formData.append("idUser", isAuth()._id);
+     
+      
+      
       setErrorMsg("");
       const { data } = await axios.post(`http://localhost:9000/clothes/upload`, formData, {
         headers: {
