@@ -1,7 +1,9 @@
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import React, { useState, useRef, useEffect } from "react";
 import Dropzone from "react-dropzone";
 import axios from "axios";
 import { Form, Row, Col } from "react-bootstrap";
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import Radio from "@material-ui/core/Radio";
 import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
@@ -31,6 +33,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Close from "@material-ui/icons/Close";
 // core components
 import Slide from "@material-ui/core/Slide";
+import CustomInput from "components/CustomInput/CustomInput.js";
 import Button from "components/CustomButtons/Button.js";
 
 const useStyles = makeStyles(styles);
@@ -72,6 +75,12 @@ const Wardrobe = (props) => {
     });
   };
 
+  const [price, setprice] = useState(null);
+  const handleChangePrice = e => {
+    const { price, value } = e.currentTarget;
+    setprice(value);
+  };
+
   const onDrop = (files) => {
     const [uploadedFile] = files;
     setFile(uploadedFile);
@@ -102,16 +111,13 @@ const Wardrobe = (props) => {
       formData.append("file", file);
 
       setErrorMsg("");
-      const { data } = await axios.post(
-        `http://localhost:9000/clothes/upload`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+      const { data } = await axios.post(`http://localhost:9000/clothes/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
       );
-      console.log("test const { data } = ", data);
+      console.log("test const { data } =", data);
       props.history.push("/DetailsClothes?id=" + data._id);
     } catch (error) {
       error.response && setErrorMsg(error.response.data);
@@ -123,7 +129,7 @@ const Wardrobe = (props) => {
     event.preventDefault();
 
     try {
-      const { sell } = state;
+      const sell = price;
 
       const data = {
         sell,
@@ -138,27 +144,39 @@ const Wardrobe = (props) => {
       error.response && setErrorMsg(error.response.data);
     }
   };
+
+  function deleteClothes(Id) {
+    axios.post('http://localhost:9000/clothes/delete/' + Id);
+    const getFilesList = async () => {
+      try {
+        const { data } = await axios.get(
+          `http://localhost:9000/clothes/getAllClothes`
+        );
+        setErrorMsg("");
+        setFilesList(data);
+      } catch (error) {
+        error.response && setErrorMsg(error.response.data);
+      }
+    };
+
+    getFilesList();
+  }
+
+  /*  const handleDelete = async (event) => {
+      event.preventDefault();
   
-  function deleteClothes(Id){
-  axios.post('http://localhost:9000/clothes/delete/' + Id);
-  props.history.push('/list');
-}
-
-/*  const handleDelete = async (event) => {
-    event.preventDefault();
-
-    try {
-
-
-
-      await axios.post(`http://localhost:9000/clothes/sellClothes`, data);
-      props.history.push('/list');
-    } catch (error) {
-      error.response && setErrorMsg(error.response.data);
-    }
-  };
-*/
-const [filesList, setFilesList] = useState([]);
+      try {
+  
+  
+  
+        await axios.post(`http://localhost:9000/clothes/sellClothes`, data);
+        props.history.push('/list');
+      } catch (error) {
+        error.response && setErrorMsg(error.response.data);
+      }
+    };
+  */
+  const [filesList, setFilesList] = useState([]);
   useEffect(() => {
     const getFilesList = async () => {
       try {
@@ -275,7 +293,7 @@ const [filesList, setFilesList] = useState([]);
 
                               <p>Drag and drop a clothes OR click here to select a clothes</p>
 
-                       
+
                               {file ? (
                                 <div>
                                   <strong>Selected clothes</strong>: {file.name}
@@ -284,7 +302,7 @@ const [filesList, setFilesList] = useState([]);
                               ) : (<div>
                                 <strong>-----------------------------------------------------</strong>
                               </div>)}
-                              
+
                             </div>
                           )}
                         </Dropzone>
@@ -549,7 +567,7 @@ const [filesList, setFilesList] = useState([]);
                   <div className={classes.ClothesList}>
                     {filesList.length > 0 ? (
                       filesList.map(
-                        ({ _id,title }) => (
+                        ({ _id, title }) => (
                           <Card className={classes.ClothesItem}>
                             <img
                               className={Cardclasses.cardImgTop}
@@ -561,83 +579,85 @@ const [filesList, setFilesList] = useState([]);
                             />
                             <CardBody>
                               <h4>{title}</h4>
-                              <button>Details</button><button onClick={() => deleteClothes(_id)} >Delete</button>
-                             
-                              
-             
-
-                             
-
+                              <button>Details</button>
+                              <IconButton aria-label="delete"  color="secondary" >
+                                <DeleteIcon onClick={() => deleteClothes(_id)}/>
+                              </IconButton>
                             </CardBody>
-                            <b>Add to local store<button  onClick={() => setModalSell(true)}> <button
-                          
-                          
-                          
-                          onClick={() => setID(_id)}
-                        >Sell</button></button>
-         </b>
-                              
-                  <Dialog
-                    classes={{
-                      root: classes.center,
-                      paper: classes.modalSell
-                    }}
-                    open={modalSell}
-                    TransitionComponent={Transition}
-                    keepMounted
-                    onClose={() => setModalSell(false)}
-                    aria-labelledby="modal-slide-title"
-                    aria-describedby="modal-slide-description"
-                  >
-                    <DialogTitle
-                      id="classic-modal-slide-title"
-                      disableTypography
-                      className={classes.modalHeader}
-                    >
+                            <b>Add to local store
+                            <IconButton color="secondary" onClick={() => setModalSell(true)} aria-label="add to shopping cart">
+                                <AddShoppingCartIcon onClick={() => setID(_id)} />
+                              </IconButton>
 
-                      <div className={classes.addStore}>
+                            </b>
 
-                        <IconButton
-                          className={classes.modalCloseButton}
-                          key="close"
-                          aria-label="Close"
-                          color="inherit"
-                          onClick={() => setModalSell(false)}
-                        >
-                          <Close className={classes.modalClose} />
-                        </IconButton>
-                      </div>
-                    </DialogTitle>
-                    <DialogContent
-                      id="modal-slide-description"
-                      className={classes.modalBody}
-                    >
+                            <Dialog
+                              classes={{
+                                root: classes.center,
+                                paper: classes.modalSell
+                              }}
+                              open={modalSell}
+                              TransitionComponent={Transition}
+                              keepMounted
+                              onClose={() => setModalSell(false)}
+                              aria-labelledby="modal-slide-title"
+                              aria-describedby="modal-slide-description"
+                            >
+                              <DialogTitle
+                                id="classic-modal-slide-title"
+                                disableTypography
+                                className={classes.modalHeader}
+                              >
 
+                                <div className={classes.addStore}>
 
-<Form className="search-form" onSubmit={handleSelSubmit}>
-                        <Row>
-                          <Col>
-                            <Form.Group controlId="title">
-                              <Form.Control
-                                type="text"
-                                name="sell"
-                                value={state.sell || ''}
-                                placeholder="add your price"
-                                onChange={handleInputChange}
-                              />
-                            </Form.Group>
-          </Col>
-                        </Row>
-                        <Button variant="primary" type="submit">
-                          Submit
-        </Button>
-                      </Form>
+                                  <IconButton
+                                    className={classes.modalCloseButton}
+                                    key="close"
+                                    aria-label="Close"
+                                    color="inherit"
+                                    onClick={() => setModalSell(false)}
+                                  >
+                                    <Close className={classes.modalClose} />
+                                  </IconButton>
+                                </div>
+                              </DialogTitle>
+                              <DialogContent
+                                id="modal-slide-description"
+                                className={classes.modalBody}
+                              >
 
 
+                                <Form className="search-form" onSubmit={handleSelSubmit}>
+                                  <Row>
+                                    <Col>
+                                      <Form.Group controlId="title">
+
+                                        <CustomInput
+                                          labelText="add your price"
+                                          name="price"
+
+                                          formControlProps={{
+                                            fullWidth: true
+                                          }}
+                                          inputProps={{
+                                            onChange: (e) => handleChangePrice(e),
+                                            multiline: true,
+                                            rows: 2
+                                          }}
+                                        />
+                                      </Form.Group>
+                                    </Col>
+                                  </Row>
+                                  <Button color="primary" type="submit" onClick={() => setModalSell(false)}>Add Price</Button>
+
+                                </Form>
 
 
-                      </DialogContent>
-                  </Dialog>
+
+
+                              </DialogContent>
+                            </Dialog>
 
                           </Card>
 

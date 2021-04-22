@@ -1,6 +1,10 @@
+import { Form, Row, Col } from "react-bootstrap";
+import DeleteIcon from '@material-ui/icons/Delete';
+import UpdateIcon from '@material-ui/icons/Update';
 import Slider, { Range } from 'rc-slider';
+import CustomInput from "components/CustomInput/CustomInput.js";
 import 'rc-slider/assets/index.css';
-import Button from 'components/CustomButtons/Button.js';
+import Button from "components/CustomButtons/Button.js";
 import React, { Suspense, useState, useEffect } from "react";
 import axios from 'axios';
 // @material-ui/core components
@@ -23,8 +27,6 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Check from "@material-ui/icons/Check";
 import Radio from "@material-ui/core/Radio";
 import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
-
-
 
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -49,8 +51,14 @@ export default function LocalStore() {
   const [valueMax, setValueMax] = useState(150);
   const [modal, setModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  
+  const [modalSell, setModalSell] = useState(false);  
   const [checked, setChecked] = React.useState([]);
+  const [price, setprice] = useState(null);
+  const handleChangePrice = e => {
+    const {price, value} = e.currentTarget;
+    setprice(value);
+  };
+
   //handle slidre range price
   const handleInputChange = (value) => {
     setSelectedValueALL(500);
@@ -87,8 +95,41 @@ export default function LocalStore() {
    
   
   };
+  const [state, setState] = useState({
+    sell: "",
+  });
+  const [Id, SetID] = useState(null);
 
+  const handleSelSubmit = async (event) => {
+    event.preventDefault();
 
+    try {
+      const  sell  = price;
+
+      const data = {
+        sell,
+        Id,
+      };
+
+      setErrorMsg("");
+      await axios.post(`http://localhost:9000/clothes/sellClothes`, data);
+      const getFilesListUser = async () => {
+        try {
+          const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothesUser/`);
+          setErrorMsg('');
+          setFilesListUser(data);
+        } catch (error) {
+          error.response && setErrorMsg(error.response.data);
+        }
+      };
+  
+      getFilesListUser();
+     
+    } catch (error) {
+      error.response && setErrorMsg(error.response.data);
+    }
+  };
+ 
   const classes = useStyless();
   const Cardclasses = useCardStyles();
   const handleToggle = value => {
@@ -124,9 +165,23 @@ console.log(newChecked);
     getFilesList();
   };
   
-
+  function deleteClothes(Id){
+    axios.post('http://localhost:9000/clothes/delete/' + Id);
+    
+    const getFilesListUser = async () => {
+      try {
+        const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothesUser/`);
+        setErrorMsg('');
+        setFilesListUser(data);
+      } catch (error) {
+        error.response && setErrorMsg(error.response.data);
+      }
+    };
+    getFilesListUser();
+  }
 
   const [filesList, setFilesList] = useState([]);
+
   useEffect(() => {
     const getFilesList = async () => {
       try {
@@ -140,6 +195,22 @@ console.log(newChecked);
 
     getFilesList();
   }, []);
+  const [filesListUser, setFilesListUser] = useState([]);
+
+  useEffect(() => {
+    const getFilesListUser = async () => {
+      try {
+        const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothesUser/`);
+        setErrorMsg('');
+        setFilesListUser(data);
+      } catch (error) {
+        error.response && setErrorMsg(error.response.data);
+      }
+    };
+
+    getFilesListUser();
+  }, []);
+ 
 
   return (
     <>
@@ -179,7 +250,7 @@ console.log(newChecked);
 
                         <div className={classes.addStore}>
                           <h4 className={classes.modalTitle}>My store</h4>
-                          <b>to add clothing to your store click on the link</b>
+                          
                           <IconButton
                             className={classes.modalCloseButton}
                             key="close"
@@ -191,15 +262,121 @@ console.log(newChecked);
                           </IconButton>
                         </div>
                       </DialogTitle>
+                      
+                    
                       <DialogContent
                         id="modal-slide-description"
                         className={classes.modalBody}
                       >
+                          <b>if you want to add clothes in your store, go to your wardrobe... </b>
+   
                          <div className={classes.ClothesList}>
 
-{Store.map((clothes, index) => (
-  <MyStore clothes={clothes} key={index}></MyStore>
-))}
+                         {filesListUser.length > 0 ? (
+                      filesListUser.map(
+                        ({ _id,sell,title,size}) => (
+                          <Card className={classes.ClothesItem}>
+                            <img
+                              className={Cardclasses.cardImgTop}
+                              data-src="holder.js/100px180/"
+                              alt="100%x180"
+                              style={{ height: "175px", width: "100%", display: "block" }}
+                              src={'http://localhost:9000/clothes/download/' + _id}
+                              data-holder-rendered="true"
+                            />
+                            <CardBody>
+                            <p> {title}<br></br>
+                              Price: {sell}DT<br></br>
+                              Size: {size}</p>
+                              
+                              <b>25148752</b>
+                              <div className={classes.sliderFilter}>
+                              <IconButton aria-label="update" onClick={() => setModalSell(true)} className={classes.margin}>
+          <UpdateIcon fontSize="small" onClick={() => SetID(_id)} />
+        </IconButton>
+        <Dialog
+                    classes={{
+                      root: classes.center,
+                      paper: classes.modalSell
+                    }}
+                    open={modalSell}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={() => setModalSell(false)}
+                    aria-labelledby="modal-slide-title"
+                    aria-describedby="modal-slide-description"
+                  >
+                    <DialogTitle
+                      id="classic-modal-slide-title"
+                      disableTypography
+                      className={classes.modalHeader}
+                    >
+
+                      <div className={classes.addStore}>
+
+                        <IconButton
+                          className={classes.modalCloseButton}
+                          key="close"
+                          aria-label="Close"
+                          color="inherit"
+                          onClick={() => setModalSell(false)}
+                        >
+                          <Close className={classes.modalClose} />
+                        </IconButton>
+                      </div>
+                    </DialogTitle>
+                    <DialogContent
+                      id="modal-slide-description"
+                      className={classes.modalBody}
+                    >
+
+
+<Form className="search-form" onSubmit={handleSelSubmit}>
+                        <Row>
+                          <Col>
+                            <Form.Group controlId="title">
+                              
+                      <CustomInput
+                        labelText="add your new price"
+                        name="price"
+                       
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          onChange: (e) => handleChangePrice(e),
+                          multiline: true,
+                          rows: 2
+                        }}
+                      />
+                            </Form.Group>
+          </Col>
+                        </Row>
+                        <Button color="primary" type="submit" onClick={() => setModalSell(false)}>Update Price</Button>
+                       
+                      </Form>
+
+
+
+
+                      </DialogContent>
+                  </Dialog>
+
+         <IconButton aria-label="delete"  onClick={() => deleteClothes(_id)}className={classes.margin}>
+          <DeleteIcon fontSize="small" />
+        </IconButton>
+      </div>
+                            </CardBody>
+
+                          </Card>
+
+                        )
+                      )
+                    ) : (
+                      <b>                   No clothes found in your local store!</b>
+                    )}
+
+
 </div>
 
                       </DialogContent>
@@ -503,9 +680,26 @@ console.log(newChecked);
                       classes={{
                         checked: classes.checked
                       }}
-                    /> watch
+                    /> watch<br></br>
+                    <Checkbox
+                      tabIndex={-1}
+                      onClick={() => handleToggle("Man suit")}
+                      checkedIcon={<Check className={classes.checkedIcon} />}
+                      icon={<Check className={classes.uncheckedIcon} />}
+                      classes={{
+                        checked: classes.checked
+                      }}
+                    /> Man suit<br></br>
 
-
+   <Checkbox
+                      tabIndex={-1}
+                      onClick={() => handleToggle("Sweater")}
+                      checkedIcon={<Check className={classes.checkedIcon} />}
+                      icon={<Check className={classes.uncheckedIcon} />}
+                      classes={{
+                        checked: classes.checked
+                      }}
+                    /> Sweater
                     </CardBody>
 
                 </Card>

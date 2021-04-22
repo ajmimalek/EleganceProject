@@ -53,14 +53,15 @@ app.use(function (err, req, res, next) {
   res.json({ message: err.message });
 });
 
-//mongo config
+//connection mongoose
 const connect = mongoose.connect(
   configDB.mongo.uri,
   {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  },
-  () => console.log("Connected to DB !!")
-);
+    useNewUrlParser: true ,
+    useUnifiedTopology: true
+  }
+)
+.then( () => console.log('Connected to db '))
+.catch((err)=> console.log('catched error '+ err));
 
 module.exports = app;
