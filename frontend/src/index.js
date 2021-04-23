@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.min.css";
 // core components
 import "assets/css/material-dashboard-react.css?v=1.9.0";
 import styled from "styled-components";
+import { isAuth } from "helpers/auth";
 const ResetPasswordPage = React.lazy(() =>
   import("views/Authentification/ResetPasswordPage")
 );
@@ -92,7 +93,11 @@ ReactDOM.render(
         <Route path="/register" component={RegisterPage} />
         <Route path="/activate/:token" component={ActivatePage} />
         <Route path="/reset/" component={ResetPasswordPage} />
-        <Redirect from="/" to="/admin/wardrobe" />
+        {isAuth() ? (
+          <Redirect from="/" to="/admin/wardrobe" />
+        ) : (
+          <Redirect from="/" to="/login" />
+        )}
       </Switch>
     </Suspense>
   </BrowserRouter>,
