@@ -91,9 +91,9 @@ export default function LoginPage(props) {
           })
           //Authenticate user after login & Clear Data
           .then((res) => {
+            console.log("here is the then");
             authenticate(res, () => {
-              onSubmitProps.setSubmitting(false);
-              onSubmitProps.resetForm();
+              console.log("authenticate");
               //if authenticate but not admin redirect to /user
               // if admin redirect to /admin
               // Add this when we fix the admin path
@@ -101,11 +101,12 @@ export default function LoginPage(props) {
               ? history.push('/admin')
               : history.push('/private'); */
               // Adding this temporarily
-              history.push("/");
+              history.push("/admin/wardrobe");
               toast.success(`😍 Hey ${res.data.user.FullName}, Welcome back!`);
             });
           })
           .catch((err) => {
+            console.log("here is the catch");
             // Clear values after Error.
             onSubmitProps.setSubmitting(false);
             onSubmitProps.resetForm();
