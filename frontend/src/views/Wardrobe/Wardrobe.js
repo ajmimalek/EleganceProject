@@ -35,6 +35,8 @@ import Close from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
 import CustomInput from "components/CustomInput/CustomInput.js";
 import Button from "components/CustomButtons/Button.js";
+import { isAuth } from "helpers/auth";
+import { Redirect } from "react-router";
 
 const useStyles = makeStyles(styles);
 const connector = new AppSearchAPIConnector({
@@ -202,6 +204,7 @@ const Wardrobe = (props) => {
         <title>Elegance App - My Wardrobe</title>
       </Helmet>
       <div>
+      {isAuth() ? null : <Redirect to="/login"/>}
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
             <Card>

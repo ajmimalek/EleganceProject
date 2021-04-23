@@ -18,6 +18,8 @@ import { primaryColor } from "assets/jss/material-dashboard-react";
 import avatar from "assets/img/faces/marc.jpg";
 import { Helmet } from "react-helmet";
 import ImageUpload from "components/CustomUpload/ImageUpload";
+import { isAuth } from "helpers/auth";
+import { Redirect } from "react-router";
 
 
 
@@ -84,6 +86,7 @@ export default function UserProfile() {
   const classesUser = useStylesUser();
   return (
     <div>
+    {isAuth() ? null : <Redirect to="/login"/>}
       <Helmet>
         <title>Elegance App - My Profile</title>
       </Helmet>
