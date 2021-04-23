@@ -87,9 +87,15 @@ router.post('/CompleteNewClothes', async (req, res) => {
 );
 
 
-router.get('/getAllClothes', async (req, res) => {
+router.get('/getAllClothes/:idUser', async (req, res) => {
   try {
-    const files = await Clothes.find({ $or: [{ sell: null }] });
+    const files = await Clothes.find({ 
+      $and: [{ sell: { $exists: false } }, {
+        user: {
+          "_id": req.params.idUser
+        }
+      }
+      ] });
     const sortedByCreationDate = files.sort(
       (a, b) => b.createdAt - a.createdAt
     );
@@ -100,12 +106,12 @@ router.get('/getAllClothes', async (req, res) => {
 });
 
 //get all sell clothes user conected 
-router.get('/getAllSellClothesUser', async (req, res) => {
+router.get('/getAllSellClothesUser/:idUser', async (req, res) => {
   try {
     const files = await Clothes.find({
       $and: [{ sell: { $exists: true } }, {
         user: {
-          "_id": "607d9a859a2f7e09344ffb1b"
+          "_id": req.params.idUser
         }
       }
       ]

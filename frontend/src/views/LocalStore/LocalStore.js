@@ -9,7 +9,7 @@ import React, { Suspense, useState, useEffect } from "react";
 import axios from 'axios';
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-import Store from "../Store.json"
+import { isAuth } from "helpers/auth";
 // core components
 import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -115,7 +115,7 @@ export default function LocalStore() {
       await axios.post(`http://localhost:9000/clothes/sellClothes`, data);
       const getFilesListUser = async () => {
         try {
-          const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothesUser/`);
+          const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothesUser/`+isAuth()._id);
           setErrorMsg('');
           setFilesListUser(data);
         } catch (error) {
@@ -170,7 +170,7 @@ console.log(newChecked);
     
     const getFilesListUser = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothesUser/`);
+        const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothesUser/`+isAuth()._id);
         setErrorMsg('');
         setFilesListUser(data);
       } catch (error) {
@@ -200,7 +200,7 @@ console.log(newChecked);
   useEffect(() => {
     const getFilesListUser = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothesUser/`);
+        const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothesUser/`+isAuth()._id);
         setErrorMsg('');
         setFilesListUser(data);
       } catch (error) {

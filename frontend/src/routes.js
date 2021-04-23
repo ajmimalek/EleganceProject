@@ -8,6 +8,7 @@ import LocalStore from "views/LocalStore/LocalStore.js";
 import MyDashboard from "views/Dashboard/MyDashboard.js";
 
 import { AddShoppingCart, Dashboard, Group, HowToReg, Kitchen, LocalGroceryStore } from "@material-ui/icons";
+import UserProfile from "views/UserProfile/UserProfile";
 
 const dashboardRoutes = [
   {
@@ -51,6 +52,13 @@ const dashboardRoutes = [
     icon: Dashboard,
     invisible: true,
     component: MyDashboard,
+    layout: "/admin",
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+    invisible: true,
+    component: UserProfile,
     layout: "/admin",
   },
 ];

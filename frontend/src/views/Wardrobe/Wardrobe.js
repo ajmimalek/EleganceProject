@@ -153,7 +153,7 @@ const Wardrobe = (props) => {
     const getFilesList = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:9000/clothes/getAllClothes`
+          `http://localhost:9000/clothes/getAllClothes/`+isAuth()._id
         );
         setErrorMsg("");
         setFilesList(data);
@@ -184,7 +184,7 @@ const Wardrobe = (props) => {
     const getFilesList = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:9000/clothes/getAllClothes`
+          `http://localhost:9000/clothes/getAllClothes/`+isAuth()._id
         );
         setErrorMsg("");
         setFilesList(data);
