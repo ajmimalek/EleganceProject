@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
+import axios from "axios";
 // core components
 import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -20,8 +21,6 @@ import { Helmet } from "react-helmet";
 import ImageUpload from "components/CustomUpload/ImageUpload";
 import { isAuth } from "helpers/auth";
 import { Redirect } from "react-router";
-
-
 
 const imageUserStyle = {
   "pictureContainer": {
@@ -81,9 +80,59 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-export default function UserProfile() {
+export default function UserProfile(props) {
   const classes = useStyles();
   const classesUser = useStylesUser();
+
+   const [idUserConected,SetIdUserConected]=useState(isAuth()._id);
+
+var IdUserFollowing=null;
+function UserFollowers(id){
+  IdUserFollowing=id;
+}
+function handleOnSubmit(){
+  try {
+  const data = {
+    idUserConected,
+    IdUserFollowing
+    };
+     axios.post(`http://localhost:9000/user/follow`, data);
+    props.history.push('/admin/profile');
+  } catch (error) {
+    console.log(error.response);
+  }
+};
+
+  const [userList, setUserList] = useState([]);
+  useEffect(() => {
+    const getUserList = async () => {
+      try {
+        const { data } = await axios.get(
+          `http://localhost:9000/user/getAllUser/`+isAuth()._id);
+        console.log("dddd",data);
+        setUserList(data);
+      } catch (error) {
+        console.log(error.response) ;
+      }
+    };
+
+    getUserList();
+  }, []);
+
+  
+  
+    function getFollow(idUserfollow) {
+      try {
+        const { data } = await axios.get(
+          `http://localhost:9000/user/getAllFollow/`+idUserfollow);
+        
+        return data.state;
+      } catch (error) {
+        console.log(error.response) ;
+      }
+    };
+
+  
   return (
     <div>
     {isAuth() ? null : <Redirect to="/login"/>}
@@ -217,36 +266,37 @@ export default function UserProfile() {
             </CardHeader>
         <CardBody>
           
-      <div className={classesUser.pictureContainer}>
- 
-      <div className={classesUser.picture}>
-        <img
-          src={DefaultAvatar}
-          className={classesUser.pictureSrc}
-          id="wizardPicturePreview"
-          title=""
-        />
-        
-      </div>
-      user Name<br></br>
-      <Button color="primary">Update Profile</Button>
-    </div>          
-         <br></br>
-    <div className={classesUser.pictureContainer}>
 
-      <div className={classesUser.picture}>
-        <img
-          src={DefaultAvatar}
-          className={classesUser.pictureSrc}
-          id="wizardPicturePreview"
-          title=""
-        />
-        
-      </div>
-      user Name<br></br>
-      <Button color="primary">Update Profile</Button>
-    </div>          
-     
+    {userList.length > 0 ? (
+                      userList.map(
+                        ({ _id, FullName }) => (
+                     <div className={classesUser.pictureContainer}>
+                          <div className={classesUser.picture}>
+                          <img
+                            src={DefaultAvatar}
+                            className={classesUser.pictureSrc}
+                            id="wizardPicturePreview"
+                            title=""
+                          />
+                          
+                        </div>
+                        <b>{FullName}</b><br></br>
+                        <Button color="primary"onClick={ () =>{
+                          UserFollowers(_id);
+                          
+                          handleOnSubmit();
+                        }
+                        }>Follow (family member)</Button>
+                        <br></br>
+                      </div>                           
+                      
+                        )
+                      )
+
+                    ) : (
+                      <b> No users found. </b>
+                    )}
+
         </CardBody>
         </Card>
         </GridItem>

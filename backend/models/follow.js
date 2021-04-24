@@ -3,16 +3,12 @@ var Schema = mongoose.Schema;
 
 let follow = new Schema(
   {
-    user: [{
+    UserFollowers: {
         type: Schema.Types.ObjectId,
-        ref: "UserFollowers",
-  
-      }],
-      user: [{
+      },
+      UserFollowing: {
         type: Schema.Types.ObjectId,
-        ref: "UserFollowing",
-  
-      }],
+       },
       state: {
         type: String,
         required: false,

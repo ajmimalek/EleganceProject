@@ -7,6 +7,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 
 require("./models/clothes");
+require("./models/follow");
 
 require("./models/auth.model");
 const clothesRoutes = require("./routes/clothes");
