@@ -6,6 +6,11 @@ var bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
 
+
+
+//var users = require("./routes/users");
+
+
 require("./models/clothes");
 const clothesRoutes=require("./routes/clothes");
 var app = express();
@@ -14,10 +19,30 @@ var app = express();
 var mongoose = require("mongoose");
 var configDB = require("./database/mongodb.json");
 
+
 // Config dotev
 require("dotenv").config({
   path: "./config/config.env",
 });
+
+
+// Config dotev
+require("dotenv").config({
+  path: "./config/config.env",
+});
+
+// Dev Logginf Middleware
+if (process.env.NODE_ENV === "development") {
+  app.use(
+    cors({
+      origin: process.env.CLIENT_URL,
+    })
+  );
+  app.use(morgan("dev"));
+  //Morgan give information about each request.
+  //Cors it's allow to deal with react for localhost at port 3000 without any problem
+}
+
 
 // Dev Logginf Middleware
 if (process.env.NODE_ENV === "development") {
@@ -32,10 +57,17 @@ app.use(cookieParser());
 
 // Load routes
 const authRouter = require("./routes/auth.route");
+
 //clothes Routes
 app.use("/clothes",clothesRoutes);
 // Use Routes
 app.use("/api", authRouter);
+
+
+// Use Routes
+app.use("/api", authRouter);
+app.use("/api/v1/users", users);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -57,6 +89,7 @@ app.use(function (err, req, res, next) {
 const connect = mongoose.connect(
   configDB.mongo.uri,
   {
+
     useNewUrlParser: true ,
     useUnifiedTopology: true
   }
@@ -64,4 +97,12 @@ const connect = mongoose.connect(
 .then( () => console.log('Connected to db '))
 .catch((err)=> console.log('catched error '+ err));
 
+    
+  
+  
+
+
+
+
 module.exports = app;
+

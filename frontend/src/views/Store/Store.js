@@ -3,33 +3,33 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Helmet } from "react-helmet";
 import { createBrowserHistory } from 'history';
-import "views/Store/Store.css"
+import "views/Store/Store.css";
 import Button from "components/CustomButtons/Button.js";
 import { AttachMoney } from "@material-ui/icons";
 import Budget from "views/Store/Budget";
-import Shoes from "../../assets/img/shoes.svg";
-import Cap from "../../assets/img/cap.svg";
-import Trousers from "../../assets/img/trousers.svg";
-import Shirt from "../../assets/img/shirt.svg";
-import { Checkbox } from "@material-ui/core";
+import elegance from "assets/img/Elegance Logo.png";
 // @material-ui/icons
-import Wink from "assets/img/Elegance Black.png";
 import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import 'rc-slider/assets/index.css';
+import Slide from '@material-ui/core/Slide';
+import Carde from './Card';
+import img1 from '../../assets/img/shirt.png';
+import img2 from '../../assets/img/cap.png';
+import img3 from '../../assets/img/shoes.png';
+import img4 from '../../assets/img/trousers.png';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from "axios";
 
 
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Slide,
-} from "@material-ui/core";
+
+
+
+
+
 
 const styles = {
   cardCategoryWhite: {
@@ -60,28 +60,26 @@ const styles = {
     }
   }
 };
-
-const useStyles = makeStyles(styles);
 const history = createBrowserHistory();
+
+const useStyles = makeStyles((theme) => ({
+  appBar: {
+    position: 'relative',
+  },
+  title: {
+    marginLeft: theme.spacing(2),
+    flex: 1,
+  },
+}));
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 
+
 export default function Store(props) {
-    const [open, setOpen] = React.useState(false);
-
-    const handleClickOpen = () => {
-    setOpen(true);
-    };
-
-    const handleClose = () => {
-    setOpen(false);
-    };
-    const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
-    setTimeout(function () {
-    setCardAnimation("");
-    }, 700);
+   
+    
     const classes = useStyles();
     const { ...rest } = props;
   return (
@@ -92,7 +90,7 @@ export default function Store(props) {
     </Helmet>
    
     <div>
-      <h4 className="valide"> 
+      <h4 > 
       <GridContainer>
       <GridItem xs={12} sm={12} md={12}>
         <Card>
@@ -101,49 +99,56 @@ export default function Store(props) {
             <p className={classes.cardCategoryWhite}>
             </p>
           </CardHeader>
-          <CardBody>
+          <CardBody><br/>
+          <Budget></Budget><br/>
+          <div className="container-fluid d-flex justify-content-center">
+                <div className="row">
+                    <div className="col-md-3">
+                     <Carde
+                     title="T-shirt"
+                     imagesrc={img1}
+                     body="kkjhsfkj" />
+              
+        
+                    </div>
+                    <div className="col-md-3">
+                     <Carde 
+                     title="Cap"
+                     imagesrc={img2}
+                     body="gggggggg"
+                     />
+                  
+                    </div>
+                    <div className="col-md-3">
+                     <Carde
+                     title="Shoes"
+                     imagesrc={img3}
+                     body="kjkkljhkjh"
+                     />
+                    
+                    </div>
+                    <div className="col-md-3">
+                     <Carde
+                      title="Trousers"
+                     imagesrc={img4} 
+                     body="jnhksjehtksj"
+                     />
+                
+                    </div>
+
+                </div>
+
+            </div>
+          
+         
+        
+        
           </CardBody>
         </Card>
       </GridItem>
     </GridContainer> 
       </h4>
-    </div>
-     <br></br>
-    <Budget></Budget>
-    <div className="container"  >
-        <div > <img alt="Cap emoji" src={Cap} /><Checkbox></Checkbox> </div>
-        <div> <img alt="Trousers emoji" src={Trousers} /><Checkbox></Checkbox> </div>
-        <div> <img alt="Shirt emoji" src={Shirt} /> <Checkbox></Checkbox></div>
-        <div> <img alt="Shoes emoji" src={Shoes} />  <Checkbox></Checkbox> </div>
-    </div>
-    <div  className="validate">
-      <Button onClick={handleClickOpen} type="button" color="primary">
-        validate
-      </Button>
-    </div>
-              <Dialog
-                          open={open}
-                          TransitionComponent={Transition}
-                          keepMounted
-                          aria-labelledby="alert-dialog-slide-title"
-                          aria-describedby="alert-dialog-slide-description"
-                        >
-                          <DialogTitle id="alert-dialog-slide-title">
-                            <img alt="wink emoji" src={Wink} /> &nbsp;
-                          </DialogTitle>
-                          <DialogContent>
-                                <Button type="button" color="success" >check in website</Button>
-                                <Button type="button" color="success" >check in website</Button>
-                                <Button type="button" color="success" >check in website</Button>
-                            <DialogContentText id="alert-dialog-slide-description">
-                            </DialogContentText>
-                          </DialogContent>
-                          <DialogActions>
-                            <Button onClick={handleClose} color="danger">
-                              Back to Store
-                            </Button>
-                          </DialogActions>
-              </Dialog>
+    </div>  
       </div>
     
     </>

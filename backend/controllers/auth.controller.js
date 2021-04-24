@@ -1,4 +1,5 @@
 // Import User model
+
 const User = require("../models/auth.model");
 
 // Import Libraries
@@ -14,26 +15,59 @@ sgMail.setApiKey(process.env.MAIL_KEY);
 // Custom error handler to get useful error from database errors
 const { errorHandler } = require("../helpers/dbErrorHandling");
 
+const User = require('../models/auth.model');
+
+// Import Libraries
+const expressJwt = require('express-jwt');
+const _ = require('lodash');
+const { OAuth2Client } = require('google-auth-library');
+const fetch = require('node-fetch');
+const { validationResult } = require('express-validator');
+const jwt = require('jsonwebtoken');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.MAIL_KEY);
+
+
+// Custom error handler to get useful error from database errors
+const { errorHandler } = require('../helpers/dbErrorHandling');
+
+
+
 exports.registerController = (req, res) => {
   const { FullName, email, password, Gender, city, Phone } = req.body;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
     // Getting the value of the first error
+
     const firstError = errors.array().map((error) => error.msg)[0];
     // réponse HTTP 422 : serveur a compris le type de contenu et que la syntaxe de la requête est correcte mais le serveur n'a pas été en mesure de réaliser les instructions demandées.
     return res.status(422).json({
       errors: firstError,
+
+    const firstError = errors.array().map(error => error.msg)[0];
+    // réponse HTTP 422 : serveur a compris le type de contenu et que la syntaxe de la requête est correcte mais le serveur n'a pas été en mesure de réaliser les instructions demandées.
+    return res.status(422).json({
+      errors: firstError
+
     });
   } else {
     // When no error -> mongoose query.
     User.findOne({
+
       email,
+
+      email
+
     }).exec((err, user) => {
       // If user exists -> 400 Bad Request : we can't register an existant user
       if (user) {
         return res.status(400).json({
+
           errors: "Email is taken, Please choose another email address",
+
+          errors: 'Email is taken, Please choose another email address'
+>>>>>>> 444c3a84a46cec72c4ca58cb88e36ab63d071ac4
         });
       }
     });
@@ -42,11 +76,19 @@ exports.registerController = (req, res) => {
       {
         FullName,
         email,
+<<<<<<< HEAD
         password,
       },
       process.env.JWT_ACCOUNT_ACTIVATION,
       {
         expiresIn: "10m",
+
+        password
+      },
+      process.env.JWT_ACCOUNT_ACTIVATION,
+      {
+        expiresIn: '10m'
+
       }
     );
 
@@ -55,7 +97,11 @@ exports.registerController = (req, res) => {
       //We will specify the adress from whom the email will be sent.
       from: process.env.EMAIL_FROM,
       to: email,
+
       subject: "Elegance App - Activate your account",
+
+      subject: 'Elegance App - Activate your account',
+>>>>>>> 444c3a84a46cec72c4ca58cb88e36ab63d071ac4
       html: `
       <table border="0" cellpadding="0" cellspacing="0" width="100%">
       <tr>
@@ -126,18 +172,31 @@ exports.registerController = (req, res) => {
               </table>
           </td>
       </tr>
+
       </table>`,
+
+      </table>`
+>
     };
 
     // send mail and deliver a success message or error message
     sgMail
       .send(emailData)
+
       .then((sent) => {
         return res.json({
           message: `Email has been sent to ${email}`,
         });
       })
       .catch((err) => {
+
+      .then(sent => {
+        return res.json({
+          message: `Email has been sent to ${email}`
+        });
+      })
+      .catch(err => {
+>>>>>>> 444c3a84a46cec72c4ca58cb88e36ab63d071ac4
         return res.status(400).json({
           success: false,
           // errors: errorHandler(err)
@@ -146,6 +205,7 @@ exports.registerController = (req, res) => {
       });
   }
 };
+<<<<<<< HEAD
 
 // Activate Account and Save User to Database.
 exports.activationController = (req, res) => {
@@ -302,7 +362,7 @@ exports.forgotPasswordController = (req, res) => {
                     <p>This email may contain sensetive information</p>
                     <p>${process.env.CLIENT_URL}</p>
                 `
-        };
+       };
 
         return user.updateOne(
           {
@@ -337,3 +397,5 @@ exports.forgotPasswordController = (req, res) => {
     );
   }
 };
+
+

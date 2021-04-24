@@ -548,9 +548,19 @@ const Wardrobe = (props) => {
                             />
                             <CardBody>
                               <h4>{title}</h4>
-                              <button>Details</button><button onClick={() => deleteClothes(_id)} >Delete</button>
-                             
                               
+      
+                              <button class="bouton">See Details</button>
+
+                              <button onClick={() => deleteClothes(_id)} >Delete</button>
+                              <div class="card-footer">
+                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+              </div>
+              
+                              
+
+                             
+  
              
 
                              

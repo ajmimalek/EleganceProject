@@ -43,7 +43,7 @@ function Budget() {
   return (
     <>
       <div>
-        <b>{valueMin} DT</b>
+        <b>{valueMin} TND</b>
           <Range
             min={0}
             max={500}
@@ -51,7 +51,7 @@ function Budget() {
             ariaLabelGroupForHandles
             onChange={handleInputChange}
           />
-        <b>{valueMax} DT</b>
+        <b>{valueMax} TND</b>
       </div>
 
     </>

@@ -4,6 +4,7 @@ import { createBrowserHistory } from "history";
 import { Router, Route, Switch, Redirect, BrowserRouter } from "react-router-dom";
 // core components
 import "assets/css/material-dashboard-react.css?v=1.9.0";
+
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from "react-loader-spinner";
 
@@ -12,6 +13,10 @@ const LoginPage = React.lazy(() => import("views/Authentification/LoginPage"));
 const Admin = React.lazy(() => import("layouts/Admin.js"));
 const RegisterPage = React.lazy(() => import("views/Authentification/RegisterPage"));
 const DetailsClothes  = React.lazy(() => import("views/Wardrobe/DetailsClothes"));
+
+
+
+
 
 const hist = createBrowserHistory();
 
@@ -44,9 +49,13 @@ ReactDOM.render(
  
       <Route path="/admin" component={Admin} />
       <Route path="/login" component={LoginPage} />
+
       {/* Add :token after /activate/ */}
       <Route path="/register" component={RegisterPage} />
       <Route path="/activate/" component={ActivatePage} />
+
+      <Route path="/register" component={RegisterPage} />
+
       <Redirect from="/" to="/admin/wardrobe" />
     </Switch>
     </Suspense>
