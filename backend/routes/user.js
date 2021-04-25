@@ -10,11 +10,11 @@ const path = require('path');
 router.post('/follow', async (req, res) => {
   try {
     console.log("vvv", req.body);
-    const { idUserConected,IdUserFollowing } = req.body;
-    console.log("jjjj",idUserConected,IdUserFollowing);
+    const { idUserConected,IdUserFollowers } = req.body;
+    console.log("jjjj",idUserConected,IdUserFollowers);
     const follow = new Follow({
-      UserFollowers: idUserConected,
-      UserFollowing: IdUserFollowing,
+      UserFollowers: IdUserFollowers,
+      UserFollowing: idUserConected,
       state:"Requested"
     
     });
@@ -39,11 +39,18 @@ router.post('/follow', async (req, res) => {
     }
   }
 );
-//get api all follow
-router.get('/getAllFollow/', async (req, res) => {
+//get api all UnFollow
+router.post('/UnFollow', function (req, res, next) {
+  Follow.deleteMany({ $and: [{  UserFollowing: req.body.idUserConected },{ UserFollowers: req.body.IdUserFollowers }] }).then(function(){
+    console.log("Data deleted"); // Success
+}).catch(function(error){
+    console.log(error); // Failure
+});
+  });
+//get api all follow 
+router.get('/getAllFollow/:iduser', async (req, res) => {
   try {
-    const follow = await Follow.find({ 
-      });
+    const follow = await Follow.find({ UserFollowing: req.params.iduser });
     const sortedByCreationDate = follow.sort(
       (a, b) => b.createdAt - a.createdAt
     );

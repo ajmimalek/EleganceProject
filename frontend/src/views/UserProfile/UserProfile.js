@@ -84,58 +84,79 @@ export default function UserProfile(props) {
   const classes = useStyles();
   const classesUser = useStylesUser();
 
-   const [idUserConected,SetIdUserConected]=useState(isAuth()._id);
+  const [idUserConected, SetIdUserConected] = useState(isAuth()._id);
+  const [testFollow, SetTestFollow] = useState(false);
 
-var IdUserFollowing=null;
-function UserFollowers(id){
-  IdUserFollowing=id;
-}
-function handleOnSubmit(){
-  try {
-  const data = {
-    idUserConected,
-    IdUserFollowing
-    };
-     axios.post(`http://localhost:9000/user/follow`, data);
-    props.history.push('/admin/profile');
-  } catch (error) {
-    console.log(error.response);
+  var IdUserFollowers = null;
+  function UserFollowersUse(id) {
+    IdUserFollowers = id;
   }
-};
+  function handleOnfollow() {
+    try {
+      const data = {
+        idUserConected,
+        IdUserFollowers
+      };
+      axios.post(`http://localhost:9000/user/follow`, data);
+      window.location.reload(false);
+      
+    } catch (error) {
+      console.log(error.response);
+    }
+    
+  };
+  function handleOnUnfollow() {
+    try {
+      const data = {
+        idUserConected,
+        IdUserFollowers
+      };
+      axios.post(`http://localhost:9000/user/UnFollow`, data);
+      window.location.reload(false);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
 
   const [userList, setUserList] = useState([]);
   useEffect(() => {
     const getUserList = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:9000/user/getAllUser/`+isAuth()._id);
-        console.log("dddd",data);
+          `http://localhost:9000/user/getAllUser/` + isAuth()._id);
         setUserList(data);
       } catch (error) {
-        console.log(error.response) ;
+        console.log(error.response);
       }
     };
 
     getUserList();
   }, []);
 
-  
-  
-    function getFollow(idUserfollow) {
+  const [FollowList, setFollowList] = useState([]);
+  useEffect(() => {
+    const getFollowList = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:9000/user/getAllFollow/`+idUserfollow);
-        
-        return data.state;
+          `http://localhost:9000/user/getAllFollow/` + isAuth()._id);
+        setFollowList(data);
+        console.log(data);
+        data.forEach(element => {
+          console.log(element.state, "iddd", element.UserFollowers)
+
+        });
+
       } catch (error) {
-        console.log(error.response) ;
+        console.log(error.response);
       }
     };
 
-  
+    getFollowList();
+  }, []);
+
   return (
     <div>
-    {isAuth() ? null : <Redirect to="/login"/>}
+      {isAuth() ? null : <Redirect to="/login" />}
       <Helmet>
         <title>Elegance App - My Profile</title>
       </Helmet>
@@ -252,53 +273,96 @@ function handleOnSubmit(){
           </Card>
         </GridItem>
         <GridItem xs={12} sm={12} md={4}>
-        <Card>
-        <CardHeader color="primary">
-        <GridItem xs={12} sm={12} md={12}>
-                  <CustomInput
-                    labelText="Find your family member"
-                    id="email-address"
-                    formControlProps={{
-                      fullWidth: true
-                    }}
-                  />
-                </GridItem>
+          <Card>
+            <CardHeader color="primary">
+              <GridItem xs={12} sm={12} md={12}>
+                <CustomInput
+                  labelText="Find your family member"
+                  id="email-address"
+                  formControlProps={{
+                    fullWidth: true
+                  }}
+                />
+              </GridItem>
             </CardHeader>
-        <CardBody>
-          
+            <CardBody>
 
-    {userList.length > 0 ? (
-                      userList.map(
-                        ({ _id, FullName }) => (
-                     <div className={classesUser.pictureContainer}>
-                          <div className={classesUser.picture}>
+
+              {
+                userList.map(
+                  ({ _id, FullName,v }) => {
+                    return (
+                      <div className={classesUser.pictureContainer}>
+                        <div className={classesUser.picture}>
                           <img
                             src={DefaultAvatar}
                             className={classesUser.pictureSrc}
                             id="wizardPicturePreview"
                             title=""
                           />
-                          
+
                         </div>
                         <b>{FullName}</b><br></br>
-                        <Button color="primary"onClick={ () =>{
-                          UserFollowers(_id);
-                          
-                          handleOnSubmit();
-                        }
-                        }>Follow (family member)</Button>
-                        <br></br>
-                      </div>                           
-                      
+                        {FollowList.length > 0 ? (
+                          FollowList.map(
+                            ({ UserFollowers, state }) => {
+                              return (
+                                UserFollowers === _id ? (
+                                  v=true,
+                                  state === "Requested" ? (
+                                    <Button color="secondary"
+                                      onClick={() => {
+                                        UserFollowersUse(_id);
+                                        handleOnUnfollow();
+                                      }
+                                      }>{state}</Button>
+                                  ) : (
+                                    <Button color="primary"
+                                      onClick={() => {
+                                        UserFollowersUse(_id);
+                                        handleOnUnfollow();
+                                      }
+                                      }>UnFollow (family member)</Button>
+                                  )
+                                ) :
+                                  (
+                                    <p></p>
+                                    )
+
+                              )
+                            })) : (
+                          <Button color="primary"
+                            onClick={() => {
+                              UserFollowersUse(_id);
+                              handleOnfollow();
+                            }
+                            }>Follow (family member)</Button>
+
+                        )}{v!==true?(
+                          <Button color="primary"
+                            onClick={() => {
+                              UserFollowersUse(_id);
+                              handleOnfollow();
+                            }
+                            }>Follow (family member)</Button>
+                        ):
+                        (
+                          <p></p>
                         )
-                      )
 
-                    ) : (
-                      <b> No users found. </b>
-                    )}
+                        }
 
-        </CardBody>
-        </Card>
+
+                        <br></br>
+                      </div>
+
+                    )
+                  })
+
+              }
+
+            </CardBody>
+          </Card>
         </GridItem>
       </GridContainer>
     </div>
