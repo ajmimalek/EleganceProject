@@ -13,7 +13,12 @@ let follow = new Schema(
         type: String,
         required: false,
         trim: false
-      }
+      },
+      NameUserFollowing: {
+        type: String,
+        required: false,
+        trim: false
+      },
 },
 {
   timestamps: true

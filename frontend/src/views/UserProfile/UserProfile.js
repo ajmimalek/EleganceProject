@@ -85,6 +85,7 @@ export default function UserProfile(props) {
   const classesUser = useStylesUser();
 
   const [idUserConected, SetIdUserConected] = useState(isAuth()._id);
+  const [NameUserConected, SetNameUserConected] = useState(isAuth().FullName);
   const [testFollow, SetTestFollow] = useState(false);
 
   var IdUserFollowers = null;
@@ -95,7 +96,8 @@ export default function UserProfile(props) {
     try {
       const data = {
         idUserConected,
-        IdUserFollowers
+        IdUserFollowers,
+        NameUserConected
       };
       axios.post(`http://localhost:9000/user/follow`, data);
       window.location.reload(false);
@@ -274,17 +276,14 @@ export default function UserProfile(props) {
         </GridItem>
         <GridItem xs={12} sm={12} md={4}>
           <Card>
-            <CardHeader color="primary">
-              <GridItem xs={12} sm={12} md={12}>
-                <CustomInput
+           
+            <CustomInput
                   labelText="Find your family member"
-                  id="email-address"
+                  id="FulleName"
                   formControlProps={{
                     fullWidth: true
                   }}
                 />
-              </GridItem>
-            </CardHeader>
             <CardBody>
 
 
@@ -303,7 +302,7 @@ export default function UserProfile(props) {
 
                         </div>
                         <b>{FullName}</b><br></br>
-                        {FollowList.length > 0 ? (
+                        {
                           FollowList.map(
                             ({ UserFollowers, state }) => {
                               return (
@@ -320,9 +319,9 @@ export default function UserProfile(props) {
                                     <Button color="primary"
                                       onClick={() => {
                                         UserFollowersUse(_id);
-                                        handleOnUnfollow();
+                                      handleOnUnfollow();
                                       }
-                                      }>UnFollow (family member)</Button>
+                                      }>UnFollow </Button>
                                   )
                                 ) :
                                   (
@@ -330,21 +329,13 @@ export default function UserProfile(props) {
                                     )
 
                               )
-                            })) : (
+                            })}{v!==true?(
                           <Button color="primary"
                             onClick={() => {
                               UserFollowersUse(_id);
                               handleOnfollow();
                             }
-                            }>Follow (family member)</Button>
-
-                        )}{v!==true?(
-                          <Button color="primary"
-                            onClick={() => {
-                              UserFollowersUse(_id);
-                              handleOnfollow();
-                            }
-                            }>Follow (family member)</Button>
+                            }>family member</Button>
                         ):
                         (
                           <p></p>
