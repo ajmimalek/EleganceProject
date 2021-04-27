@@ -20,7 +20,10 @@ module.exports = {
       jsx: true,
     },
   },
-  plugins: ["react"],
+  plugins: [
+    "react",
+    'mui-unused-classes',
+  ],
   extends: [
     "eslint:recommended",
     "plugin:react/recommended",

@@ -82,6 +82,19 @@ const signupPageStyle = {
   inputIconsColor: {
     color: "#495057",
   },
+  helperText: {
+    color: "rgba(0, 0, 0, 0.54)",
+    fontSize: "0.75rem",
+    marginTop: "-7px",
+    marginRight: "-6px",
+    textAlign: "left",
+    fontFamily: "Roboto",
+    fontWeight: "400",
+    lineHeight: "1.66",
+    letterSpacing: "0.03333em",
+    width: "100%",
+    maxWidth: "100%",
+  },
   mail: {
     marginTop: "10px",
   },

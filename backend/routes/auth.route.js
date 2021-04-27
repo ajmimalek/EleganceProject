@@ -33,10 +33,10 @@ router.put(
   forgotPasswordValidator,
   forgotPasswordController
 );
-//router.put("/resetpassword", resetPasswordValidator, resetPasswordController);
+router.put("/resetpassword", resetPasswordValidator, resetPasswordController);
 
 // Google and Facebook Login
-//router.post("/googlelogin", googleController);
+router.post("/googlelogin", googleController);
 //router.post("/facebooklogin", facebookController);
 
 module.exports = router;

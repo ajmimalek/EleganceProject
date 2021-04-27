@@ -131,6 +131,7 @@ export default function LoginPage(props) {
     // Submit data to backend
     onSubmit: (values, onSubmitProps) => {
       formikForgot.setFieldValue("textChange", "Getting New Password");
+      setLoading(true);
       console.log(values.textChange);
       // pass values to backend.
       axios
@@ -143,6 +144,7 @@ export default function LoginPage(props) {
           onSubmitProps.resetForm();
           setLoading(true);
           toast.success(`📧 Please check your email`);
+          setLoading(false);
         })
         .catch((err) => {
           console.log(err.response);
