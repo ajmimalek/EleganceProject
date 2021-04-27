@@ -4,8 +4,27 @@ import {
   grayColor,
   hexToRgb
 } from "assets/jss/material-dashboard-react.js";
+import { rotateIn } from "react-animations";
+import imagesStyles from "assets/jss/material-dashboard-react/components/imagesStyles";
 
-const localStoreStyle = {
+const localStoreStyle = (theme) => ({
+  ...imagesStyles,
+  contextImage: {
+    marginRight: "6%",
+    marginLeft: "5%",
+    "&:hover": {
+      animation : "$rotateIn 2s",
+    },
+    [theme.breakpoints.up("lg")]: {
+      marginRight: "140px",
+      marginLeft: "5%",
+    },
+    [theme.breakpoints.down("xs")]: {
+      marginRight: "5px",
+      marginLeft: "0px",
+    },
+  },
+  "@keyframes rotateIn": rotateIn,
   cardCategoryWhite: {
     "&,& a,& a:hover,& a:focus": {
       color: "rgba(" + hexToRgb(whiteColor) + ",.62)",
@@ -65,14 +84,9 @@ sliderFilter:{
     flexWrap: "no wrap",
     flexDirection: "row",
   },
-addStore:{
-    display: "flex",
-    justifyContent: "space-between",
+  addClothes:{
+    float: "right",
   }
-
-
-
-  
-};
+});
 
 export default localStoreStyle;

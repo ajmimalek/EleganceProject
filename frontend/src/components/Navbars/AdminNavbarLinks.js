@@ -22,13 +22,22 @@ import {
   Settings,
 } from "@material-ui/icons";
 import dummyContents from "variables/dummyContents";
+import { isAuth } from "helpers/auth";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles(styles);
 
 export default function AdminNavbarLinks() {
+  const history = useHistory();
   const classes = useStyles();
   const [openNotification, setOpenNotification] = React.useState(null);
   const [openProfile, setOpenProfile] = React.useState(null);
+  //console.log(isAuth().FullName);
+  const goToProfile = (e) => {
+    e.preventDefault();
+    history.push("/admin/profile");
+  }
+
   const handleClickNotification = (event) => {
     if (openNotification && openNotification.contains(event.target)) {
       setOpenNotification(null);
@@ -208,20 +217,20 @@ export default function AdminNavbarLinks() {
                 <ClickAwayListener onClickAway={handleCloseProfile}>
                   <MenuList role="menu">
                     <div className={classes.dropdownItem}>
-                    First & Last Name
+                      {isAuth() ? isAuth().FullName : "First & Last Name"}
                     </div>
                     <MenuItem
-                      onClick={handleCloseProfile}
+                      onClick={goToProfile}
                       className={classes.dropdownItem}
                     >
                       <AccountCircle /> &nbsp; Profile
                     </MenuItem>
-                    <MenuItem
+                    {/*<MenuItem
                       onClick={handleCloseProfile}
                       className={classes.dropdownItem}
                     >
                       <Settings /> &nbsp; Settings
-                    </MenuItem>
+                    </MenuItem>*/}
                     <a href="mailto:ajmi.malek@esprit.tn?subject=Elegance App - Feedbacks&cc=achref.aguel@esprit.tn,mahmoud.hadidi1@esprit.tn,ibtissem.kraiem@esprit.tn">
                       <MenuItem
                         onClick={handleCloseProfile}

@@ -1,5 +1,4 @@
-import EleganceBlack from "../assets/img/Elegance Black.png";
-import React, { Suspense } from "react";
+import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 // creates a beautiful scrollbar
 import PerfectScrollbar from "perfect-scrollbar";
@@ -75,14 +74,6 @@ export default function Admin({ ...rest }) {
   }, [mainPanel]);
   return (
     <div className={classes.wrapper}>
-      <Suspense
-        fallback={
-          <div className={classes.suspense}>
-            <img src={EleganceBlack} alt="Logo Elegance Black" />
-            <p>Loading page please wait...</p>
-          </div>
-        }
-      >
         <Sidebar
           routes={routes}
           image={image}
@@ -107,7 +98,6 @@ export default function Admin({ ...rest }) {
           )}
           {getRoute() ? <Footer /> : null}
         </div>
-      </Suspense>
     </div>
   );
 }

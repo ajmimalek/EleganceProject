@@ -19,6 +19,7 @@ export default function CustomInput(props) {
   const {
     formControlProps,
     labelText,
+    onChange,
     id,
     labelProps,
     inputProps,
@@ -59,6 +60,7 @@ export default function CustomInput(props) {
           underline: underlineClasses
         }}
         id={id}
+        onChange={onChange}
         {...inputProps}
       />
       {error ? (
@@ -73,6 +75,7 @@ export default function CustomInput(props) {
 CustomInput.propTypes = {
   labelText: PropTypes.node,
   labelProps: PropTypes.object,
+  onChange: PropTypes.func,
   id: PropTypes.string,
   inputProps: PropTypes.object,
   formControlProps: PropTypes.object,

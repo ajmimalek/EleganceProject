@@ -216,6 +216,9 @@ console.log("sss",id);
                           <MenuItem value={"Shirt"}>
                           Shirt
                           </MenuItem>
+                          <MenuItem value={"Man suit"}>
+                          Man suit
+                          </MenuItem>
                          
                         </Select>
                       </FormControl>
