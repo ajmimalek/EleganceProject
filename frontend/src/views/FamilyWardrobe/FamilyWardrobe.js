@@ -1,16 +1,19 @@
-
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-
+import CardBody from "components/Card/CardBody.js";
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
+import profile from "../../assets/img/faces/marc.jpg";
+import React, { useState, useEffect } from "react";
+import SearchBar from 'material-ui-search-bar';
 
-import React from "react";
+import Cardstyles from "assets/jss/material-dashboard-react/cardImagesStyles.js";
+import axios from "axios";
 import Store from "../Store.json"
-
+import { isAuth } from "helpers/auth";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/material-dashboard-react/views/localStoreStyle.js";
@@ -20,7 +23,7 @@ import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
-
+import Button from "components/CustomButtons/Button.js";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import ClothesChange from "components/FamilyWardrobe/ClothesChange.js";
 const userStyles = makeStyles((theme) => ({
@@ -36,6 +39,9 @@ const userStyles = makeStyles((theme) => ({
     // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
     transform: 'translateZ(0)',
   },
+  actionIcon:{
+    color: theme.palette.primary,
+  },
   title: {
     color: theme.palette.primary.light,
   },
@@ -44,37 +50,54 @@ const userStyles = makeStyles((theme) => ({
       'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
   },
 }));
-
-const tileData = [
-  {
-    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ10g0ghYRDZ8Lk3ZHjT8EozD2SgmIxkAQQSA&usqp=CAU',
-    title: 'Dali'
-
-    },  {
-    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRUyPVcIDmUC_W3wQ5Hz-TNKdY0Z0oqvOPtg&usqp=CAU',
-    title: 'Moha'
-  },
-  {
-    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ10g0ghYRDZ8Lk3ZHjT8EozD2SgmIxkAQQSA&usqp=CAU',
-    title: 'hadidi'
-  },{
-    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRUyPVcIDmUC_W3wQ5Hz-TNKdY0Z0oqvOPtg&usqp=CAU',
-    title: 'Rzoga'
-  },
-  {
-    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRUyPVcIDmUC_W3wQ5Hz-TNKdY0Z0oqvOPtg&usqp=CAU',
-    title: 'Aloulo'
-  },
-  {
-    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRUyPVcIDmUC_W3wQ5Hz-TNKdY0Z0oqvOPtg&usqp=CAU',
-    title: 'mahmoud'
-  }
-  ];
 const useStyles = makeStyles(styles);
-
+const useCardStyles = makeStyles(Cardstyles);
 export default function FamilyWardrobe() {
+  const Cardclasses = useCardStyles();
   const classes = useStyles();
   const classesUser = userStyles();
+  const [FollowList, setFollowList] = useState([]);
+  useEffect(() => {
+    const getFollowList = async () => {
+      try {
+        const { data } = await axios.get(
+          `http://localhost:9000/user/getUserFollow/` + isAuth()._id);
+        setFollowList(data);
+        console.log(data);
+        data.forEach(element => {
+          console.log(element.state, "iddd", element.UserFollowers)
+
+        });
+
+      } catch (error) {
+        console.log(error.response);
+      }
+    };
+
+    getFollowList();
+  }, []);
+
+  const [userClothesList, setUserClothesList] = useState([]);
+  function handleUserClothes(Iduser) {
+    try {
+     
+      const getClothesList = async () => {
+        try {
+          const { data } = await axios.get(
+            `http://localhost:9000/clothes/getAllClothes/`+Iduser);
+            setUserClothesList(data);
+         
+        } catch (error) {
+          console.log(error.response);
+        }
+      };
+  
+      getClothesList();
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
   return (
     <>
     <Helmet>
@@ -85,37 +108,35 @@ export default function FamilyWardrobe() {
             <Card>
               <CardHeader>
               
-              <Autocomplete
-        freeSolo
-        id="free-solo-2-demo"
-        disableClearable
-        options={tileData.map((option) => option.title)}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Search your member family"
-            margin="normal"
-            variant="outlined"
-            InputProps={{ ...params.InputProps, type: 'search' }}
-          />
-        )}
-      />
- 
-            
-
+              <SearchBar
+      onChange={() => console.log('onChange')}
+      onRequestSearch={() => console.log('onRequestSearch')}
+      style={{
+        margin: '0 auto',
+        maxWidth: 800
+      }}
+    />
               <GridList className={classesUser.gridList} cols={7}>
-              {tileData.map((tile) => (
-          <GridListTile key={tile.img}>
-            <img src={tile.img} alt={tile.title} />
+              {  FollowList.map(
+                            ({ NameUserFollowing, UserFollowing }) => (
+          
+          <GridListTile key={NameUserFollowing}>
+            
+            <img src={profile} alt={NameUserFollowing} />
+            
             <GridListTileBar
-              title={tile.title}
              
-              /*
+             
+              
               actionIcon={
-                <IconButton aria-label={`star ${tile.title}`}>
-                  <StarBorderIcon className={classesUser.title} />
+                <IconButton className={classesUser.title} 
+                onClick={() => {
+                  handleUserClothes(UserFollowing);
+                }
+                }>
+                  {NameUserFollowing}
                 </IconButton>
-              }*/
+              }
             />
           </GridListTile>
         ))}
@@ -124,10 +145,35 @@ export default function FamilyWardrobe() {
               
       </CardHeader>
 <div className={classes.ClothesList}>
+ {userClothesList.length > 0 ? (
+                      userClothesList.map(
+                        ({ _id,sell,title,size}) => (
+                          
+                          <Card className={classes.ClothesItem}>
+                          <img
+                            className={Cardclasses.cardImgTop}
+                            data-src="holder.js/100px180/"
+                            alt="100%x180"
+                            style={{ height: "175px", width: "100%", display: "block" }}
+                            src={'http://localhost:9000/clothes/download/' + _id}
+                            data-holder-rendered="true"
+                          />
+                          <CardBody>
+                            <h4>{title}</h4>
+                            <Button color="primary">Lend</Button>
+                           
+                          </CardBody>
+                          
 
-  {Store.map((clothes, index) => (
-    <ClothesChange clothes={clothes} key={index}></ClothesChange>
-  ))}
+
+                        </Card>
+
+                          )
+                          )
+                        ) : (
+                          <b>                   Select your family member!</b>
+                        )}
+    
 </div>
 
 

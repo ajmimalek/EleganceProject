@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import axios from "axios";
+import SearchBar from 'material-ui-search-bar';
 // core components
 import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -276,16 +277,16 @@ export default function UserProfile(props) {
         </GridItem>
         <GridItem xs={12} sm={12} md={4}>
           <Card>
-           
-            <CustomInput
-                  labelText="Find your family member"
-                  id="FulleName"
-                  formControlProps={{
-                    fullWidth: true
-                  }}
-                />
+          
             <CardBody>
-
+            <SearchBar
+      onChange={() => console.log('onChange')}
+      onRequestSearch={() => console.log('onRequestSearch')}
+      style={{
+        margin: '0 auto',
+        maxWidth: 800
+      }}
+    />
 
               {
                 userList.map(

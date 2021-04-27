@@ -102,6 +102,18 @@ router.get('/getAllFollow/:iduser', async (req, res) => {
     res.status(400).send('Error while getting list of files. Try again later.');
   }
 });
+//get api all follow 
+router.get('/getUserFollow/:iduser', async (req, res) => {
+  try {
+    const follow = await Follow.find({$and: [{ UserFollowers: req.params.iduser },{state:"accepted"}]});
+    const sortedByCreationDate = follow.sort(
+      (a, b) => b.createdAt - a.createdAt
+    );
+    res.send(sortedByCreationDate);
+  } catch (error) {
+    res.status(400).send('Error while getting list of files. Try again later.');
+  }
+});
 
 /* DELETE API follow */
 router.post('/UnFollow/:id', function (req, res, next) {
