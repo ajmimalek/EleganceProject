@@ -92,7 +92,7 @@ ReactDOM.render(
         <Route path="/login" component={LoginPage} />
         <Route path="/register" component={RegisterPage} />
         <Route path="/activate/:token" component={ActivatePage} />
-        <Route path="/reset/" component={ResetPasswordPage} />
+        <Route path="/reset/:token" component={ResetPasswordPage} />
         {isAuth() ? (
           <Redirect from="/" to="/admin/wardrobe" />
         ) : (

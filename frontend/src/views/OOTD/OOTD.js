@@ -20,6 +20,12 @@ import {
 } from "@material-ui/core";
 import Toolstyles from "assets/jss/material-dashboard-react/components/tasksStyle.js";
 import Quote from "components/Typography/Quote";
+import { isAuth } from "helpers/auth";
+import { Redirect } from "react-router";
+import {
+  Chart,
+  PieSeries
+} from '@devexpress/dx-react-chart-material-ui';
 
 const styles = (theme) => ({
   ...imagesStyles,
@@ -43,7 +49,7 @@ const styles = (theme) => ({
     marginRight: "6%",
     marginLeft: "5%",
     "&:hover": {
-      animation : "$rotateIn 2s",
+      animation: "$rotateIn 2s",
     },
     [theme.breakpoints.up("lg")]: {
       marginRight: "140px",
@@ -61,12 +67,24 @@ const useToolsStyles = makeStyles(Toolstyles);
 
 const useStyles = makeStyles(styles);
 
+const data = [
+  { country: "Russia", area: 12 },
+  { country: "Canada", area: 7 },
+  { country: "USA", area: 7 },
+  { country: "China", area: 7 },
+  { country: "Brazil", area: 6 },
+  { country: "Australia", area: 5 },
+  { country: "India", area: 2 },
+  { country: "Others", area: 55 },
+];
+
 // Slide animation for work context Dialog
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function OOTD(props) {
+  const [chartData, setChartData] = useState(data);
   //Quotes
   const [quote, setQuote] = useState("");
   const [author, setAuthor] = useState("");
@@ -94,6 +112,7 @@ export default function OOTD(props) {
       <Helmet>
         <title>Elegance App - Outfit Of The Day</title>
       </Helmet>
+      {isAuth() ? null : <Redirect to="/login" />}
       <div>
         <Card>
           <CardHeader color="primary">
@@ -205,10 +224,15 @@ export default function OOTD(props) {
                 </span>
                 ...
               </DialogTitle>
-              <DialogContent></DialogContent>
+              <DialogContent>
+                <Chart data={chartData}>
+                  <PieSeries valueField="area" argumentField="country" />
+                </Chart>
+              </DialogContent>
             </Dialog>
           </CardBody>
         </Card>
+        <div></div>
         <Card>
           <CardHeader color="success">
             <span role="img" aria-labelledby="sun">
