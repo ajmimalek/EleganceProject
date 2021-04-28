@@ -24,7 +24,7 @@ import EleganceLogo from "../../assets/img/Elegance Logo.png";
 import { Helmet } from "react-helmet";
 import { Fingerprint, PersonAdd } from "@material-ui/icons";
 import { isAuth } from "helpers/auth";
-import { Redirect, useParams } from "react-router";
+import { Redirect, useHistory, useParams } from "react-router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
@@ -45,6 +45,7 @@ export default function ResetPasswordPage(props) {
 
   // retrieve params into a variable
   const params = useParams();
+  const history = useHistory();
 
   // print params to console
   console.log("params :", params);
@@ -83,6 +84,7 @@ export default function ResetPasswordPage(props) {
         setLoading(true);
         toast.success("✔ " + res.data.message);
         setLoading(false);
+        history.push("/login");
       })
       .catch(err => {
         console.log(err.response.data);

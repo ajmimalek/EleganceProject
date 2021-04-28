@@ -50,7 +50,7 @@ exports.registerController = async (req, res) => {
             });
           }
         });
-    
+
         const jwtToken = jwt.sign(
           {
             FullName,
@@ -65,7 +65,7 @@ exports.registerController = async (req, res) => {
             expiresIn: "10m",
           }
         );
-    
+
         //Sending an email to activate account after registration
         const emailData = {
           //We will specify the adress from whom the email will be sent.
@@ -144,7 +144,7 @@ exports.registerController = async (req, res) => {
           </tr>
           </table>`,
         };
-    
+
         // send mail and deliver a success message or error message
         sgMail
           .send(emailData)
@@ -162,10 +162,10 @@ exports.registerController = async (req, res) => {
           });
       }
     } else {
-      return res.status(400).json({ error: 'Invalid Captcha...Try again.' });
+      return res.status(400).json({ error: "Invalid Captcha...Try again." });
     }
   } catch (error) {
-    return res.status(400).json({ error: 'reCaptcha error' + error });
+    return res.status(400).json({ error: "reCaptcha error" + error });
   }
 };
 
@@ -426,7 +426,7 @@ exports.forgotPasswordController = (req, res) => {
               sgMail
                 .send(emailData)
                 .then((sent) => {
-                  console.log('SIGNUP EMAIL SENT', sent)
+                  console.log("SIGNUP EMAIL SENT", sent);
                   return res.json({
                     message: `Email has been sent to ${email}. Follow the instruction to activate your account`,
                   });
@@ -453,59 +453,60 @@ exports.resetPasswordController = (req, res) => {
 
   if (!errors.isEmpty()) {
     // Getting the value of the first error
-    const firstError = errors.array().map(error => error.msg)[0];
+    const firstError = errors.array().map((error) => error.msg)[0];
     return res.status(422).json({
-      errors: firstError
+      errors: firstError,
     });
   } else {
     if (resetPasswordLink) {
-      jwt.verify(resetPasswordLink, process.env.JWT_RESET_PASSWORD, function(
-        err,
-        decoded
-      ) {
-        console.log("reset error after jwt verify : " , err);
-        if (err) {
-          return res.status(400).json({
-            error: 'Expired link. Try again'
-          });
-        }
-        //verify that the user has the same resetpasswordLink which has been send with the forgot password controller.
-        User.findOne(
-          {
-            resetPasswordLink
-          },
-          (err, user) => {
-            // if there is error or the user is not found
-            if (err || !user) {
-              console.log("error after find user : ",err);
-              return res.status(400).json({
-                error: 'Something went wrong. Try later'
-              });
-            }
-
-            //set the new password as user password and clear the resetPasswordLink for a future reset password.
-            const updatedFields = {
-              password: newPassword,
-              resetPasswordLink: ''
-            };
-
-            //assign/extend take each property in the source, copy its value as-is to destination. 
-            user = _.extend(user, updatedFields);
-
-            user.save((err, result) => {
-              console.log(err);
-              if (err) {
-                return res.status(400).json({
-                  error: 'Error resetting user password'
-                });
-              }
-              res.json({
-                message: `Great! Now you can login with your new password`
-              });
+      jwt.verify(
+        resetPasswordLink,
+        process.env.JWT_RESET_PASSWORD,
+        function (err, decoded) {
+          console.log("reset error after jwt verify : ", err);
+          if (err) {
+            return res.status(400).json({
+              error: "Expired link. Try again",
             });
           }
-        );
-      });
+          //verify that the user has the same resetpasswordLink which has been send with the forgot password controller.
+          User.findOne(
+            {
+              resetPasswordLink,
+            },
+            (err, user) => {
+              // if there is error or the user is not found
+              if (err || !user) {
+                console.log("error after find user : ", err);
+                return res.status(400).json({
+                  error: "Something went wrong. Try later",
+                });
+              }
+
+              //set the new password as user password and clear the resetPasswordLink for a future reset password.
+              const updatedFields = {
+                password: newPassword,
+                resetPasswordLink: "",
+              };
+
+              //assign/extend take each property in the source, copy its value as-is to destination.
+              user = _.extend(user, updatedFields);
+
+              user.save((err, result) => {
+                console.log(err);
+                if (err) {
+                  return res.status(400).json({
+                    error: "Error resetting user password",
+                  });
+                }
+                res.json({
+                  message: `Great! Now you can login with your new password`,
+                });
+              });
+            }
+          );
+        }
+      );
     }
   }
 };
@@ -519,50 +520,158 @@ exports.googleController = (req, res) => {
   //Verify token
   client
     .verifyIdToken({ idToken, audience: process.env.GOOGLE_CLIENT })
-    .then(response => {
-      console.log('GOOGLE LOGIN RESPONSE',response);
-      const { email_verified, name, email } = response.payload;
+    .then((response) => {
+      console.log("GOOGLE LOGIN RESPONSE", response);
+      const { email_verified, name, email, picture } = response.payload;
       //Check if email is verified
       if (email_verified) {
         User.findOne({ email }).exec((err, user) => {
           // find if this email already exists
           // if exists
           if (user) {
+            console.log("old user : " + user);
             const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-              expiresIn: '7d' // valid token for 7 days
+              expiresIn: "7d", // valid token for 7 days
             });
-            const { _id, email, name, role } = user;
+            //add infos from google to the user model
+            user.FullName = name;
+            user.image = picture;
+            user.save().then((data) => {
+              data === user; // true
+              console.log("data update after : " + data);
+            });
+            console.log("new user : " + user);
+            const { _id, FullName, email, role, image, city, Phone } = user;
+            //send response to client side (react) : token + user info
             return res.json({
               token,
-              user: { _id, email, name, role }
+              user: {
+                _id,
+                FullName,
+                email,
+                role,
+                image,
+                city,
+                Phone,
+              },
             });
           } else {
+            //If user not exists we will save in database and generate password for it
             let password = email + process.env.JWT_SECRET;
-            user = new User({ name, email, password });
+            //Create user object with this email
+            user = new User({
+              FullName: name,
+              email,
+              password,
+              image: picture,
+            });
             user.save((err, data) => {
               if (err) {
-                console.log('ERROR GOOGLE LOGIN ON USER SAVE', err);
+                console.log("ERROR GOOGLE LOGIN ON USER SAVE", err);
                 return res.status(400).json({
-                  error: 'User signup failed with google'
+                  error: "User signup failed with google",
                 });
               }
+              //If no error generate a token
               const token = jwt.sign(
                 { _id: data._id },
                 process.env.JWT_SECRET,
-                { expiresIn: '7d' }
+                { expiresIn: "7d" }
               );
-              const { _id, email, name, role } = data;
+              const { _id, email, FullName, role, image } = data;
               return res.json({
                 token,
-                user: { _id, email, name, role }
+                user: { _id, email, FullName, role, image },
               });
             });
           }
         });
       } else {
         return res.status(400).json({
-          error: 'Google login failed. Try again'
+          //If error
+          error: "Google login failed. Try again",
         });
       }
+    });
+};
+
+exports.facebookController = (req, res) => {
+  console.log("FACEBOOK LOGIN REQ BODY", req.body);
+  //Get ID and token from react
+  const { userID, accessToken } = req.body;
+
+  //get from facebook API
+  const url = `https://graph.facebook.com/v2.11/${userID}/?fields=id,name,email,picture&access_token=${accessToken}`;
+
+  return fetch(url, {
+    method: "GET",
+  })
+    .then((response) => response.json())
+    .then((response) => {
+      //Get Name, Email and picture from facebook
+      const { email, name, picture } = response;
+      User.findOne({ email }).exec((err, user) => {
+        //Check if this account with this email already exists
+        if (user) {
+          const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "7d",
+          });
+          //add infos from facebook to the user model
+          user.FullName = name;
+          user.image = picture.data.url;
+          user.save().then((data) => {
+            data === user; // true
+            console.log("data update after : " + data);
+          });
+          console.log("new user : " + user);
+          const { _id, FullName, email, role, image, city, Phone } = user;
+          //send response to client side (react) : token + user info
+          return res.json({
+            token,
+            user: {
+              _id,
+              FullName,
+              email,
+              role,
+              image,
+              city,
+              Phone,
+            },
+          });
+        } else {
+          //If user not exists we will save in database and generate password for it
+          let password = email + process.env.JWT_SECRET;
+          //Create user object with this email
+          user = new User({
+            FullName: name,
+            email,
+            password,
+            image: picture.data.url,
+          });
+          user.save((err, data) => {
+            if (err) {
+              console.log("ERROR FACEBOOK LOGIN ON USER SAVE", err);
+              return res.status(400).json({
+                error: "User signup failed with facebook",
+              });
+            }
+            //if no error
+            const token = jwt.sign({ _id: data._id }, process.env.JWT_SECRET, {
+              expiresIn: "7d",
+            });
+            const { _id, email, FullName, role, image } = data;
+            return res.json({
+              token,
+              user: { _id, email, FullName, role, image },
+            });
+          });
+        }
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.json({
+        error: "Facebook login failed. Try later",
+      });
     });
 };

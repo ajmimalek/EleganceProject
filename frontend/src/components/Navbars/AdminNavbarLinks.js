@@ -185,7 +185,7 @@ export default function AdminNavbarLinks() {
           className={classes.buttonLink}
           color="inherit"
         >
-          <Avatar src={profile} alt="Rebirth"></Avatar>
+          <Avatar src={isAuth() ? isAuth().image : profile} alt="Rebirth"></Avatar>
           <Hidden mdUp implementation="css">
             <p onClick={handleCloseNotification} className={classes.linkText}>
               My Profile

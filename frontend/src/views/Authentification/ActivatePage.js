@@ -24,7 +24,7 @@ import { Check, PersonAdd } from "@material-ui/icons";
 import jwt from "jsonwebtoken";
 import axios from "axios";
 import { isAuth } from "helpers/auth";
-import { Redirect, useParams } from "react-router-dom";
+import { Redirect, useHistory, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 
 const useStyles = makeStyles(styles);
@@ -35,6 +35,7 @@ export default function ActivatePage(props) {
     setCardAnimation("");
   }, 700);
   const classes = useStyles();
+  const history = useHistory();
   const { ...rest } = props;
 
   // retrieve params into a variable
@@ -78,6 +79,7 @@ export default function ActivatePage(props) {
         });
         console.log(res.data.message);
         toast.success("✔ " + res.data.message);
+        history.push("/login");
       })
       .catch((err) => {
         console.log(err.response.data);

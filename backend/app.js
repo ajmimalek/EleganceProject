@@ -60,4 +60,6 @@ const connect = mongoose
   .then(() => console.log("Connected to db "))
   .catch((err) => console.log("catched error " + err));
 
+  mongoose.set("useCreateIndex", true);
+
 module.exports = app;
