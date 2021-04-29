@@ -24,8 +24,6 @@ router.get('/getAllNotifFollow/:iduser', async (req, res) => {
 router.post('/follow/:id', async (req, res) => {
 
   try {
-    
-   
     Follow.findByIdAndUpdate(
       req.params.id,
       { state: "accepted" },

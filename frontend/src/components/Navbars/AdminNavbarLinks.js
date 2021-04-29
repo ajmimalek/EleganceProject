@@ -63,8 +63,84 @@ export default function AdminNavbarLinks() {
   const handleCloseProfile = () => {
     setOpenProfile(null);
   };
+  const [lendList, setLendList] = useState([]);
+  useEffect(() => {
+    const getLendList = async () => {
+      try {
+        const { data } = await axios.get(
+          `http://localhost:9000/clothes/getAllClothesLend/` + isAuth()._id);
+        setLendList(data);
+       
+      } catch (error) {
+        console.log(error.response);
+      }
+    };
 
+    getLendList();
+  }, []);
   
+  function handleAcceptLendClothes(lend,Idclothes) {
+    try {
+     
+      const AcceptLendClothes = async () => {
+        try {
+          await axios.post(
+            `http://localhost:9000/clothes/AcceptLend/`+lend+'/'+Idclothes);
+            const getLendList = async () => {
+              try {
+                const { data } = await axios.get(
+                  `http://localhost:9000/clothes/getAllClothesLend/` + isAuth()._id);
+                setLendList(data);
+               
+              } catch (error) {
+                console.log(error.response);
+              }
+            };
+        
+            getLendList();
+         
+        } catch (error) {
+          console.log(error.response);
+        }
+      };
+  
+      AcceptLendClothes();
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  function handleRefuseLendClothes(lend,Idclothes) {
+    try {
+     
+      const RefuseLendClothes = async () => {
+        try {
+          await axios.post(
+            `http://localhost:9000/clothes/RefuseLend/`+lend+'/'+Idclothes);
+            const getLendList = async () => {
+              try {
+                const { data } = await axios.get(
+                  `http://localhost:9000/clothes/getAllClothesLend/` + isAuth()._id);
+                setLendList(data);
+               
+              } catch (error) {
+                console.log(error.response);
+              }
+            };
+        
+            getLendList();
+         
+        } catch (error) {
+          console.log(error.response);
+        }
+      };
+  
+      RefuseLendClothes();
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
   const [FollowList, setFollowList] = useState([]);
   useEffect(() => {
     const getFollowList = async () => {
@@ -140,7 +216,7 @@ export default function AdminNavbarLinks() {
         >
           <Notifications className={classes.icons} />
           {/* To change 5 in span based on logic of notifications */}
-          <span className={classes.notifications}>{FollowList.length}</span>
+          <span className={classes.notifications}>{FollowList.length+lendList.length}</span>
           <Hidden mdUp implementation="css">
             <p onClick={handleCloseNotification} className={classes.linkText}>
               Notification
@@ -182,7 +258,7 @@ export default function AdminNavbarLinks() {
                                   alt="User Name"
                                   
                                   className={classes.avatar}
-                                /><b>{NameUserFollowing }: </b> Family member request
+                                /><b>{NameUserFollowing }: </b> Family member request 
                                 
                                
                               </div>
@@ -212,6 +288,40 @@ export default function AdminNavbarLinks() {
                               handleOnUnfollow();
                             }} />
                 </IconButton>
+                            
+                           </center>
+                            <Divider inset />
+                            </>
+                            ))
+                          }
+                { lendList.map(
+                            ({ _id,userlend,title,lend }) => (
+                              <>
+                              <MenuItem
+                              onClick={handleCloseNotification}
+                              className={classes.dropdownItem}
+                            >
+                              <div className={classes.messageInfo}>
+                               <b>{userlend }: </b> Lend {title} request
+                                
+                               <Avatar
+                                  alt="User Name"
+                                  src={'http://localhost:9000/clothes/download/' + _id}
+                                  className={classes.avatar}
+                                />
+                              </div>
+                             
+                            </MenuItem>
+                            <center>
+                            <Button color="primary"onClick={() => {
+                             handleAcceptLendClothes(lend,_id)
+                            }}
+                            >Accept</Button>
+
+                            <Button onClick={() => {
+                              handleRefuseLendClothes(lend,_id)
+                            }}
+                            >refuse</Button>
                             
                            </center>
                             <Divider inset />

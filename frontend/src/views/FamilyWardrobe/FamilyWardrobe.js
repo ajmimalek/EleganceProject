@@ -57,6 +57,7 @@ export default function FamilyWardrobe() {
   const classes = useStyles();
   const classesUser = userStyles();
   const [FollowList, setFollowList] = useState([]);
+  const [lendtest, setLend] = useState(null);
   useEffect(() => {
     const getFollowList = async () => {
       try {
@@ -97,6 +98,37 @@ export default function FamilyWardrobe() {
       console.log(error.response);
     }
   };
+  function handleLendClothes(Idclothes) {
+    try {
+     
+      const lend = async () => {
+        try {
+          await axios.post(
+            `http://localhost:9000/clothes/lend/`+isAuth()._id+'/'+Idclothes+'/'+isAuth().FullName);
+            
+      const getClothesList = async () => {
+        try {
+          const { data } = await axios.get(
+            `http://localhost:9000/clothes/getAllClothes/`+lendtest);
+            setUserClothesList(data);
+         
+        } catch (error) {
+          console.log(error.response);
+        }
+      };
+  
+      getClothesList();
+         
+        } catch (error) {
+          console.log(error.response);
+        }
+      };
+  
+      lend();
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
 
   return (
     <>
@@ -132,6 +164,7 @@ export default function FamilyWardrobe() {
                 <IconButton className={classesUser.title} 
                 onClick={() => {
                   handleUserClothes(UserFollowing);
+                  setLend(UserFollowing);
                 }
                 }>
                   {NameUserFollowing}
@@ -147,7 +180,7 @@ export default function FamilyWardrobe() {
 <div className={classes.ClothesList}>
  {userClothesList.length > 0 ? (
                       userClothesList.map(
-                        ({ _id,sell,title,size}) => (
+                        ({ _id,lend,title,size}) => (
                           
                           <Card className={classes.ClothesItem}>
                           <img
@@ -160,8 +193,23 @@ export default function FamilyWardrobe() {
                           />
                           <CardBody>
                             <h4>{title}</h4>
-                            <Button color="primary">Lend</Button>
-                           
+                            {lend===_id?(
+                              <Button color="primary"
+                            onClick={() => {
+                              handleLendClothes(_id);
+                              setLend(_id);
+                            }}
+                            >Lend</Button>
+                            ):lend?(
+                            <Button color="primary" disabled
+                            >Lend</Button>):(
+                            <Button color="primary"
+                            onClick={() => {
+                              handleLendClothes(_id);
+                              setLend(_id);
+                            }}
+                            >Lend</Button>)}
+                            
                           </CardBody>
                           
 
