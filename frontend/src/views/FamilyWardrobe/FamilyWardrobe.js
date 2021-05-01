@@ -58,24 +58,39 @@ export default function FamilyWardrobe() {
   const classesUser = userStyles();
   const [FollowList, setFollowList] = useState([]);
   const [lendtest, setLend] = useState(null);
-  useEffect(() => {
-    const getFollowList = async () => {
+  
+  function handleSearchUser(FullName) {
+    
+    const Search = async () => {
       try {
-        const { data } = await axios.get(
-          `http://localhost:9000/user/getUserFollow/` + isAuth()._id);
-        setFollowList(data);
-        console.log(data);
-        data.forEach(element => {
-          console.log(element.state, "iddd", element.UserFollowers)
-
-        });
-
+        const { data } = await axios.post(
+          `http://localhost:9000/user/FindUserFollow/` + isAuth()._id+'/'+FullName);
+          setFollowList(data);
       } catch (error) {
-        console.log(error.response);
+        getFollowList();
       }
     };
+    Search();
+      
+  };
+  const getFollowList = async () => {
+    try {
+      const { data } = await axios.get(
+        `http://localhost:9000/user/getUserFollow/` + isAuth()._id);
+      setFollowList(data);
+      console.log(data);
+      data.forEach(element => {
+        console.log(element.state, "iddd", element.UserFollowers)
 
-    getFollowList();
+      });
+
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+      getFollowList();
   }, []);
 
   const [userClothesList, setUserClothesList] = useState([]);
@@ -141,13 +156,14 @@ export default function FamilyWardrobe() {
               <CardHeader>
               
               <SearchBar
-      onChange={() => console.log('onChange')}
+      onChange={(e) => handleSearchUser(e)}
       onRequestSearch={() => console.log('onRequestSearch')}
+     
       style={{
         margin: '0 auto',
-        maxWidth: 800
+        maxWidth: 1400
       }}
-    />
+    /><br></br>
               <GridList className={classesUser.gridList} cols={7}>
               {  FollowList.map(
                             ({ NameUserFollowing, UserFollowing }) => (

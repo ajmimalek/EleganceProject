@@ -1,3 +1,4 @@
+import Divider from "@material-ui/core/Divider";
 import React, { useState, useEffect } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -14,7 +15,7 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardAvatar from "components/Card/CardAvatar.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
-
+import swal from 'sweetalert';
 import DefaultAvatar from "../../assets/img/default-avatar.png";
 import { primaryColor } from "assets/jss/material-dashboard-react";
 import avatar from "assets/img/faces/marc.jpg";
@@ -89,70 +90,107 @@ export default function UserProfile(props) {
   const [NameUserConected, SetNameUserConected] = useState(isAuth().FullName);
   const [testFollow, SetTestFollow] = useState(false);
 
+  const [userList, setUserList] = useState([]);
+ 
   var IdUserFollowers = null;
   function UserFollowersUse(id) {
     IdUserFollowers = id;
   }
-  function handleOnfollow() {
-    try {
-      const data = {
-        idUserConected,
-        IdUserFollowers,
-        NameUserConected
-      };
-      axios.post(`http://localhost:9000/user/follow`, data);
-      window.location.reload(false);
-      
-    } catch (error) {
-      console.log(error.response);
-    }
-    
-  };
-  function handleOnUnfollow() {
-    try {
-      const data = {
-        idUserConected,
-        IdUserFollowers
-      };
-      axios.post(`http://localhost:9000/user/UnFollow`, data);
-      window.location.reload(false);
-    } catch (error) {
-      console.log(error.response);
-    }
-  };
-
-  const [userList, setUserList] = useState([]);
-  useEffect(() => {
-    const getUserList = async () => {
+  function handleOnfollow(FullName) {
+    const follow = async () => {
       try {
-        const { data } = await axios.get(
-          `http://localhost:9000/user/getAllUser/` + isAuth()._id);
-        setUserList(data);
+        
+    const data = {
+      idUserConected,
+      IdUserFollowers,
+      NameUserConected
+    };
+    await   axios.post(`http://localhost:9000/user/follow`, data);
+
       } catch (error) {
         console.log(error.response);
       }
     };
+    follow();
+  
+    swal("Requested family member to: "+FullName)
+    .then((value) => {
+      getFollowList();
+      getUserList();;
+    });
 
+  };
+  function handleOnUnfollow(FullName) {
+    
+    const Unfollow = async () => {
+      try {
+        
+        const data = {
+          idUserConected,
+          IdUserFollowers
+        };
+        await axios.post(`http://localhost:9000/user/UnFollow`, data);
+
+      } catch (error) {
+        console.log(error.response);
+      }
+    };
+    Unfollow();
+    swal("Remove: "+FullName)
+    .then((value) => {
+      getFollowList();
+      getUserList();;
+    }); 
+      
+  };
+  
+  function handleSearchUser(FullName) {
+    
+    const Search = async () => {
+      try {
+        const { data } = await axios.post(
+          `http://localhost:9000/user/FindAllUser/` + isAuth()._id+'/'+FullName);
+        setUserList(data);
+      } catch (error) {
+        getUserList();
+      }
+    };
+    Search();
+      
+  };
+  const getUserList = async () => {
+    try {
+      const { data } = await axios.post(
+        `http://localhost:9000/user/getAllUser/` + isAuth()._id);
+      setUserList(data);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+ 
     getUserList();
   }, []);
 
   const [FollowList, setFollowList] = useState([]);
+  const getFollowList = async () => {
+    try {
+      const { data } = await axios.post(
+        `http://localhost:9000/user/getAllFollow/` + isAuth()._id);
+      setFollowList(data);
+      console.log(data);
+      data.forEach(element => {
+        console.log(element.state, "iddd", element.UserFollowers)
+
+      });
+
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
   useEffect(() => {
-    const getFollowList = async () => {
-      try {
-        const { data } = await axios.get(
-          `http://localhost:9000/user/getAllFollow/` + isAuth()._id);
-        setFollowList(data);
-        console.log(data);
-        data.forEach(element => {
-          console.log(element.state, "iddd", element.UserFollowers)
-
-        });
-
-      } catch (error) {
-        console.log(error.response);
-      }
-    };
 
     getFollowList();
   }, []);
@@ -280,14 +318,15 @@ export default function UserProfile(props) {
           
             <CardBody>
             <SearchBar
-      onChange={() => console.log('onChange')}
+      onChange={(e) => handleSearchUser(e)}
       onRequestSearch={() => console.log('onRequestSearch')}
+     
       style={{
         margin: '0 auto',
         maxWidth: 800
       }}
     />
-
+<br></br>
               {
                 userList.map(
                   ({ _id, FullName,v }) => {
@@ -313,20 +352,20 @@ export default function UserProfile(props) {
                                     <Button color="secondary"
                                       onClick={() => {
                                         UserFollowersUse(_id);
-                                        handleOnUnfollow();
+                                        handleOnUnfollow(FullName);
                                       }
                                       }>{state}</Button>
                                   ) : (
                                     <Button color="primary"
                                       onClick={() => {
                                         UserFollowersUse(_id);
-                                      handleOnUnfollow();
+                                      handleOnUnfollow(FullName);
                                       }
                                       }>UnFollow </Button>
                                   )
                                 ) :
                                   (
-                                    <p></p>
+                                    <></>
                                     )
 
                               )
@@ -334,17 +373,17 @@ export default function UserProfile(props) {
                           <Button color="primary"
                             onClick={() => {
                               UserFollowersUse(_id);
-                              handleOnfollow();
+                              handleOnfollow(FullName);
                             }
                             }>family member</Button>
                         ):
                         (
-                          <p></p>
+                          <></>
                         )
 
                         }
 
-
+<Divider inset />
                         <br></br>
                       </div>
 

@@ -151,10 +151,20 @@ console.log(newChecked);
         const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+selectedValue,newChecked);
         setErrorMsg('');
         setFilesList(data);
+        if(newChecked.length==0){
+          const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+selectedValue);
+          setErrorMsg('');
+          setFilesList(data);
+        }
       }else{
         const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothing/`+valueMax+'/'+valueMin,newChecked);
         setErrorMsg('');
         setFilesList(data);
+        if(newChecked.length==0){
+          const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin);
+          setErrorMsg('');
+          setFilesList(data);
+        }
       }
         
       } catch (error) {
@@ -227,9 +237,9 @@ console.log(newChecked);
               <CardHeader color="primary">
                 <div className={classes.addStore}>
                   <h4 className={Cardclasses.cardTitleWhite}>Ariana's Store </h4>
-                  <p >
+                  
 
-                    <Button color="primary" round onClick={() => setModal(true)}> my store</Button>
+                    <Button  className={classes.addClothes} color="primary" round onClick={() => setModal(true)}> my store</Button>
                     <Dialog
                       classes={{
                         root: classes.center,
@@ -248,19 +258,10 @@ console.log(newChecked);
                         className={classes.modalHeader}
                       >
 
-                        <div className={classes.addStore}>
+                        
                           <h4 className={classes.modalTitle}>My store</h4>
                           
-                          <IconButton
-                            className={classes.modalCloseButton}
-                            key="close"
-                            aria-label="Close"
-                            color="inherit"
-                            onClick={() => setModal(false)}
-                          >
-                            <Close className={classes.modalClose} />
-                          </IconButton>
-                        </div>
+                  
                       </DialogTitle>
                       
                     
@@ -382,7 +383,7 @@ console.log(newChecked);
                       </DialogContent>
                     </Dialog>
 
-                  </p></div>
+                  </div>
               </CardHeader>
               <div className={classes.clothes}>
 

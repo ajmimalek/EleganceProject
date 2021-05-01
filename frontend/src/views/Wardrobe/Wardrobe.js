@@ -11,6 +11,8 @@ import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
 import Cardstyles from "assets/jss/material-dashboard-react/cardImagesStyles.js";
 
 import { makeStyles } from "@material-ui/core/styles";
+import Checkbox from "@material-ui/core/Checkbox";
+import Check from "@material-ui/icons/Check";
 
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -87,6 +89,37 @@ const Wardrobe = (props) => {
     const { price, value } = e.currentTarget;
     setprice(value);
   };
+  const handleToggle = value => {
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    console.log("checked",checked);
+    } else {
+      newChecked.splice(currentIndex, 1);
+      console.log("nochecked",checked);
+    }
+    setChecked(newChecked);
+console.log(newChecked);
+    const clothing = async () => {
+      try {
+        
+       
+        const { data } = await axios.post(`http://localhost:9000/clothes/getClothesByClothing/`+ isAuth()._id,newChecked);
+        setErrorMsg('');
+        setFilesList(data);
+        if(newChecked.length==0){
+          getFilesList();
+        }
+        
+      } catch (error) {
+        error.response && setErrorMsg(error.response.data);
+      }
+    };
+
+    clothing();
+  };
+  
 
   const onDrop = (files) => {
     const [uploadedFile] = files;
@@ -201,19 +234,36 @@ const Wardrobe = (props) => {
       }
     };
   */
+ //handleSearchClothes
+ function handleSearchClothes(clothes){
+  const search = async () => {
+  try {
+    const { data } = await axios.get(
+      `http://localhost:9000/clothes/getSearchClothes/` + isAuth()._id+'/'+clothes
+    );
+    setErrorMsg("");
+    setFilesList(data);
+  } catch (error) {
+    getFilesList();
+  }
+};
+
+search();
+ }
+ const getFilesList = async () => {
+  try {
+    const { data } = await axios.get(
+      `http://localhost:9000/clothes/getAllClothes/` + isAuth()._id
+    );
+    setErrorMsg("");
+    setFilesList(data);
+  } catch (error) {
+    error.response && setErrorMsg(error.response.data);
+  }
+};
   const [filesList, setFilesList] = useState([]);
   useEffect(() => {
-    const getFilesList = async () => {
-      try {
-        const { data } = await axios.get(
-          `http://localhost:9000/clothes/getAllClothes/` + isAuth()._id
-        );
-        setErrorMsg("");
-        setFilesList(data);
-      } catch (error) {
-        error.response && setErrorMsg(error.response.data);
-      }
-    };
+    
 
     getFilesList();
   }, []);
@@ -402,14 +452,14 @@ const Wardrobe = (props) => {
               <CardBody>
                 {/**Here */}
                 <SearchBar
-                  onChange={() => console.log('onChange')}
-                  onRequestSearch={() => console.log('onRequestSearch')}
-                  style={{
-                    margin: '0 auto',
-                    maxWidth: 800
-                  }}
-                />
-
+      onChange={(e) => handleSearchClothes(e)}
+      onRequestSearch={() => console.log('onRequestSearch')}
+     
+      style={{
+        margin: '0 auto',
+        maxWidth: 1400
+      }}
+    />
                 <Dialog
                   classes={{
                     root: classes.center,
@@ -426,26 +476,31 @@ const Wardrobe = (props) => {
                     id="classic-modal-slide-title"
                     disableTypography
                     className={classes.modalHeader}
-                  >
-                    <div className={classes.addStore}>
-                      <IconButton
-                        className={classes.modalCloseButton}
-                        key="close"
-                        aria-label="Close"
-                        color="inherit"
-                        onClick={() => setModal(false)}
-                      >
-                        <Close className={classes.modalClose} />
-                      </IconButton>
-                    </div>
-                  </DialogTitle>
+                  >Size
+                      </DialogTitle>
                   <DialogContent
                     id="modal-slide-description"
                     className={classes.modalBody}
                   >
                     <Radio
                       checked={selectedValue === "s"}
-                      onChange={() => setSelectedValue("s")}
+                      onChange={() => {setSelectedValue("s");
+                      const getFilesList = async () => {
+                        try {
+                          const Value="s";
+                         
+                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          setErrorMsg('');
+                          setFilesList(data);
+                          
+                          
+                        } catch (error) {
+                          error.response && setErrorMsg(error.response.data);
+                        }
+                      };
+                  
+                      getFilesList();
+                    }}
                       value="s"
                       name="radio button demo"
                       aria-label="S"
@@ -464,8 +519,24 @@ const Wardrobe = (props) => {
                       S
                       <Radio
                       checked={selectedValue === "m"}
-                      onChange={() => setSelectedValue("m")}
-                      value="m"
+                      onChange={() => {setSelectedValue("m");
+                      const getFilesList = async () => {
+                        try {
+                          const Value="m";
+                         
+                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          setErrorMsg('');
+                          setFilesList(data);
+                          
+                          
+                        } catch (error) {
+                          error.response && setErrorMsg(error.response.data);
+                        }
+                      };
+                  
+                      getFilesList();
+                    }}
+                    value="m"
                       name="radio button demo"
                       aria-label="M"
                       icon={
@@ -483,7 +554,23 @@ const Wardrobe = (props) => {
                       M
                       <Radio
                       checked={selectedValue === "l"}
-                      onChange={() => setSelectedValue("l")}
+                      onChange={() => {setSelectedValue("l");
+                      const getFilesList = async () => {
+                        try {
+                          const Value="l";
+                         
+                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          setErrorMsg('');
+                          setFilesList(data);
+                          
+                          
+                        } catch (error) {
+                          error.response && setErrorMsg(error.response.data);
+                        }
+                      };
+                  
+                      getFilesList();
+                    }}
                       value="l"
                       name="radio button demo"
                       aria-label="L"
@@ -502,7 +589,23 @@ const Wardrobe = (props) => {
                       L
                       <Radio
                       checked={selectedValue === "xl"}
-                      onChange={() => setSelectedValue("xl")}
+                      onChange={() => {setSelectedValue("xl");
+                      const getFilesList = async () => {
+                        try {
+                          const Value="xl";
+                         
+                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          setErrorMsg('');
+                          setFilesList(data);
+                          
+                          
+                        } catch (error) {
+                          error.response && setErrorMsg(error.response.data);
+                        }
+                      };
+                  
+                      getFilesList();
+                    }}
                       value="xl"
                       name="radio button demo"
                       aria-label="XL"
@@ -521,7 +624,23 @@ const Wardrobe = (props) => {
                       XL
                       <Radio
                       checked={selectedValue === "xxl"}
-                      onChange={() => setSelectedValue("xxl")}
+                      onChange={() => {setSelectedValue("xxl");
+                      const getFilesList = async () => {
+                        try {
+                          const Value="xxl";
+                         
+                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          setErrorMsg('');
+                          setFilesList(data);
+                          
+                          
+                        } catch (error) {
+                          error.response && setErrorMsg(error.response.data);
+                        }
+                      };
+                  
+                      getFilesList();
+                    }}
                       value="xxl"
                       name="radio button demo"
                       aria-label="XXL"
@@ -542,7 +661,24 @@ const Wardrobe = (props) => {
                     {("Checkbox:", console.log(checked))}
                     <Radio
                       checked={selectedValue === "xxxl"}
-                      onChange={() => setSelectedValue("xxxl")}
+                      
+                      onChange={() => {setSelectedValue("xxxl");
+                      const getFilesList = async () => {
+                        try {
+                          const Value="xxxl";
+                         
+                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          setErrorMsg('');
+                          setFilesList(data);
+                          
+                          
+                        } catch (error) {
+                          error.response && setErrorMsg(error.response.data);
+                        }
+                      };
+                  
+                      getFilesList();
+                    }}
                       value="xxxl"
                       name="radio button demo"
                       aria-label="XXXL"
@@ -579,23 +715,63 @@ const Wardrobe = (props) => {
                     disableTypography
                     className={classes.modalHeader}
                   >
-                    <div className={classes.addStore}>
-                      <IconButton
-                        className={classes.modalCloseButton}
-                        key="close"
-                        aria-label="Close"
-                        color="inherit"
-                        onClick={() => setModalType(false)}
-                      >
-                        <Close className={classes.modalClose} />
-                      </IconButton>
-                    </div>
+                   Clothing
                   </DialogTitle>
                   <DialogContent
                     id="modal-slide-description"
                     className={classes.modalBody}
                   >
-                    Type
+                    
+                    
+                    <Checkbox
+                      tabIndex={-1}
+                      onClick={() => handleToggle("Jacket")}
+                      checkedIcon={<Check className={classes.checkedIcon} />}
+                      icon={<Check className={classes.uncheckedIcon} />}
+                      classes={{
+                        checked: classes.checked
+                      }}
+                    /> Jacket
+
+                    <Checkbox
+                      tabIndex={-1}
+                      onClick={() => handleToggle("Jeane")}
+                      checkedIcon={<Check className={classes.checkedIcon} />}
+                      icon={<Check className={classes.uncheckedIcon} />}
+                      classes={{
+                        checked: classes.checked
+                      }}
+                    /> Jeane
+
+                    <Checkbox
+                      tabIndex={-1}
+                      onClick={() => handleToggle("Shirt")}
+                      checkedIcon={<Check className={classes.checkedIcon} />}
+                      icon={<Check className={classes.uncheckedIcon} />}
+                      classes={{
+                        checked: classes.checked
+                      }}
+                    /> Shirt
+                 <Checkbox
+                      tabIndex={-1}
+                      onClick={() => handleToggle("Man suit")}
+                      checkedIcon={<Check className={classes.checkedIcon} />}
+                      icon={<Check className={classes.uncheckedIcon} />}
+                      classes={{
+                        checked: classes.checked
+                      }}
+                    /> suit
+
+   <Checkbox
+                      tabIndex={-1}
+                      onClick={() => handleToggle("Sweater")}
+                      checkedIcon={<Check className={classes.checkedIcon} />}
+                      icon={<Check className={classes.uncheckedIcon} />}
+                      classes={{
+                        checked: classes.checked
+                      }}
+                    /> Sweater
+
                     </DialogContent>
                 </Dialog>
 
@@ -639,7 +815,7 @@ const Wardrobe = (props) => {
                 <div className={classes.ClothesList}>
                   {filesList.length > 0 ? (
                     filesList.map(
-                      ({ _id, title }) => (
+                      ({ _id, title ,size}) => (
                         <Card className={classes.ClothesItem}>
                           <img
                             className={Cardclasses.cardImgTop}
@@ -658,7 +834,7 @@ const Wardrobe = (props) => {
                           </CardHeader>
                           
                           <CardBody>
-                            <h4>{title}</h4>
+                            <h4>{title}</h4>Size: {size}
                             <Button>Details</Button>
                           </CardBody>
                           <b>Add to local store

@@ -162,7 +162,26 @@ router.post('/RefuseLend/:lend/:idClothes', async (req, res) => {
       }
     }
   );
-  
+  //getSearchClothes
+router.get('/getSearchClothes/:idUser/:keyword', async (req, res) => {
+  try {
+    const files = await Clothes.find({ 
+      $and: [{ sell: { $exists: false } }, {
+        user: {
+          "_id": req.params.idUser
+        }
+      },{title: new RegExp(req.params.keyword, 'i')}
+      ] });
+    const sortedByCreationDate = files.sort(
+      (a, b) => b.createdAt - a.createdAt
+    );
+    res.send(sortedByCreationDate);
+  } catch (error) {
+    res.status(400).send('Error while getting list of files. Try again later.');
+  }
+});
+
+
 router.get('/getAllClothes/:idUser', async (req, res) => {
   try {
     const files = await Clothes.find({ 
@@ -171,6 +190,25 @@ router.get('/getAllClothes/:idUser', async (req, res) => {
           "_id": req.params.idUser
         }
       }
+      ] });
+    const sortedByCreationDate = files.sort(
+      (a, b) => b.createdAt - a.createdAt
+    );
+    res.send(sortedByCreationDate);
+  } catch (error) {
+    res.status(400).send('Error while getting list of files. Try again later.');
+  }
+});
+
+
+router.get('/getAllClothes/:size/:idUser', async (req, res) => {
+  try {
+    const files = await Clothes.find({ 
+      $and: [{ sell: { $exists: false } }, {
+        user: {
+          "_id": req.params.idUser
+        }
+      }, { size: req.params.size }
       ] });
     const sortedByCreationDate = files.sort(
       (a, b) => b.createdAt - a.createdAt
@@ -262,6 +300,26 @@ router.post('/getAllSellClothesByClothing/:max/:min/', async (req, res) => {
   try {
 
     const files = await Clothes.find({ $and: [{ sell: { $gte: req.params.min, $lte: req.params.max } }, { type: { $in: req.body } }] });
+    console.log("eee");
+    const sortedByCreationDate = files.sort(
+      (a, b) => b.createdAt - a.createdAt
+    );
+    res.send(sortedByCreationDate);
+  } catch (error) {
+    res.status(400).send('Error while getting list of files. Try again later.');
+  }
+});
+
+
+//get All Sell Clothes ByClothing 
+router.post('/getClothesByClothing/:idUser', async (req, res) => {
+  try {
+
+    const files = await Clothes.find({ $and: [{
+      user: {
+        "_id": req.params.idUser
+      }
+    }, { type: { $in: req.body } }] });
     console.log("eee");
     const sortedByCreationDate = files.sort(
       (a, b) => b.createdAt - a.createdAt

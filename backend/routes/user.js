@@ -49,7 +49,7 @@ router.post('/follow/:id', async (req, res) => {
 /* post API follow user */
 router.post('/follow', async (req, res) => {
   try {
-    console.log("vvv", req.body);
+  
     const { idUserConected,IdUserFollowers,NameUserConected } = req.body;
     console.log("jjjj",idUserConected,IdUserFollowers);
     const follow = new Follow({
@@ -60,16 +60,7 @@ router.post('/follow', async (req, res) => {
     
     });
 
-    await follow.save((err, newContact) => {
-      if (err)
-        console.log("Error message : " + err);
-      else {
-
-        sortedByCreationDate = newContact;
-        console.log(sortedByCreationDate);
-        res.send(sortedByCreationDate);
-      }
-    });
+    await follow.save();
   } catch (error) {
     res.status(400).send('Error while uploading file. Try fff again later.');
   }
@@ -81,17 +72,17 @@ router.post('/follow', async (req, res) => {
   }
 );
 //get api all UnFollow
-router.post('/UnFollow', function (req, res, next) {
-  Follow.deleteMany({ $and: [{  UserFollowing: req.body.idUserConected },{ UserFollowers: req.body.IdUserFollowers }] }).then(function(){
+router.post('/UnFollow',  async (req, res) => {
+  await Follow.deleteMany({ $and: [{  UserFollowing: req.body.idUserConected },{ UserFollowers: req.body.IdUserFollowers }] }).then(function(){
     console.log("Data deleted"); // Success
 }).catch(function(error){
     console.log(error); // Failure
 });
   });
 //get api all follow 
-router.get('/getAllFollow/:iduser', async (req, res) => {
+router.post('/getAllFollow/:iduser', async (req, res) => {
   try {
-    const follow = await Follow.find({ UserFollowing: req.params.iduser });
+    const follow =  await Follow.find({ UserFollowing: req.params.iduser });
     const sortedByCreationDate = follow.sort(
       (a, b) => b.createdAt - a.createdAt
     );
@@ -103,6 +94,7 @@ router.get('/getAllFollow/:iduser', async (req, res) => {
 //get api all follow 
 router.get('/getUserFollow/:iduser', async (req, res) => {
   try {
+    
     const follow = await Follow.find({$and: [{ UserFollowers: req.params.iduser },{state:"accepted"}]});
     const sortedByCreationDate = follow.sort(
       (a, b) => b.createdAt - a.createdAt
@@ -114,9 +106,8 @@ router.get('/getUserFollow/:iduser', async (req, res) => {
 });
 
 /* DELETE API follow */
-router.post('/UnFollow/:id', function (req, res, next) {
-  console.log(req.params.id);
-  Follow.findByIdAndRemove(
+router.post('/UnFollow/:id', async (req, res) =>{
+  await Follow.findByIdAndRemove(
     req.params.id,
     function (err, data) {
       if (err) console.log(err);
@@ -124,7 +115,7 @@ router.post('/UnFollow/:id', function (req, res, next) {
     }
   )
 });
-router.get('/getAllUser/:idUserConected', async (req, res) => {
+router.post('/getAllUser/:idUserConected', async (req, res) => {
     try {
       const user = await User.find({ "_id":{$ne:req.params.idUserConected}
         });
@@ -137,9 +128,33 @@ router.get('/getAllUser/:idUserConected', async (req, res) => {
     }
   });
   
-
-
-
+//search user
+  router.post('/FindAllUser/:idUserConected/:keyword', async (req, res) => {
+    try {
+      const user = await User.find({ $and: [{ "_id":{$ne:req.params.idUserConected}},{FullName: new RegExp(req.params.keyword, 'i')}]}
+        );
+      const sortedByCreationDate = user.sort(
+        (a, b) => b.createdAt - a.createdAt
+      );
+      res.send(sortedByCreationDate);
+    } catch (error) {
+      res.status(400).send('Error while getting list of files. Try again later.');
+    }
+  });
+  
+//search User Follow FindUserFollow
+router.post('/FindUserFollow/:idUserConected/:keyword', async (req, res) => {
+  try {
+    const user = await Follow.find({ $and: [{UserFollowers: req.params.idUserConected},{NameUserFollowing: new RegExp(req.params.keyword, 'i')},{state:"accepted"}]}
+      );
+    const sortedByCreationDate = user.sort(
+      (a, b) => b.createdAt - a.createdAt
+    );
+    res.send(sortedByCreationDate);
+  } catch (error) {
+    res.status(400).send('Error while getting list of files. Try again later.');
+  }
+});
 
 
 module.exports = router;
