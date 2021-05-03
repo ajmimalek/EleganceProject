@@ -9,6 +9,7 @@ import StarBorderIcon from '@material-ui/icons/StarBorder';
 import profile from "../../assets/img/faces/marc.jpg";
 import React, { useState, useEffect } from "react";
 import SearchBar from 'material-ui-search-bar';
+import { Redirect } from "react-router";
 
 import Cardstyles from "assets/jss/material-dashboard-react/cardImagesStyles.js";
 import axios from "axios";
@@ -64,7 +65,7 @@ export default function FamilyWardrobe() {
     const Search = async () => {
       try {
         const { data } = await axios.post(
-          `http://localhost:9000/user/FindUserFollow/` + isAuth()._id+'/'+FullName);
+          `${process.env.REACT_APP_API_URL_USER}/FindUserFollow/` + isAuth()._id+'/'+FullName);
           setFollowList(data);
       } catch (error) {
         getFollowList();
@@ -76,7 +77,7 @@ export default function FamilyWardrobe() {
   const getFollowList = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:9000/user/getUserFollow/` + isAuth()._id);
+        `${process.env.REACT_APP_API_URL_USER}/getUserFollow/` + isAuth()._id);
       setFollowList(data);
       console.log(data);
       data.forEach(element => {
@@ -100,7 +101,7 @@ export default function FamilyWardrobe() {
       const getClothesList = async () => {
         try {
           const { data } = await axios.get(
-            `http://localhost:9000/clothes/getAllClothes/`+Iduser);
+            `${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/`+Iduser);
             setUserClothesList(data);
          
         } catch (error) {
@@ -119,12 +120,12 @@ export default function FamilyWardrobe() {
       const lend = async () => {
         try {
           await axios.post(
-            `http://localhost:9000/clothes/lend/`+isAuth()._id+'/'+Idclothes+'/'+isAuth().FullName);
+            `${process.env.REACT_APP_API_URL_CLOTHES}/lend/`+isAuth()._id+'/'+Idclothes+'/'+isAuth().FullName);
             
       const getClothesList = async () => {
         try {
           const { data } = await axios.get(
-            `http://localhost:9000/clothes/getAllClothes/`+lendtest);
+            `${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/`+lendtest);
             setUserClothesList(data);
          
         } catch (error) {
@@ -151,6 +152,7 @@ export default function FamilyWardrobe() {
       <title>Elegance App - Family Wardrobe</title>
     </Helmet>
     <GridContainer>
+    {isAuth() ? null : <Redirect to="/login" />}
           <GridItem xs={12} sm={12} md={12}>
             <Card>
               <CardHeader>

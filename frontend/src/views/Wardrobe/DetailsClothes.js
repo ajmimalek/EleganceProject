@@ -13,10 +13,10 @@ import CardFooter from "components/Card/CardFooter.js";
 
 import axios from 'axios';
 import Footer from "components/FooterLogin/Footer.js";
-
+import { isAuth } from "helpers/auth";
 import styles from "assets/jss/material-dashboard-react/views/registerPage";
 import image from "assets/img/bg7.jpg";
-
+import { Redirect } from "react-router";
 import {
   FormControl,
   Slide,
@@ -99,7 +99,7 @@ console.log("sss",id);
       };
      
 
-      await axios.post(`http://localhost:9000/clothes/CompleteNewClothes`, data);
+      await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/CompleteNewClothes`, data);
       props.history.push('/admin/wardrobe');
     } catch (error) {
       console.log(error.response);
@@ -109,6 +109,7 @@ console.log("sss",id);
 
   return (
     <div>
+           {isAuth() ? null : <Redirect to="/login" />}
       <div
         className={classes.pageHeader}
         style={{

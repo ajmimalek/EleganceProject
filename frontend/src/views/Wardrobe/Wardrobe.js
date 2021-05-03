@@ -89,6 +89,7 @@ const Wardrobe = (props) => {
     const { price, value } = e.currentTarget;
     setprice(value);
   };
+  
   const handleToggle = value => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
@@ -105,7 +106,7 @@ console.log(newChecked);
       try {
         
        
-        const { data } = await axios.post(`http://localhost:9000/clothes/getClothesByClothing/`+ isAuth()._id,newChecked);
+        const { data } = await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/getClothesByClothing/`+ isAuth()._id,newChecked);
         setErrorMsg('');
         setFilesList(data);
         if(newChecked.length==0){
@@ -154,7 +155,7 @@ console.log(newChecked);
 
 
       setErrorMsg("");
-      const { data } = await axios.post(`http://localhost:9000/clothes/upload`, formData, {
+      const { data } = await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -180,7 +181,7 @@ console.log(newChecked);
       };
 
       setErrorMsg("");
-      await axios.post(`http://localhost:9000/clothes/sellClothes`, data);
+      await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/sellClothes`, data);
 
       props.history.push("/list");
     } catch (error) {
@@ -202,7 +203,7 @@ console.log(newChecked);
           const getFilesList = async () => {
             try {
               const { data } = await axios.get(
-                `http://localhost:9000/clothes/getAllClothes/` + isAuth()._id
+                `${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/` + isAuth()._id
               );
               setErrorMsg("");
               setFilesList(data);
@@ -239,7 +240,7 @@ console.log(newChecked);
   const search = async () => {
   try {
     const { data } = await axios.get(
-      `http://localhost:9000/clothes/getSearchClothes/` + isAuth()._id+'/'+clothes
+      `${process.env.REACT_APP_API_URL_CLOTHES}/getSearchClothes/` + isAuth()._id+'/'+clothes
     );
     setErrorMsg("");
     setFilesList(data);
@@ -253,7 +254,7 @@ search();
  const getFilesList = async () => {
   try {
     const { data } = await axios.get(
-      `http://localhost:9000/clothes/getAllClothes/` + isAuth()._id
+      `${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/` + isAuth()._id
     );
     setErrorMsg("");
     setFilesList(data);
@@ -489,7 +490,7 @@ search();
                         try {
                           const Value="s";
                          
-                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/`+Value+'/'+ isAuth()._id);
                           setErrorMsg('');
                           setFilesList(data);
                           
@@ -524,7 +525,7 @@ search();
                         try {
                           const Value="m";
                          
-                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/`+Value+'/'+ isAuth()._id);
                           setErrorMsg('');
                           setFilesList(data);
                           
@@ -559,7 +560,7 @@ search();
                         try {
                           const Value="l";
                          
-                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/`+Value+'/'+ isAuth()._id);
                           setErrorMsg('');
                           setFilesList(data);
                           
@@ -594,7 +595,7 @@ search();
                         try {
                           const Value="xl";
                          
-                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/`+Value+'/'+ isAuth()._id);
                           setErrorMsg('');
                           setFilesList(data);
                           
@@ -629,7 +630,7 @@ search();
                         try {
                           const Value="xxl";
                          
-                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/`+Value+'/'+ isAuth()._id);
                           setErrorMsg('');
                           setFilesList(data);
                           
@@ -667,7 +668,7 @@ search();
                         try {
                           const Value="xxxl";
                          
-                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/`+Value+'/'+ isAuth()._id);
                           setErrorMsg('');
                           setFilesList(data);
                           
