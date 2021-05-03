@@ -1,4 +1,5 @@
 var createError = require("http-errors");
+console.log("require createError");
 var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
@@ -12,7 +13,6 @@ var app = express();
 
 //import database
 var mongoose = require("mongoose");
-var configDB = require("./database/mongodb.json");
 
 // Config dotev
 require("dotenv").config();
@@ -30,36 +30,51 @@ app.use(cookieParser());
 
 // Load routes
 const authRouter = require("./routes/auth.route");
+const userRouter = require("./routes/user.route");
 //clothes Routes
 app.use("/clothes", clothesRoutes);
 // Use Routes
 app.use("/api", authRouter);
+app.use("/api", userRouter);
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
+if (process.env.NODE_ENV === "development") {
+  console.log("d5lna f dev");
+  // error handler
+  app.use(function (err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get("env") === "development" ? err : {};
 
-// error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.json({ message: err.message });
-});
+    // render the error page
+    res.status(err.status || 500);
+    res.json({ message: err.message });
+  });
+  // catch 404 and forward to error handler
+  app.use(function (req, res, next) {
+    console.log("neeext");
+    next(createError(404));
+  });
+}
 
 //connection mongoose
 const connect = mongoose
-  .connect(configDB.mongo.uri, {
+  .connect(`${process.env.MONGO_URI}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => console.log("Connected to db "))
   .catch((err) => console.log("catched error " + err));
 
-  mongoose.set("useCreateIndex", true);
+mongoose.set("useCreateIndex", true);
+//Serving React Files
+if (process.env.NODE_ENV === "production") {
+  console.log("d5lna f prod");
+  //we give server access to react application (the production mode 'build')
+  app.use(express.static(path.join(__dirname, "../frontend/build")));
+  //whenever we reach a get route in url, we send data into index.html
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend", "build", "index.html"));
+  });
+}
 
 module.exports = app;

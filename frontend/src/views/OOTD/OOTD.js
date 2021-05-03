@@ -6,7 +6,7 @@ import CardBody from "components/Card/CardBody";
 import Card from "components/Card/Card";
 import CardHeader from "components/Card/CardHeader";
 import imagesStyles from "assets/jss/material-dashboard-react/components/imagesStyles";
-import Casual from "../../assets/img/Context/casual.jpeg";
+import Casual from "../../assets/img/Context/casual.jpg";
 import Party from "../../assets/img/Context/party.jpg";
 import Seminar from "../../assets/img/Context/Seminar.jpg";
 import Work from "../../assets/img/Context/Work.jpg";
@@ -22,10 +22,9 @@ import Toolstyles from "assets/jss/material-dashboard-react/components/tasksStyl
 import Quote from "components/Typography/Quote";
 import { isAuth } from "helpers/auth";
 import { Redirect } from "react-router";
-import {
-  Chart,
-  PieSeries
-} from '@devexpress/dx-react-chart-material-ui';
+var CanvasJSReact = require("../../assets/js/canvasjs.react");
+var CanvasJS = CanvasJSReact.CanvasJS;
+var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const styles = (theme) => ({
   ...imagesStyles,
@@ -67,24 +66,38 @@ const useToolsStyles = makeStyles(Toolstyles);
 
 const useStyles = makeStyles(styles);
 
-const data = [
-  { country: "Russia", area: 12 },
-  { country: "Canada", area: 7 },
-  { country: "USA", area: 7 },
-  { country: "China", area: 7 },
-  { country: "Brazil", area: 6 },
-  { country: "Australia", area: 5 },
-  { country: "India", area: 2 },
-  { country: "Others", area: 55 },
-];
-
 // Slide animation for work context Dialog
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function OOTD(props) {
-  const [chartData, setChartData] = useState(data);
+  //Charts
+  const options = {
+    exportEnabled: true,
+    animationEnabled: true,
+    title: {
+      text: "Website Traffic Sources",
+    },
+    data: [
+      {
+        type: "pie",
+        startAngle: 75,
+        toolTipContent: "<b>{label}</b>: {y}%",
+        showInLegend: "true",
+        legendText: "{label}",
+        indexLabelFontSize: 16,
+        indexLabel: "{label} - {y}%",
+        dataPoints: [
+          { y: 18, label: "Direct" },
+          { y: 49, label: "Organic Search" },
+          { y: 9, label: "Paid Search" },
+          { y: 5, label: "Referral" },
+          { y: 19, label: "Social" },
+        ],
+      },
+    ],
+  };
   //Quotes
   const [quote, setQuote] = useState("");
   const [author, setAuthor] = useState("");
@@ -225,9 +238,10 @@ export default function OOTD(props) {
                 ...
               </DialogTitle>
               <DialogContent>
-                <Chart data={chartData}>
-                  <PieSeries valueField="area" argumentField="country" />
-                </Chart>
+                {/*<CanvasJSChart
+                  options={options}
+                  onRef={ref => this.chart = ref} />
+                You can get reference to the chart instance as shown above using onRef. This allows you to access all chart properties and methods*/}
               </DialogContent>
             </Dialog>
           </CardBody>

@@ -15,8 +15,6 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 
 import { Helmet } from "react-helmet";
-import AppSearchAPIConnector from "@elastic/search-ui-app-search-connector";
-import { SearchProvider, SearchBox } from "@elastic/react-search-ui";
 
 import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -25,7 +23,6 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import styles from "assets/jss/material-dashboard-react/views/localStoreStyle.js";
 
-import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import IconButton from "@material-ui/core/IconButton";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
@@ -36,11 +33,6 @@ import { isAuth } from "helpers/auth";
 import { Redirect } from "react-router";
 
 const useStyles = makeStyles(styles);
-const connector = new AppSearchAPIConnector({
-  searchKey: "search-371auk61r2bwqtdzocdgutmg",
-  engineName: "search-ui-examples",
-  hostIdentifier: "host-2376rb",
-});
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
@@ -322,9 +314,7 @@ const Wardrobe = (props) => {
                   </DialogContent>
                 </Dialog>
               </CardHeader>
-              <SearchProvider>
                 <CardBody>
-                  <SearchBox />
 
                   <Dialog
                     classes={{
@@ -649,7 +639,6 @@ const Wardrobe = (props) => {
                     )}
                   </div>
                 </CardBody>
-              </SearchProvider>
             </Card>
           </GridItem>
         </GridContainer>

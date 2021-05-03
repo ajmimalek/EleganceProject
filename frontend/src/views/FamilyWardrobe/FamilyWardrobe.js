@@ -21,7 +21,6 @@ import GridContainer from "components/Grid/GridContainer.js";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 
-import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import ClothesChange from "components/FamilyWardrobe/ClothesChange.js";
 const userStyles = makeStyles((theme) => ({
   root: {

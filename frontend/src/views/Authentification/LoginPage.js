@@ -250,6 +250,7 @@ export default function LoginPage(props) {
                         onClick={onclick}
                         //scope="public_profile,user_friends,user_gender,user_location"
                         callback={responseFacebook}
+                        cssClass={classes.facebook}
                         icon={<Facebook />}
                       />
                       <GoogleLogin
