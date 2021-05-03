@@ -18,6 +18,11 @@ let Clothes = new Schema(
       required: false,
       trim: false
     },
+     testLend: {
+      type: String,
+      required: false,
+      trim: false
+    },
     color: {
       type: String,
       required: false,
@@ -32,6 +37,14 @@ let Clothes = new Schema(
       type: String,
       required: false,
       trim: false
+    },
+    userlend: {
+      type: String,
+      required: false,
+      trim: false
+    },
+    lend: {
+      type: Schema.Types.ObjectId,
     },
     sell: {
       type: Number,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -23,6 +23,12 @@ import image from "assets/img/bg7.jpg";
 import EleganceLogo from "../../assets/img/Elegance Logo.png";
 import { Helmet } from "react-helmet";
 import { Fingerprint, PersonAdd } from "@material-ui/icons";
+import { isAuth } from "helpers/auth";
+import { Redirect, useParams } from "react-router";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 
 const useStyles = makeStyles(styles);
 
@@ -33,12 +39,67 @@ export default function ResetPasswordPage(props) {
   }, 700);
   const classes = useStyles();
   const { ...rest } = props;
+
+  const [token, setToken] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // retrieve params into a variable
+  const params = useParams();
+
+  // print params to console
+  console.log("params :", params);
+
+  useEffect(() => {
+    // Extract token from params like /reset/token
+    let token = params.token;
+    if (token) {
+      setToken(token);
+    }
+  }, []);
+
+  // Form inputs
+  const formik = useFormik({
+    initialValues: {
+      pass: "",
+      passConfirm: "",
+      textChange: "Change password",
+    },
+    validationSchema: yupSchema,
+    // Submit data to backend
+    onSubmit: (values, onSubmitProps) => {
+      formik.setFieldValue("textChange", "Setting new password");
+      setLoading(true);
+      // pass values to backend.
+      axios
+        .put(`${process.env.REACT_APP_API_URL}/resetpassword`, {
+          newPassword: values.pass,
+          resetPasswordLink: token
+      })
+      .then(res => {
+        console.log(res.data.message);
+        //Clear values after submitting
+        onSubmitProps.setSubmitting(false);
+        onSubmitProps.resetForm();
+        setLoading(true);
+        toast.success("✔ " + res.data.message);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.log(err.response.data);
+        toast.error('❌ Something is wrong try again ', err.response.data.error);
+      });
+    },
+  });
+  
+
   return (
     <>
       <Helmet>
         <title>Elegance App - Reset Password</title>
       </Helmet>
       <div>
+        {isAuth() ? <Redirect to="/" /> : null}
+        <ToastContainer autoClose={5000} />
         <Header
           absolute
           color="transparent"
@@ -58,7 +119,8 @@ export default function ResetPasswordPage(props) {
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={6}>
                 <Card className={classes[cardAnimaton]}>
-                  <form className={classes.form}>
+                  <form onSubmit={formik.handleSubmit}
+                  className={classes.form}>
                     <CardHeader color="primary" className={classes.cardHeader}>
                       <h4>Reset Your Password</h4>
                       <p>Set a new password...</p>
@@ -67,14 +129,18 @@ export default function ResetPasswordPage(props) {
                       <CustomInput
                         labelText="Password"
                         id="pass"
+                        error={formik.errors.pass ? true : false}
                         formControlProps={{
                           fullWidth: true,
                           className: classes.mail,
                         }}
                         inputProps={{
+                          required: true,
+                          onChange: formik.handleChange("pass"),
+                          value: formik.values.pass,
                           type: "password",
-                          endAdornment: (
-                            <InputAdornment position="end">
+                          startAdornment: (
+                            <InputAdornment position="start">
                               <Icon className={classes.inputIconsColor}>
                                 lock_outline
                               </Icon>
@@ -83,17 +149,26 @@ export default function ResetPasswordPage(props) {
                           autoComplete: "off",
                         }}
                       />
+                      {formik.errors.pass && formik.touched.pass && (
+                        <p className={classes.helperText}>
+                          {formik.errors.pass}
+                        </p>
+                      )}
                       <CustomInput
                         labelText="Confirm Password"
                         id="passConfirm"
+                        error={formik.errors.passConfirm ? true : false}
                         formControlProps={{
                           fullWidth: true,
                           className: classes.mail,
                         }}
                         inputProps={{
+                          required: true,
+                          onChange: formik.handleChange("passConfirm"),
+                          value: formik.values.passConfirm,
                           type: "password",
-                          endAdornment: (
-                            <InputAdornment position="end">
+                          startAdornment: (
+                            <InputAdornment position="start">
                               <Icon className={classes.inputIconsColor}>
                                 lock_outline
                               </Icon>
@@ -102,16 +177,22 @@ export default function ResetPasswordPage(props) {
                           autoComplete: "off",
                         }}
                       />
+                      {formik.errors.passConfirm && formik.touched.passConfirm && (
+                        <p className={classes.helperText}>
+                          {formik.errors.passConfirm}
+                        </p>
+                      )}
                       <Button
+                        type="submit"
                         simple
                         color="primary"
                         size="lg"
                         className={classes.button}
                       >
-                        Change Password
+                        {formik.values.textChange}
                       </Button>
                     </CardBody>
-                  </form> 
+                  </form>
                   <p className={classes.divider}>Or You Can...</p>
                   <CardFooter className={classes.cardFooter}>
                     <Button
@@ -139,3 +220,16 @@ export default function ResetPasswordPage(props) {
     </>
   );
 }
+
+const yupSchema = Yup.object({
+  pass: Yup.string()
+    .required("Password is required")
+    .min(8, "At least 8 caracters")
+    .matches(
+      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/,
+      "Password must include one lowercase character, one uppercase character, a number, and a special character."
+    ),
+  passConfirm: Yup.string()
+    .required("You must confirm password")
+    .oneOf([Yup.ref("pass"), null], "Passwords must match"),
+});

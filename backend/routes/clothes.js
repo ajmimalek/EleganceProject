@@ -86,6 +86,101 @@ router.post('/CompleteNewClothes', async (req, res) => {
   }
 );
 
+/* update API lend clothes */
+router.post('/lend/:idUser/:idClothes/:username', async (req, res) => {
+try {
+    Clothes.findByIdAndUpdate(
+      req.params.idClothes,
+      { lend:req.params.idUser,userlend:req.params.username,testLend:"true"},
+      function (err) {
+        if (err) {
+          res.send(err);
+          return;
+        }
+        res.send({ data: "Record has been Updated..!!" });
+      });
+  } catch (error) {
+    res.status(400).send('Error while uploading file. Try fff again later.');
+  }
+},
+  (error, req, res, next) => {
+    if (error) {
+      res.status(500).send(error.message);
+    }
+  }
+);
+
+/* update API Accept lend clothes */
+router.post('/AcceptLend/:lend/:idClothes', async (req, res) => {
+  try {
+   
+      Clothes.findByIdAndUpdate(
+        req.params.idClothes,
+        {         user: {
+          "_id": req.params.lend
+         
+        },lend:req.params.idClothes,testLend:"false"},
+        function (err) {
+          if (err) {
+            res.send(err);
+            return;
+          }
+          res.send({ data: "Record has been Updated..!!" });
+        });
+    } catch (error) {
+      res.status(400).send('Error while uploading file. Try fff again later.');
+    }
+  },
+    (error, req, res, next) => {
+      if (error) {
+        res.status(500).send(error.message);
+      }
+    }
+  );
+  
+/* update API Refuse lend clothes */
+router.post('/RefuseLend/:lend/:idClothes', async (req, res) => {
+  try {
+   
+      Clothes.findByIdAndUpdate(
+        req.params.idClothes,
+        {lend:req.params.idClothes,testLend:"false"},
+        function (err) {
+          if (err) {
+            res.send(err);
+            return;
+          }
+          res.send({ data: "Record has been Updated..!!" });
+        });
+    } catch (error) {
+      res.status(400).send('Error while uploading file. Try fff again later.');
+    }
+  },
+    (error, req, res, next) => {
+      if (error) {
+        res.status(500).send(error.message);
+      }
+    }
+  );
+  //getSearchClothes
+router.get('/getSearchClothes/:idUser/:keyword', async (req, res) => {
+  try {
+    const files = await Clothes.find({ 
+      $and: [{ sell: { $exists: false } }, {
+        user: {
+          "_id": req.params.idUser
+        }
+      },{title: new RegExp(req.params.keyword, 'i')}
+      ] });
+    const sortedByCreationDate = files.sort(
+      (a, b) => b.createdAt - a.createdAt
+    );
+    res.send(sortedByCreationDate);
+  } catch (error) {
+    res.status(400).send('Error while getting list of files. Try again later.');
+  }
+});
+
 
 router.get('/getAllClothes/:idUser', async (req, res) => {
   try {
@@ -105,6 +200,45 @@ router.get('/getAllClothes/:idUser', async (req, res) => {
   }
 });
 
+
+router.get('/getAllClothes/:size/:idUser', async (req, res) => {
+  try {
+    const files = await Clothes.find({ 
+      $and: [{ sell: { $exists: false } }, {
+        user: {
+          "_id": req.params.idUser
+        }
+      }, { size: req.params.size }
+      ] });
+    const sortedByCreationDate = files.sort(
+      (a, b) => b.createdAt - a.createdAt
+    );
+    res.send(sortedByCreationDate);
+  } catch (error) {
+    res.status(400).send('Error while getting list of files. Try again later.');
+  }
+});
+
+router.get('/getAllClothesLend/:idUser', async (req, res) => {
+  try {
+    const files = await Clothes.find({ 
+      $and: [{ sell: { $exists: false } }, {
+        lend: { $exists: true }
+        
+      },{testLend:"true"}, {
+        user: {
+          "_id": req.params.idUser
+        }
+      }
+      ] });
+    const sortedByCreationDate = files.sort(
+      (a, b) => b.createdAt - a.createdAt
+    );
+    res.send(sortedByCreationDate);
+  } catch (error) {
+    res.status(400).send('Error while getting list of files. Try again later.');
+  }
+});
 //get all sell clothes user conected 
 router.get('/getAllSellClothesUser/:idUser', async (req, res) => {
   try {
@@ -166,6 +300,26 @@ router.post('/getAllSellClothesByClothing/:max/:min/', async (req, res) => {
   try {
 
     const files = await Clothes.find({ $and: [{ sell: { $gte: req.params.min, $lte: req.params.max } }, { type: { $in: req.body } }] });
+    console.log("eee");
+    const sortedByCreationDate = files.sort(
+      (a, b) => b.createdAt - a.createdAt
+    );
+    res.send(sortedByCreationDate);
+  } catch (error) {
+    res.status(400).send('Error while getting list of files. Try again later.');
+  }
+});
+
+
+//get All Sell Clothes ByClothing 
+router.post('/getClothesByClothing/:idUser', async (req, res) => {
+  try {
+
+    const files = await Clothes.find({ $and: [{
+      user: {
+        "_id": req.params.idUser
+      }
+    }, { type: { $in: req.body } }] });
     console.log("eee");
     const sortedByCreationDate = files.sort(
       (a, b) => b.createdAt - a.createdAt

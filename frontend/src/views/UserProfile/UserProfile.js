@@ -1,8 +1,10 @@
+import Divider from "@material-ui/core/Divider";
 import React, { useState, useEffect } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import axios from "axios";
+import SearchBar from 'material-ui-search-bar';
 // core components
 import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -13,7 +15,7 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardAvatar from "components/Card/CardAvatar.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
-
+import swal from 'sweetalert';
 import DefaultAvatar from "../../assets/img/default-avatar.png";
 import { primaryColor } from "assets/jss/material-dashboard-react";
 import avatar from "assets/img/faces/marc.jpg";
@@ -84,58 +86,118 @@ export default function UserProfile(props) {
   const classes = useStyles();
   const classesUser = useStylesUser();
 
-   const [idUserConected,SetIdUserConected]=useState(isAuth()._id);
-
-var IdUserFollowing=null;
-function UserFollowers(id){
-  IdUserFollowing=id;
-}
-function handleOnSubmit(){
-  try {
-  const data = {
-    idUserConected,
-    IdUserFollowing
-    };
-     axios.post(`http://localhost:9000/user/follow`, data);
-    props.history.push('/admin/profile');
-  } catch (error) {
-    console.log(error.response);
-  }
-};
+  const [idUserConected, SetIdUserConected] = useState(isAuth()._id);
+  const [NameUserConected, SetNameUserConected] = useState(isAuth().FullName);
+  const [testFollow, SetTestFollow] = useState(false);
 
   const [userList, setUserList] = useState([]);
-  useEffect(() => {
-    const getUserList = async () => {
+ 
+  var IdUserFollowers = null;
+  function UserFollowersUse(id) {
+    IdUserFollowers = id;
+  }
+  function handleOnfollow(FullName) {
+    const follow = async () => {
       try {
-        const { data } = await axios.get(
-          `http://localhost:9000/user/getAllUser/`+isAuth()._id);
-        console.log("dddd",data);
-        setUserList(data);
+        
+    const data = {
+      idUserConected,
+      IdUserFollowers,
+      NameUserConected
+    };
+    await   axios.post(`http://localhost:9000/user/follow`, data);
+
       } catch (error) {
-        console.log(error.response) ;
+        console.log(error.response);
       }
     };
+    follow();
+  
+    swal("Requested family member to: "+FullName)
+    .then((value) => {
+      getFollowList();
+      getUserList();;
+    });
 
+  };
+  function handleOnUnfollow(FullName) {
+    
+    const Unfollow = async () => {
+      try {
+        
+        const data = {
+          idUserConected,
+          IdUserFollowers
+        };
+        await axios.post(`http://localhost:9000/user/UnFollow`, data);
+
+      } catch (error) {
+        console.log(error.response);
+      }
+    };
+    Unfollow();
+    swal("Remove: "+FullName)
+    .then((value) => {
+      getFollowList();
+      getUserList();;
+    }); 
+      
+  };
+  
+  function handleSearchUser(FullName) {
+    
+    const Search = async () => {
+      try {
+        const { data } = await axios.post(
+          `http://localhost:9000/user/FindAllUser/` + isAuth()._id+'/'+FullName);
+        setUserList(data);
+      } catch (error) {
+        getUserList();
+      }
+    };
+    Search();
+      
+  };
+  const getUserList = async () => {
+    try {
+      const { data } = await axios.post(
+        `http://localhost:9000/user/getAllUser/` + isAuth()._id);
+      setUserList(data);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+ 
     getUserList();
   }, []);
 
-  
-  
-    function getFollow(idUserfollow) {
-      try {
-        const { data } = axios.get(
-          `http://localhost:9000/user/getAllFollow/`+idUserfollow);
-        
-        return data.state;
-      } catch (error) {
-        console.log(error.response) ;
-      }
-    };
+  const [FollowList, setFollowList] = useState([]);
+  const getFollowList = async () => {
+    try {
+      const { data } = await axios.post(
+        `http://localhost:9000/user/getAllFollow/` + isAuth()._id);
+      setFollowList(data);
+      console.log(data);
+      data.forEach(element => {
+        console.log(element.state, "iddd", element.UserFollowers)
 
-  
+      });
+
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+
+    getFollowList();
+  }, []);
+
   return (
     <div>
-    {isAuth() ? null : <Redirect to="/login"/>}
+      {isAuth() ? null : <Redirect to="/login" />}
       <Helmet>
         <title>Elegance App - My Profile</title>
       </Helmet>
@@ -252,53 +314,86 @@ function handleOnSubmit(){
           </Card>
         </GridItem>
         <GridItem xs={12} sm={12} md={4}>
-        <Card>
-        <CardHeader color="primary">
-        <GridItem xs={12} sm={12} md={12}>
-                  <CustomInput
-                    labelText="Find your family member"
-                    id="email-address"
-                    formControlProps={{
-                      fullWidth: true
-                    }}
-                  />
-                </GridItem>
-            </CardHeader>
-        <CardBody>
+          <Card>
           
-
-    {userList.length > 0 ? (
-                      userList.map(
-                        ({ _id, FullName }) => (
-                     <div className={classesUser.pictureContainer}>
-                          <div className={classesUser.picture}>
+            <CardBody>
+            <SearchBar
+      onChange={(e) => handleSearchUser(e)}
+      onRequestSearch={() => console.log('onRequestSearch')}
+     
+      style={{
+        margin: '0 auto',
+        maxWidth: 800
+      }}
+    />
+<br></br>
+              {
+                userList.map(
+                  ({ _id, FullName,v }) => {
+                    return (
+                      <div className={classesUser.pictureContainer}>
+                        <div className={classesUser.picture}>
                           <img
                             src={DefaultAvatar}
                             className={classesUser.pictureSrc}
                             id="wizardPicturePreview"
                             title=""
                           />
-                          
+
                         </div>
                         <b>{FullName}</b><br></br>
-                        <Button color="primary"onClick={ () =>{
-                          UserFollowers(_id);
-                          
-                          handleOnSubmit();
-                        }
-                        }>Follow (family member)</Button>
-                        <br></br>
-                      </div>                           
-                      
+                        {
+                          FollowList.map(
+                            ({ UserFollowers, state }) => {
+                              return (
+                                UserFollowers === _id ? (
+                                  v=true,
+                                  state === "Requested" ? (
+                                    <Button color="secondary"
+                                      onClick={() => {
+                                        UserFollowersUse(_id);
+                                        handleOnUnfollow(FullName);
+                                      }
+                                      }>{state}</Button>
+                                  ) : (
+                                    <Button color="primary"
+                                      onClick={() => {
+                                        UserFollowersUse(_id);
+                                      handleOnUnfollow(FullName);
+                                      }
+                                      }>UnFollow </Button>
+                                  )
+                                ) :
+                                  (
+                                    <></>
+                                    )
+
+                              )
+                            })}{v!==true?(
+                          <Button color="primary"
+                            onClick={() => {
+                              UserFollowersUse(_id);
+                              handleOnfollow(FullName);
+                            }
+                            }>family member</Button>
+                        ):
+                        (
+                          <></>
                         )
-                      )
 
-                    ) : (
-                      <b> No users found. </b>
-                    )}
+                        }
 
-        </CardBody>
-        </Card>
+<Divider inset />
+                        <br></br>
+                      </div>
+
+                    )
+                  })
+
+              }
+
+            </CardBody>
+          </Card>
         </GridItem>
       </GridContainer>
     </div>

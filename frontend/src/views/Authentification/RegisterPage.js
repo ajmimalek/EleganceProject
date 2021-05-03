@@ -391,7 +391,7 @@ export default function RegisterPage(props) {
                         size="lg"
                         disabled={loading}
                       >
-                        {formik.values.textChange}
+                        {formik.values.textChange} 
                       </Button>
                     </CardFooter>
                   </form>
