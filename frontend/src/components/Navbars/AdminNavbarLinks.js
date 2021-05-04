@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import classNames from "classnames";
+import axios from "axios";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -11,10 +12,14 @@ import Poppers from "@material-ui/core/Popper";
 import Divider from "@material-ui/core/Divider";
 // @material-ui/icons
 import Notifications from "@material-ui/icons/Notifications";
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import PersonAddDisabledIcon from '@material-ui/icons/PersonAddDisabled';
+import IconButton from "@material-ui/core/IconButton";
 // core components
+import Button from "components/CustomButtons/Button.js";
 import profile from "../../assets/img/faces/marc.jpg";
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
-import { Avatar, Hidden, IconButton, ListItemText } from "@material-ui/core";
+import { Avatar, Hidden,  ListItemText } from "@material-ui/core";
 import {
   AccountCircle,
   ExitToApp,
@@ -38,6 +43,7 @@ export default function AdminNavbarLinks() {
     e.preventDefault();
     history.push("/admin/profile");
   }
+
   const handleClickNotification = (event) => {
     if (openNotification && openNotification.contains(event.target)) {
       setOpenNotification(null);
@@ -63,6 +69,147 @@ export default function AdminNavbarLinks() {
   const handleCloseProfile = () => {
     setOpenProfile(null);
   };
+  const [lendList, setLendList] = useState([]);
+  useEffect(() => {
+    const getLendList = async () => {
+      try {
+        const { data } = await axios.get(
+          `http://localhost:9000/clothes/getAllClothesLend/` + isAuth()._id);
+        setLendList(data);
+       
+      } catch (error) {
+        console.log(error.response);
+      }
+    };
+
+    getLendList();
+  }, []);
+  
+  function handleAcceptLendClothes(lend,Idclothes) {
+    try {
+     
+      const AcceptLendClothes = async () => {
+        try {
+          await axios.post(
+            `http://localhost:9000/clothes/AcceptLend/`+lend+'/'+Idclothes);
+            const getLendList = async () => {
+              try {
+                const { data } = await axios.get(
+                  `http://localhost:9000/clothes/getAllClothesLend/` + isAuth()._id);
+                setLendList(data);
+               
+              } catch (error) {
+                console.log(error.response);
+              }
+            };
+        
+            getLendList();
+         
+        } catch (error) {
+          console.log(error.response);
+        }
+      };
+  
+      AcceptLendClothes();
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  function handleRefuseLendClothes(lend,Idclothes) {
+    try {
+     
+      const RefuseLendClothes = async () => {
+        try {
+          await axios.post(
+            `http://localhost:9000/clothes/RefuseLend/`+lend+'/'+Idclothes);
+            const getLendList = async () => {
+              try {
+                const { data } = await axios.get(
+                  `http://localhost:9000/clothes/getAllClothesLend/` + isAuth()._id);
+                setLendList(data);
+               
+              } catch (error) {
+                console.log(error.response);
+              }
+            };
+        
+            getLendList();
+         
+        } catch (error) {
+          console.log(error.response);
+        }
+      };
+  
+      RefuseLendClothes();
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  const [FollowList, setFollowList] = useState([]);
+  useEffect(() => {
+    const getFollowList = async () => {
+      try {
+        const { data } = await axios.get(
+          `http://localhost:9000/user/getAllNotifFollow/` + isAuth()._id);
+        setFollowList(data);
+       
+      } catch (error) {
+        console.log(error.response);
+      }
+    };
+
+    getFollowList();
+  }, []);
+  var IdFollow = null;
+  function Followuse(id) {
+    IdFollow = id;
+  }
+  function handleOnUnfollow() {
+    try {
+     
+      axios.post(`http://localhost:9000/user/UnFollow/`+IdFollow);
+      const getFollowList = async () => {
+        try {
+          const { data } = await axios.get(
+            `http://localhost:9000/user/getAllNotifFollow/` + isAuth()._id);
+          setFollowList(data);
+         
+        } catch (error) {
+          console.log(error.response);
+        }
+      };
+  
+      getFollowList();
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  
+  function handleOnfollow() {
+    try {
+      
+      axios.post(`http://localhost:9000/user/follow/`+IdFollow);
+      const getFollowList = async () => {
+        try {
+          const { data } = await axios.get(
+            `http://localhost:9000/user/getAllNotifFollow/` + isAuth()._id);
+          setFollowList(data);
+         
+        } catch (error) {
+          console.log(error.response);
+        }
+      };
+  
+      getFollowList();
+      
+    } catch (error) {
+      console.log(error.response);
+    }
+    
+  };
   return (
     <div>
       <div className={classes.manager}>
@@ -75,7 +222,7 @@ export default function AdminNavbarLinks() {
         >
           <Notifications className={classes.icons} />
           {/* To change 5 in span based on logic of notifications */}
-          <span className={classes.notifications}>5</span>
+          <span className={classes.notifications}>{FollowList.length+lendList.length}</span>
           <Hidden mdUp implementation="css">
             <p onClick={handleCloseNotification} className={classes.linkText}>
               Notification
@@ -105,77 +252,89 @@ export default function AdminNavbarLinks() {
               <Paper>
                 <ClickAwayListener onClickAway={handleCloseNotification}>
                   <MenuList role="menu">
-                    <MenuItem
-                      onClick={handleCloseNotification}
-                      className={classes.dropdownItem}
-                    >
-                      <div className={classes.messageInfo}>
-                        <Avatar
-                          alt="User Name"
-                          src={profile}
-                          className={classes.avatar}
-                        />
-                        <ListItemText
-                          classes={{ secondary: classes.secondaryText }}
-                          primary={dummyContents.text.subtitle}
-                          secondary={dummyContents.text.date}
-                        />
-                      </div>
-                    </MenuItem>
-                    <Divider inset />
-                    <MenuItem
-                      onClick={handleCloseNotification}
-                      className={classes.dropdownItem}
-                    >
-                      <div className={classes.messageInfo}>
-                        <Avatar
-                          alt="User Name"
-                          src={profile}
-                          className={classes.avatar}
-                        />
-                        <ListItemText
-                          classes={{ secondary: classes.secondaryText }}
-                          primary={dummyContents.text.subtitle}
-                          secondary={dummyContents.text.date}
-                        />
-                      </div>
-                    </MenuItem>
-                    <Divider inset />
-                    <MenuItem
-                      onClick={handleCloseNotification}
-                      className={classes.dropdownItem}
-                    >
-                      <div className={classes.messageInfo}>
-                        <Avatar
-                          alt="User Name"
-                          src={profile}
-                          className={classes.avatar}
-                        />
-                        <ListItemText
-                          classes={{ secondary: classes.secondaryText }}
-                          primary={dummyContents.text.subtitle}
-                          secondary={dummyContents.text.date}
-                        />
-                      </div>
-                    </MenuItem>
-                    <Divider inset />
-                    <MenuItem
-                      onClick={handleCloseNotification}
-                      className={classes.dropdownItem}
-                    >
-                      <div className={classes.messageInfo}>
-                        <Avatar
-                          alt="User Name"
-                          src={profile}
-                          className={classes.avatar}
-                        />
-                        <ListItemText
-                          classes={{ secondary: classes.secondaryText }}
-                          primary={dummyContents.text.subtitle}
-                          secondary={dummyContents.text.date}
-                        />
-                      </div>
-                    </MenuItem>
+                { FollowList.map(
+                            ({ _id,NameUserFollowing }) => (
+                              <>
+                              <MenuItem
+                              onClick={handleCloseNotification}
+                              className={classes.dropdownItem}
+                            >
+                              <div className={classes.messageInfo}>
+                                <Avatar
+                                  alt="User Name"
+                                  
+                                  className={classes.avatar}
+                                /><b>{NameUserFollowing }: </b> Family member request 
+                                
+                               
+                              </div>
+                             
+                            </MenuItem>
+                            <center>
+                            <IconButton aria-label="add" className={classes.margin}
+                            onClick={() => {
+                              Followuse(_id);
+                              handleOnfollow();
+                            }}
+                             >
+                  <PersonAddIcon  color="primary" fontSize="large" onClick={() => {
+                              Followuse(_id);
+                              handleOnfollow();
+                            }}/>
+                </IconButton>
+
+                
+                            <IconButton aria-label="delete"  className={classes.margin}
+                            onClick={() => {
+                              Followuse(_id);
+                              handleOnUnfollow();
+                            }}>
+                  <PersonAddDisabledIcon fontSize="large" onClick={() => {
+                              Followuse(_id);
+                              handleOnUnfollow();
+                            }} />
+                </IconButton>
+                            
+                           </center>
+                            <Divider inset />
+                            </>
+                            ))
+                          }
+                { lendList.map(
+                            ({ _id,userlend,title,lend }) => (
+                              <>
+                              <MenuItem
+                              onClick={handleCloseNotification}
+                              className={classes.dropdownItem}
+                            >
+                              <div className={classes.messageInfo}>
+                               <b>{userlend }: </b> Lend {title} request
+                                
+                               <Avatar
+                                  alt="User Name"
+                                  src={'http://localhost:9000/clothes/download/' + _id}
+                                  className={classes.avatar}
+                                />
+                              </div>
+                             
+                            </MenuItem>
+                            <center>
+                            <Button color="primary"onClick={() => {
+                             handleAcceptLendClothes(lend,_id)
+                            }}
+                            >Accept</Button>
+
+                            <Button onClick={() => {
+                              handleRefuseLendClothes(lend,_id)
+                            }}
+                            >refuse</Button>
+                            
+                           </center>
+                            <Divider inset />
+                            </>
+                            ))
+                          }
+                   
                   </MenuList>
                 </ClickAwayListener>
               </Paper>

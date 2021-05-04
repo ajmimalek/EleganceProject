@@ -7,7 +7,11 @@ const cors = require("cors");
 const morgan = require("morgan");
 
 require("./models/clothes");
+require("./models/follow");
+
+require("./models/auth.model");
 const clothesRoutes = require("./routes/clothes");
+const userRoutes = require("./routes/user");
 var app = express();
 
 //import database
@@ -32,6 +36,7 @@ const authRouter = require("./routes/auth.route");
 const userRouter = require("./routes/user.route");
 //clothes Routes
 app.use("/clothes", clothesRoutes);
+app.use("/user", userRoutes);
 // Use Routes
 app.use("/api", authRouter);
 app.use("/api", userRouter);

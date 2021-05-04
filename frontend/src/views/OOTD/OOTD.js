@@ -11,7 +11,7 @@ import Party from "../../assets/img/Context/party.jpg";
 import Seminar from "../../assets/img/Context/Seminar.jpg";
 import Work from "../../assets/img/Context/Work.jpg";
 import Match from "../../assets/img/perfect_match.gif";
-import { rotateIn } from "react-animations";
+import { rotateIn, bounceInUp } from "react-animations";
 import {
   Dialog,
   DialogContent,
@@ -59,6 +59,21 @@ const styles = (theme) => ({
     },
   },
   "@keyframes rotateIn": rotateIn,
+  match:{
+    height: "150px",
+    width: "150px",
+  },
+  center:{
+    textAlign: "center",
+  },
+  spacement:{
+    marginLeft: "3%",
+    animation: "$bounceInUp 2s",
+  },
+  up: {
+    marginBottom: "70px",
+  },
+  "@keyframes bounceInUp": bounceInUp,
 });
 
 const useToolsStyles = makeStyles(Toolstyles);
@@ -95,7 +110,7 @@ export default function OOTD(props) {
   };
   const showOOTD = () => {
     settimesClicked(timesClicked + 1);
-    if (timesClicked === 2) {
+    if (timesClicked > 1) {
       setOutfit(false);
       settimesClicked(0);
     } else {
@@ -154,6 +169,7 @@ export default function OOTD(props) {
             >
               <img
                 src={Party}
+                onClick={showOOTD}
                 alt="outfit for Parties"
                 className={
                   classes.imgRaised +
@@ -174,6 +190,7 @@ export default function OOTD(props) {
             >
               <img
                 src={Seminar}
+                onClick={showOOTD}
                 alt="outfit for Seminars"
                 className={
                   classes.imgRaised +
@@ -228,16 +245,16 @@ export default function OOTD(props) {
         </Card>
         <div>
           {outfit ? (
-            <div>
-              <img src={Work} alt="1" />
-              <Add />
-              <img src={Work} alt="2" />
-              <Add />
-              <img src={Work} alt="3" />
-              <Add />
-              <img src={Work} alt="4" />
-              <ArrowForward />
-              <img src={Match} alt="The Perfect Match" />
+            <div className={classes.center}>
+              <img className={classes.spacement} src={Work} alt="1" />
+              <Add className={classes.spacement + " " + classes.up} />
+              <img className={classes.spacement} src={Work} alt="2" />
+              <Add className={classes.spacement + " " + classes.up} />
+              <img className={classes.spacement} src={Work} alt="3" />
+              <Add className={classes.spacement + " " + classes.up} />
+              <img className={classes.spacement} src={Work} alt="4" />
+              <ArrowForward className={classes.spacement + " " + classes.up} />
+              <img src={Match} alt="The Perfect Match" className={classes.match + " " + classes.spacement} />
             </div>
           ) : null}
         </div>
