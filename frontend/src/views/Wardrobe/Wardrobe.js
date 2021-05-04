@@ -63,7 +63,17 @@ const Wardrobe = (props) => {
   const [modalColor, setModalColor] = useState(false);
   const [modalUpload, setModalUpload] = useState(false);
   const [modalSell, setModalSell] = useState(false);
+  const [modalDetails, setModalDetails] = useState(false);
   const [Id, setID] = useState(null);
+
+
+  const [Image, setImage] = useState(null);
+  const [Title, setTitle] = useState(null);
+  const [SizeC, setSizeC] = useState(null);
+  const [TypeC,setTypeC]= useState(null);
+  const [BrandC, setBrandC]=useState(null);
+  const [DescriptionC,setDescriptionC]= useState(null);
+  const [IdDetails,setIdDetails]=useState(null);
 
   const [checked, setChecked] = React.useState([]);
   const [selectedValue, setSelectedValue] = useState(null);
@@ -89,6 +99,7 @@ const Wardrobe = (props) => {
     const { price, value } = e.currentTarget;
     setprice(value);
   };
+  
   const handleToggle = value => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
@@ -105,7 +116,7 @@ console.log(newChecked);
       try {
         
        
-        const { data } = await axios.post(`http://localhost:9000/clothes/getClothesByClothing/`+ isAuth()._id,newChecked);
+        const { data } = await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/getClothesByClothing/`+ isAuth()._id,newChecked);
         setErrorMsg('');
         setFilesList(data);
         if(newChecked.length==0){
@@ -154,7 +165,7 @@ console.log(newChecked);
 
 
       setErrorMsg("");
-      const { data } = await axios.post(`http://localhost:9000/clothes/upload`, formData, {
+      const { data } = await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -180,7 +191,7 @@ console.log(newChecked);
       };
 
       setErrorMsg("");
-      await axios.post(`http://localhost:9000/clothes/sellClothes`, data);
+      await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/sellClothes`, data);
 
       props.history.push("/list");
     } catch (error) {
@@ -202,7 +213,7 @@ console.log(newChecked);
           const getFilesList = async () => {
             try {
               const { data } = await axios.get(
-                `http://localhost:9000/clothes/getAllClothes/` + isAuth()._id
+                `${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/` + isAuth()._id
               );
               setErrorMsg("");
               setFilesList(data);
@@ -239,7 +250,7 @@ console.log(newChecked);
   const search = async () => {
   try {
     const { data } = await axios.get(
-      `http://localhost:9000/clothes/getSearchClothes/` + isAuth()._id+'/'+clothes
+      `${process.env.REACT_APP_API_URL_CLOTHES}/getSearchClothes/` + isAuth()._id+'/'+clothes
     );
     setErrorMsg("");
     setFilesList(data);
@@ -253,7 +264,7 @@ search();
  const getFilesList = async () => {
   try {
     const { data } = await axios.get(
-      `http://localhost:9000/clothes/getAllClothes/` + isAuth()._id
+      `${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/` + isAuth()._id
     );
     setErrorMsg("");
     setFilesList(data);
@@ -489,7 +500,7 @@ search();
                         try {
                           const Value="s";
                          
-                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/`+Value+'/'+ isAuth()._id);
                           setErrorMsg('');
                           setFilesList(data);
                           
@@ -524,7 +535,7 @@ search();
                         try {
                           const Value="m";
                          
-                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/`+Value+'/'+ isAuth()._id);
                           setErrorMsg('');
                           setFilesList(data);
                           
@@ -559,7 +570,7 @@ search();
                         try {
                           const Value="l";
                          
-                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/`+Value+'/'+ isAuth()._id);
                           setErrorMsg('');
                           setFilesList(data);
                           
@@ -594,7 +605,7 @@ search();
                         try {
                           const Value="xl";
                          
-                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/`+Value+'/'+ isAuth()._id);
                           setErrorMsg('');
                           setFilesList(data);
                           
@@ -629,7 +640,7 @@ search();
                         try {
                           const Value="xxl";
                          
-                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/`+Value+'/'+ isAuth()._id);
                           setErrorMsg('');
                           setFilesList(data);
                           
@@ -667,7 +678,7 @@ search();
                         try {
                           const Value="xxxl";
                          
-                          const { data } = await axios.get(`http://localhost:9000/clothes/getAllClothes/`+Value+'/'+ isAuth()._id);
+                          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/`+Value+'/'+ isAuth()._id);
                           setErrorMsg('');
                           setFilesList(data);
                           
@@ -815,7 +826,7 @@ search();
                 <div className={classes.ClothesList}>
                   {filesList.length > 0 ? (
                     filesList.map(
-                      ({ _id, title ,size}) => (
+                      ({ _id, title ,size,type,description,brand}) => (
                         <Card className={classes.ClothesItem}>
                           <img
                             className={Cardclasses.cardImgTop}
@@ -834,8 +845,22 @@ search();
                           </CardHeader>
                           
                           <CardBody>
-                            <h4>{title}</h4>Size: {size}
-                            <Button>Details</Button>
+                            <h4 >{title}</h4>
+                            
+                            <Button onClick={() =>{ 
+                              setIdDetails(_id);
+                              setTitle(title);
+                              setSizeC(size);
+                              setTypeC(type);
+                              setBrandC(brand);
+                              setDescriptionC(description);
+                             
+                              setModalDetails(true);
+                          
+                            
+                            }}>Details</Button>
+
+                            
                           </CardBody>
                           <b>Add to local store
                             <IconButton color="secondary" onClick={() => setModalSell(true)} aria-label="add to shopping cart">
@@ -844,7 +869,79 @@ search();
 
                           </b>
 
-                          <Dialog
+                         
+                        </Card>
+
+                      )
+                    )
+
+                  ) : (
+                    <b> No clothes found. Please add some.</b>
+                  )}
+                  
+                <Dialog
+                  classes={{
+                    root: classes.center,
+                    paper: classes.modalDetails,
+                  }}
+                  open={modalDetails}
+                  TransitionComponent={Transition}
+                  keepMounted
+                  onClose={() => setModalDetails(false)}
+                  aria-labelledby="modal-slide-title"
+                  aria-describedby="modal-slide-description"
+                >
+                  <DialogTitle
+                    id="classic-modal-slide-title"
+                    disableTypography
+                    className={classes.modalHeader}
+                  >
+                    <div className={classes.addStore}>
+                      <IconButton
+                        className={classes.modalCloseButton}
+                        key="close"
+                        aria-label="Close"
+                        color="inherit"
+                        onClick={() => setModalDetails(false)}
+                      >
+                        <Close className={classes.modalClose} />
+                      </IconButton>
+                    </div>
+                  </DialogTitle>
+                  <DialogContent
+                    id="modal-slide-description"
+                    className={classes.modalBody}
+                  >
+
+<img
+                            className={Cardclasses.cardImgTop}
+                            data-src="holder.js/100px180/"
+                            alt="100%x180"
+                            style={{ height: "200px", width: "100%", display: "block" }}
+                            src={'http://localhost:9000/clothes/download/' + IdDetails}
+                            data-holder-rendered="true"
+                          />
+                          <h4>{Title}</h4>
+                          <h4>{TypeC}</h4>
+                          <h4>{DescriptionC}</h4>
+                          <h4>{BrandC}</h4>
+                          
+                          
+                          
+                    
+                  </DialogContent>
+                </Dialog>
+
+
+
+
+
+
+
+
+
+
+                <Dialog
                             classes={{
                               root: classes.center,
                               paper: classes.modalSell
@@ -912,19 +1009,14 @@ search();
                             </DialogContent>
                           </Dialog>
 
-                        </Card>
-
-                      )
-                    )
-
-                  ) : (
-                    <b> No clothes found. Please add some.</b>
-                  )}
                 </div>
               </CardBody>
             </Card>
           </GridItem>
         </GridContainer>
+
+
+
       </div>
     </React.Fragment>
   );

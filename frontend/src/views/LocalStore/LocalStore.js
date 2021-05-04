@@ -18,6 +18,7 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import Clothes from "components/LocalStore/Clothes.js";
 import MyStore from "components/LocalStore/MyStore.js";
+import { Redirect } from "react-router";
 
 
 import styles from "assets/jss/material-dashboard-react/views/localStoreStyle.js";
@@ -69,19 +70,19 @@ export default function LocalStore() {
         try {
           
           if(selectedValue!=null && checked!=0){
-            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+value[1]+'/'+value[0]+'/'+selectedValue,checked);
+            const { data } = await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothingAndSize/`+value[1]+'/'+value[0]+'/'+selectedValue,checked);
             setErrorMsg('');
             setFilesList(data);
           }else if(checked!=0){
-            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothing/`+value[1]+'/'+value[0],checked);
+            const { data } = await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothing/`+value[1]+'/'+value[0],checked);
             setErrorMsg('');
             setFilesList(data);    
         }else if(selectedValue!=null){
-            const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+value[1]+'/'+value[0]+'/'+selectedValue);
+            const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothes/`+value[1]+'/'+value[0]+'/'+selectedValue);
             setErrorMsg('');
             setFilesList(data);
         }else{
-          const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+value[1]+'/'+value[0]);
+          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothes/`+value[1]+'/'+value[0]);
           setErrorMsg('');
           setFilesList(data);
         }
@@ -112,10 +113,10 @@ export default function LocalStore() {
       };
 
       setErrorMsg("");
-      await axios.post(`http://localhost:9000/clothes/sellClothes`, data);
+      await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/sellClothes`, data);
       const getFilesListUser = async () => {
         try {
-          const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothesUser/`+isAuth()._id);
+          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesUser/`+isAuth()._id);
           setErrorMsg('');
           setFilesListUser(data);
         } catch (error) {
@@ -148,20 +149,20 @@ console.log(newChecked);
     const getFilesList = async () => {
       try {
         if(selectedValue!=null){
-        const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+selectedValue,newChecked);
+        const { data } = await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+selectedValue,newChecked);
         setErrorMsg('');
         setFilesList(data);
         if(newChecked.length==0){
-          const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+selectedValue);
+          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+selectedValue);
           setErrorMsg('');
           setFilesList(data);
         }
       }else{
-        const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothing/`+valueMax+'/'+valueMin,newChecked);
+        const { data } = await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothing/`+valueMax+'/'+valueMin,newChecked);
         setErrorMsg('');
         setFilesList(data);
         if(newChecked.length==0){
-          const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin);
+          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothes/`+valueMax+'/'+valueMin);
           setErrorMsg('');
           setFilesList(data);
         }
@@ -176,11 +177,12 @@ console.log(newChecked);
   };
   
   function deleteClothes(Id){
+    
     axios.post('http://localhost:9000/clothes/delete/' + Id);
     
     const getFilesListUser = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothesUser/`+isAuth()._id);
+        const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesUser/`+isAuth()._id);
         setErrorMsg('');
         setFilesListUser(data);
       } catch (error) {
@@ -195,7 +197,7 @@ console.log(newChecked);
   useEffect(() => {
     const getFilesList = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`);
+        const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothes/`);
         setErrorMsg('');
         setFilesList(data);
       } catch (error) {
@@ -210,7 +212,7 @@ console.log(newChecked);
   useEffect(() => {
     const getFilesListUser = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothesUser/`+isAuth()._id);
+        const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesUser/`+isAuth()._id);
         setErrorMsg('');
         setFilesListUser(data);
       } catch (error) {
@@ -231,15 +233,16 @@ console.log(newChecked);
         <title>Elegance App - Local Store</title>
       </Helmet>
       <div>
+      {isAuth() ? null : <Redirect to="/login" />}
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
             <Card>
               <CardHeader color="primary">
                 <div className={classes.addStore}>
-                  <h4 className={Cardclasses.cardTitleWhite}>Ariana's Store </h4>
+                  <h4 className={Cardclasses.cardTitleWhite}>Ariana's Store                     <Button  className={classes.addClothes} color="primary" round onClick={() => setModal(true)}> my store</Button>
+</h4>
                   
 
-                    <Button  className={classes.addClothes} color="primary" round onClick={() => setModal(true)}> my store</Button>
                     <Dialog
                       classes={{
                         root: classes.center,
@@ -395,7 +398,7 @@ console.log(newChecked);
                     setSelectedValue(null);
                     const getFilesList = async () => {
        try { 
-          const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes`);
+          const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothes`);
           setErrorMsg('');
           setFilesList(data);
         
@@ -430,11 +433,11 @@ console.log(newChecked);
            const Value="s";
            
            if(checked.length!=0){
-            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
+            const { data } = await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
             setErrorMsg('');
             setFilesList(data);
           }else{
-           const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
+           const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
            setErrorMsg('');
            setFilesList(data);
           }
@@ -463,11 +466,11 @@ console.log(newChecked);
            const Value="m";
            console.log("vvvalue",Value);
            if(checked.length!=0){
-            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
+            const { data } = await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
             setErrorMsg('');
             setFilesList(data);
           }else{
-           const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
+           const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
            setErrorMsg('');
            setFilesList(data);
           }
@@ -495,11 +498,11 @@ console.log(newChecked);
          try {
            const Value="l";
            if(checked.length!=0){
-            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
+            const { data } = await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
             setErrorMsg('');
             setFilesList(data);
           }else{
-           const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
+           const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
            setErrorMsg('');
            setFilesList(data);
           }
@@ -528,11 +531,11 @@ console.log(newChecked);
            const Value="xl";
            console.log("vvvalue",Value);   
             if(checked.length!=0){
-            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
+            const { data } = await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
             setErrorMsg('');
             setFilesList(data);
           }else{
-           const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
+           const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
            setErrorMsg('');
            setFilesList(data);
           }
@@ -562,11 +565,11 @@ console.log(newChecked);
           const Value="xxl";
           console.log("vvvalue",checked.length);
           if(checked.length!=0){
-            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
+            const { data } = await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
             setErrorMsg('');
             setFilesList(data);
           }else{
-           const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
+           const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
            setErrorMsg('');
            setFilesList(data);
           }
@@ -597,11 +600,11 @@ console.log(newChecked);
            const Value="xxxl";
            console.log("vvvalue",Value);
            if(checked.length!=0){
-            const { data } = await axios.post(`http://localhost:9000/clothes/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
+            const { data } = await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothingAndSize/`+valueMax+'/'+valueMin+'/'+Value+'/',checked);
             setErrorMsg('');
             setFilesList(data);
           }else{
-           const { data } = await axios.get(`http://localhost:9000/clothes/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
+           const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothes/`+valueMax+'/'+valueMin+'/'+Value);
            setErrorMsg('');
            setFilesList(data);
           }    console.log("valueMax",valueMax,"valueMin",valueMin);

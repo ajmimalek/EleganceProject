@@ -10,34 +10,22 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
-import InputAdornment from "@material-ui/core/InputAdornment";
 
 import axios from 'axios';
 import Footer from "components/FooterLogin/Footer.js";
-import { Phone } from "@material-ui/icons";
-import {
-
-  FormHelperText,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@material-ui/core";
 
 import styles from "assets/jss/material-dashboard-react/views/registerPage";
 import image from "assets/img/bg7.jpg";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { toast, ToastContainer } from "react-toastify";
 
 import {
   FormControl,
   Slide,
-
-
+  InputLabel,
+  MenuItem,
+  Select,
 
 } from "@material-ui/core";
-
-
+const useStyles = makeStyles(styles);
 
 // Slide animation for forget Password
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -46,100 +34,77 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 
 
-
 export default function DetailsClothes(props) {
-
-  const useStyles = makeStyles(styles);
   const classes = useStyles();
-  const formik = useFormik({
-    initialValues: {
-      title: "",
-      description:"",
-      type:"",
-      brand:"",
-      size:"",
-            
-      
-      textChange: "Update Clothes",
-    },
-
-    validationSchema: yupSchema,
-    // Submit data to backend
-    onSubmit: (values, onSubmitProps) => {
-      console.log(values);
-      if (values) {
-
-        formik.setFieldValue("textChange", "Updating Clothes");
-
-        console.log(values.textChange);
-        
-        // pass values to backend.
-        axios
-          .post(`${process.env.REACT_APP_WARDROBE_URL}/CompleteNewClothes`, {
-            // le
-            title: values.title,
-            description:values.description,
-            type:values.type,
-            
-
-            
-          })
-          // Clear values after submitting form
-          .then((res) => {
-            onSubmitProps.setSubmitting(false);
-            // hedha yfaragh formulaire mb3d submit 
-            onSubmitProps.resetForm();
-            props.history.push('/admin/wardrobe');    
-
-
-          })
-          .catch((err) => {
-            // Clear values after Error.
-            onSubmitProps.setSubmitting(false);
-            onSubmitProps.resetForm();
-
-
-
-
-          });
-
-
-      }
-
-
-      else {
-        toast.error("🤔 I think you've forgot something, Check your form");
-      }
-    },
-
-
-
-  });
-  console.log("Form values : ", formik.values);
-
-
-
-  function getParametresRequete(requeteNavigateur) {
-    //On transforme les + en espaces
-    requeteNavigateur = requeteNavigateur.split('+').join(' ');
-    var parametres = {};
-    var elements;
-    var expressionReguliere = /[?&]?([^=]+)=([^&]*)/g;
-    while (elements = expressionReguliere.exec(requeteNavigateur)) {
-      parametres[decodeURIComponent(elements[1])] = decodeURIComponent(elements[2]);
-    }
-    return parametres;
+  function getParametresRequete(requeteNavigateur)
+  {
+   //On transforme les + en espaces
+   requeteNavigateur = requeteNavigateur.split('+').join(' ');
+   var parametres = {};
+   var elements;
+   var expressionReguliere = /[?&]?([^=]+)=([^&]*)/g;
+   while (elements = expressionReguliere.exec(requeteNavigateur))
+   {
+   parametres[decodeURIComponent(elements[1])] = decodeURIComponent(elements[2]);
+   }
+   return parametres;
   }
   //Utilisation
   var requete = getParametresRequete(document.location.search);
-
-
-  const id = requete.id;
-
-  console.log("hhh", id);
-  //props.history.push('/DetailsClothes');
   
+  
+  const id=requete.id;
+  console.log("hhh",id);
+  //props.history.push('/DetailsClothes');
+  const [title, setTitle] = useState(null);
+  const [description, setDescription] = useState(null);
+  const [type, setType] = useState(null);
+  const [size, setSize] = useState(null);
+  const [brand, setBrand] = useState(null);
+  const handleChange = e => {
+    const {title, value} = e.currentTarget;
+    setTitle(value);
+};
+const handleChangeDescription = e => {
+  const {description, value} = e.currentTarget;
+  setDescription(value);
+};
+const handleChangeType= (e) => {
+  e.preventDefault();
+  setType(e.target.value);
+  console.log("Type",e.target.value);
+};
+const handleChangeSize = (e) => {
+  e.preventDefault();
+  setSize(e.target.value);
+  console.log("size",e.target.value);
+};
+const handleChangeBrand = e => {
+  const {brand, value} = e.currentTarget;
+  setBrand(value);
+};
+  const handleOnSubmit = async (event) => {
+    event.preventDefault();
+    console.log("test", title);
+    try {
+console.log("sss",id);
+      const data = {
+        title,
+        description,
+        type,
+        size,
+        brand,
+        id
 
+      };
+     
+
+      await axios.post(`http://localhost:9000/clothes/CompleteNewClothes`, data);
+      props.history.push('/admin/wardrobe');
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
 
 
   return (
@@ -154,104 +119,128 @@ export default function DetailsClothes(props) {
       >
         <div className={classes.container}>
           <GridContainer justify="center">
-            <GridItem xs={12} sm={12} md={8}>
+            <GridItem onSubmit={handleOnSubmit} xs={12} sm={12} md={8}>
               <Card>
                 <CardHeader color="primary">
                   <h4 className={classes.cardTitleWhite}>Edit Clothes</h4>
                   <p className={classes.cardCategoryWhite}>Complete your new clothes</p>
                 </CardHeader>
                 <CardBody>
-                <form onSubmit={formik.handleSubmit}>
                   <GridContainer>
-                    <FormControl className={classes.phone}>
+                    <GridItem xs={12} sm={12} md={5}>
                       <CustomInput
-                        labelText="title..."
+                        labelText="Title (name)"
+                    
                         id="title"
-                        error={formik.errors.title ? true : false}
+                        
                         formControlProps={{
-                          fullWidth: false,
+                          fullWidth: true
                         }}
                         inputProps={{
-                          required: true,
-                          onChange: formik.handleChange("title"),
-                          value: formik.values.title,
-                          type: "text",
-                          startAdornment: (
-                            <InputAdornment position="start">
-                             
-                            </InputAdornment>
-                          ),
+                          onChange: (e) => handleChange(e)
                         }}
                       />
-                      {formik.errors.title && formik.touched.title && (
-                        <FormHelperText className={classes.helper}>{formik.errors.title}</FormHelperText>
-                      )}
-                    </FormControl>
-                    <FormControl className={classes.phone}>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={3}>
                       <CustomInput
-                        labelText="description..."
-                        id="description"
-                        error={formik.errors.description ? true : false}
+                        labelText="Brand"
+                        name="brand"
+                        
                         formControlProps={{
-                          fullWidth: false,
+                          fullWidth: true
                         }}
                         inputProps={{
-                          required: true,
-                          onChange: formik.handleChange("description"),
-                          value: formik.values.description,
-                          type: "text",
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              
-                            </InputAdornment>
-                          ),
+                          onChange: (e) => handleChangeBrand(e)
                         }}
+
                       />
-                      {formik.errors.description && formik.touched.descriptions && (
-                        <FormHelperText className={classes.helper}>{formik.errors.description}</FormHelperText>
-                      )}
-                    </FormControl>
-                    <FormControl className={classes.mail}>
-                      <CustomInput
-                        labelText="type..."
-                        id="type"
-                        error={formik.errors.type ? true : false}
-                        formControlProps={{
-                          fullWidth: false,
-                        }}
-                        inputProps={{
-                          required: true,
-                          onChange: formik.handleChange("type"),
-                          value: formik.values.type,
-                          type: "text",
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                      {formik.errors.type&& formik.touched.type && (
-                        <FormHelperText className={classes.helper}>{formik.errors.type}</FormHelperText>
-                      )}
-                    </FormControl>
+                    </GridItem>
+                    
+                    <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-label">
+                          Size
+                        </InputLabel>
+                        <Select
+                          labelId="gender-label"
+                          id="size"
+                          value={size}
+                          onChange={handleChangeSize}
+                          className={classes.select}
+                        >
+                          <MenuItem value={"s"}>
+                            S
+                          </MenuItem>
+                          <MenuItem value={"m"}>
+                            M
+                          </MenuItem>
+                          <MenuItem value={"l"}>
+                            L
+                          </MenuItem>
+                          <MenuItem value={"xl"}>
+                            XL
+                          </MenuItem>
+                          <MenuItem value={"xxl"}>
+                            XXL
+                          </MenuItem>
+                          <MenuItem value={"xxxl"}>
+                            XXXL
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
 
 
-
-
-
-
-
-                  </GridContainer>
+                    </GridContainer>
                   <GridContainer>
-
-
-
+                    
+                  <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-label">
+                          Type
+                        </InputLabel>
+                        <Select
+                          labelId="gender-label"
+                          id="type"
+                          value={type}
+                          onChange={handleChangeType}
+                          className={classes.select}
+                        >
+                          <MenuItem value={"Jacket"}>
+                          Jacket
+                          </MenuItem>
+                          <MenuItem value={"Jeane"}>
+                          Jeane
+                          </MenuItem>
+                        
+                          <MenuItem value={"Sweater"}>
+                          Sweater
+                          </MenuItem>
+                          <MenuItem value={"Shirt"}>
+                          Shirt
+                          </MenuItem>
+                          <MenuItem value={"Man suit"}>
+                          Man suit
+                          </MenuItem>
+                         
+                        </Select>
+                      </FormControl>
+ <GridItem xs={12} sm={12} md={8}>
+                      <CustomInput
+                        labelText="Description"
+                        name="description"
+                       
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          onChange: (e) => handleChangeDescription(e),
+                          multiline: true,
+                          rows: 3
+                        }}
+                      />
+                    </GridItem>
                   </GridContainer>
-                  </form> 
                 </CardBody>
                 <CardFooter>
-                  <Button color="primary" type="submit">{formik.values.textChange}</Button>
+                  <Button color="primary" type="submit" onClick={handleOnSubmit}>Update Clothes</Button>
                 </CardFooter>
               </Card>
             </GridItem>
@@ -262,14 +251,3 @@ export default function DetailsClothes(props) {
     </div>
   );
 }
-
-
-const yupSchema = Yup.object({
-  title: Yup.string()
-
-    .required("title is required"),
-    type: Yup.string()
-
-    .required("title is required"),
-   
-});

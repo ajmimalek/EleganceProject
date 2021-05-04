@@ -105,7 +105,7 @@ export default function UserProfile(props) {
       IdUserFollowers,
       NameUserConected
     };
-    await   axios.post(`http://localhost:9000/user/follow`, data);
+    await   axios.post(`${process.env.REACT_APP_API_URL_USER}/follow`, data);
 
       } catch (error) {
         console.log(error.response);
@@ -129,7 +129,7 @@ export default function UserProfile(props) {
           idUserConected,
           IdUserFollowers
         };
-        await axios.post(`http://localhost:9000/user/UnFollow`, data);
+        await axios.post(`${process.env.REACT_APP_API_URL_USER}/UnFollow`, data);
 
       } catch (error) {
         console.log(error.response);
@@ -149,7 +149,7 @@ export default function UserProfile(props) {
     const Search = async () => {
       try {
         const { data } = await axios.post(
-          `http://localhost:9000/user/FindAllUser/` + isAuth()._id+'/'+FullName);
+          `${process.env.REACT_APP_API_URL_USER}/FindAllUser/` + isAuth()._id+'/'+FullName);
         setUserList(data);
       } catch (error) {
         getUserList();
@@ -161,7 +161,7 @@ export default function UserProfile(props) {
   const getUserList = async () => {
     try {
       const { data } = await axios.post(
-        `http://localhost:9000/user/getAllUser/` + isAuth()._id);
+        `${process.env.REACT_APP_API_URL_USER}/getAllUser/` + isAuth()._id);
       setUserList(data);
     } catch (error) {
       console.log(error.response);
@@ -177,7 +177,7 @@ export default function UserProfile(props) {
   const getFollowList = async () => {
     try {
       const { data } = await axios.post(
-        `http://localhost:9000/user/getAllFollow/` + isAuth()._id);
+        `${process.env.REACT_APP_API_URL_USER}/getAllFollow/` + isAuth()._id);
       setFollowList(data);
       console.log(data);
       data.forEach(element => {
