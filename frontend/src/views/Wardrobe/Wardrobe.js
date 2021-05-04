@@ -26,6 +26,8 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import styles from "assets/jss/material-dashboard-react/views/localStoreStyle.js";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 
 import IconButton from "@material-ui/core/IconButton";
@@ -177,6 +179,55 @@ console.log(newChecked);
       error.response && setErrorMsg(error.response.data);
     }
   };
+
+
+  const formik = useFormik({
+    initialValues: {
+      price:"",
+        
+  },
+    validationSchema: yupSchema,
+// Submit data to backend
+onSubmit: (values, onSubmitProps) => {
+    
+  if (values.pass === values.passConfirm) {
+    formik.setFieldValue("textChange", "Starting");
+  
+    console.log(values.textChange);
+    // pass values to backend.
+    axios
+      .post(`${process.env.REACT_APP_API_URL_CLOTHES}/sellClothes`, {
+      
+
+        sell: values.price,
+        Id
+      
+      })
+      // Clear values after submitting form
+      .then((res) => {
+        onSubmitProps.setSubmitting(false);
+        onSubmitProps.resetForm();
+        props.history.push('/list');
+        // reset the captcha and delete token.
+        
+      })
+      .catch((err) => {
+        // Clear values after Error.
+        onSubmitProps.setSubmitting(false);
+        onSubmitProps.resetForm();
+       
+        // reset the captcha and delete token.
+      
+        console.log(err.response);
+      
+      });
+  } else {
+
+  }
+},
+});
+
+
   const [id, setId] = useState(null);
 
   const handleSelSubmit = async (event) => {
@@ -978,7 +1029,7 @@ search();
                             >
 
 
-                              <Form className="search-form" onSubmit={handleSelSubmit}>
+                              <Form className="search-form" onSubmit={formik.handleSubmit}>
                                 <Row>
                                   <Col>
                                     <Form.Group controlId="title">
@@ -986,12 +1037,13 @@ search();
                                       <CustomInput
                                         labelText="add your price"
                                         name="price"
-
+                                        error={formik.errors.price ? true : false}
                                         formControlProps={{
                                           fullWidth: true
                                         }}
                                         inputProps={{
-                                          onChange: (e) => handleChangePrice(e),
+                                          onChange: formik.handleChange("price"),
+                                          value: formik.values.price,
                                           multiline: true,
                                           rows: 2
                                         }}
@@ -999,7 +1051,7 @@ search();
                                     </Form.Group>
                                   </Col>
                                 </Row>
-                                <Button color="primary" type="submit" onClick={() => setModalSell(false)}>Add Price</Button>
+                                <Button color="primary" type="submit" >Add Price</Button>
 
                               </Form>
 
@@ -1021,5 +1073,11 @@ search();
     </React.Fragment>
   );
 };
+const yupSchema = Yup.object({
 
+    price: Yup.string()
+    .required("City field cannot be empty")
+    .matches(/^[0-9]/, "Price must containes only number"),
+  
+});
 export default Wardrobe;
