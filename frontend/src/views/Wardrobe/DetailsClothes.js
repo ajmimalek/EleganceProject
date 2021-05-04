@@ -10,6 +10,8 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 import axios from 'axios';
 import Footer from "components/FooterLogin/Footer.js";
@@ -19,6 +21,7 @@ import image from "assets/img/bg7.jpg";
 import { Redirect } from "react-router";
 import {
   FormControl,
+  FormHelperText,
   Slide,
   InputLabel,
   MenuItem,
@@ -56,55 +59,69 @@ export default function DetailsClothes(props) {
   const id=requete.id;
   console.log("hhh",id);
   //props.history.push('/DetailsClothes');
-  const [title, setTitle] = useState(null);
-  const [description, setDescription] = useState(null);
-  const [type, setType] = useState(null);
-  const [size, setSize] = useState(null);
-  const [brand, setBrand] = useState(null);
-  const handleChange = e => {
-    const {title, value} = e.currentTarget;
-    setTitle(value);
-};
-const handleChangeDescription = e => {
-  const {description, value} = e.currentTarget;
-  setDescription(value);
-};
-const handleChangeType= (e) => {
-  e.preventDefault();
-  setType(e.target.value);
-  console.log("Type",e.target.value);
-};
-const handleChangeSize = (e) => {
-  e.preventDefault();
-  setSize(e.target.value);
-  console.log("size",e.target.value);
-};
-const handleChangeBrand = e => {
-  const {brand, value} = e.currentTarget;
-  setBrand(value);
-};
-  const handleOnSubmit = async (event) => {
-    event.preventDefault();
-    console.log("test", title);
-    try {
-console.log("sss",id);
-      const data = {
-        title,
-        description,
-        type,
-        size,
-        brand,
-        id
 
-      };
+
+  // Form inputs
+  const formik = useFormik({
+    initialValues: {
+      title:"",
+        description:"",
+        type:"",
+        size:"",
+        brand:"",
+        
+      
+    },
+    validationSchema: yupSchema,
+    // Submit data to backend
+    onSubmit: (values, onSubmitProps) => {
+    
+        if (values.pass === values.passConfirm) {
+          formik.setFieldValue("textChange", "Starting");
+        
+          console.log(values.textChange);
+          // pass values to backend.
+          axios
+            .post(`${process.env.REACT_APP_API_URL_CLOTHES}/CompleteNewClothes`, {
+            
+
+              title: values.title,
+              description: values.description,
+              type: values.type,
+              size: values.size,
+              brand: values.brand,
+              id
+            
+            })
+            // Clear values after submitting form
+            .then((res) => {
+              onSubmitProps.setSubmitting(false);
+              onSubmitProps.resetForm();
+              props.history.push('/admin/wardrobe');
+              // reset the captcha and delete token.
+              
+            })
+            .catch((err) => {
+              // Clear values after Error.
+              onSubmitProps.setSubmitting(false);
+              onSubmitProps.resetForm();
+             
+              // reset the captcha and delete token.
+            
+              console.log(err.response);
+            
+            });
+        } else {
      
+        }
+    },
+  });
 
-      await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/CompleteNewClothes`, data);
-      props.history.push('/admin/wardrobe');
-    } catch (error) {
-      console.log(error.response);
-    }
-  };
+
+
+
+
+
 
 
   return (
@@ -120,8 +137,9 @@ console.log("sss",id);
       >
         <div className={classes.container}>
           <GridContainer justify="center">
-            <GridItem onSubmit={handleOnSubmit} xs={12} sm={12} md={8}>
+            <GridItem xs={12} sm={12} md={8}>
               <Card>
+              <form className={classes.form} onSubmit={formik.handleSubmit}>
                 <CardHeader color="primary">
                   <h4 className={classes.cardTitleWhite}>Edit Clothes</h4>
                   <p className={classes.cardCategoryWhite}>Complete your new clothes</p>
@@ -131,14 +149,16 @@ console.log("sss",id);
                     <GridItem xs={12} sm={12} md={5}>
                       <CustomInput
                         labelText="Title (name)"
-                    
+                        error={formik.errors.title ? true : false}
                         id="title"
                         
                         formControlProps={{
                           fullWidth: true
                         }}
                         inputProps={{
-                          onChange: (e) => handleChange(e)
+                          onChange: formik.handleChange("title"),
+                          value: formik.values.title,
+                         
                         }}
                       />
                     </GridItem>
@@ -146,12 +166,13 @@ console.log("sss",id);
                       <CustomInput
                         labelText="Brand"
                         name="brand"
-                        
+                        error={formik.errors.brand ? true : false}
                         formControlProps={{
                           fullWidth: true
                         }}
                         inputProps={{
-                          onChange: (e) => handleChangeBrand(e)
+                          onChange: formik.handleChange("brand"),
+                          value: formik.values.brand,
                         }}
 
                       />
@@ -164,8 +185,10 @@ console.log("sss",id);
                         <Select
                           labelId="gender-label"
                           id="size"
-                          value={size}
-                          onChange={handleChangeSize}
+                        
+                          
+                          value={formik.values.size}
+                          onChange={formik.handleChange("size")}
                           className={classes.select}
                         >
                           <MenuItem value={"s"}>
@@ -187,6 +210,9 @@ console.log("sss",id);
                             XXXL
                           </MenuItem>
                         </Select>
+                        {formik.errors.size && formik.touched.size && (
+                          <FormHelperText className={classes.helper}>{formik.errors.size}</FormHelperText>
+                        )}
                       </FormControl>
 
 
@@ -200,8 +226,9 @@ console.log("sss",id);
                         <Select
                           labelId="gender-label"
                           id="type"
-                          value={type}
-                          onChange={handleChangeType}
+                         
+                          value={formik.values.type}
+                          onChange={formik.handleChange("type")}
                           className={classes.select}
                         >
                           <MenuItem value={"Jacket"}>
@@ -222,17 +249,21 @@ console.log("sss",id);
                           </MenuItem>
                          
                         </Select>
+                        {formik.errors.type && formik.touched.type && (
+                          <FormHelperText className={classes.helper}>{formik.errors.type}</FormHelperText>
+                        )}
                       </FormControl>
  <GridItem xs={12} sm={12} md={8}>
                       <CustomInput
                         labelText="Description"
                         name="description"
-                       
+                        error={formik.errors.description ? true : false}
                         formControlProps={{
                           fullWidth: true
                         }}
                         inputProps={{
-                          onChange: (e) => handleChangeDescription(e),
+                          onChange: formik.handleChange("description"),
+                          value: formik.values.description,
                           multiline: true,
                           rows: 3
                         }}
@@ -241,8 +272,9 @@ console.log("sss",id);
                   </GridContainer>
                 </CardBody>
                 <CardFooter>
-                  <Button color="primary" type="submit" onClick={handleOnSubmit}>Update Clothes</Button>
+                  <Button color="primary" type="submit" >Update Clothes</Button>
                 </CardFooter>
+                </form>
               </Card>
             </GridItem>
           </GridContainer>
@@ -252,3 +284,15 @@ console.log("sss",id);
     </div>
   );
 }
+const yupSchema = Yup.object({
+  title: Yup.string()
+    .required("Name is required"),
+ 
+   
+    brand: Yup.string().required("brand field cannot be empty"),
+    description: Yup.string().required("City field cannot be empty"),
+    
+    size: Yup.string().required("brand field cannot be empty"),
+    type: Yup.string().required("City field cannot be empty"),
+  
+});
