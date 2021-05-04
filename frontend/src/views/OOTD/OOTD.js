@@ -10,6 +10,7 @@ import Casual from "../../assets/img/Context/casual.jpg";
 import Party from "../../assets/img/Context/party.jpg";
 import Seminar from "../../assets/img/Context/Seminar.jpg";
 import Work from "../../assets/img/Context/Work.jpg";
+import Match from "../../assets/img/perfect_match.gif";
 import { rotateIn } from "react-animations";
 import {
   Dialog,
@@ -22,6 +23,7 @@ import Toolstyles from "assets/jss/material-dashboard-react/components/tasksStyl
 import Quote from "components/Typography/Quote";
 import { isAuth } from "helpers/auth";
 import { Redirect } from "react-router";
+import { Add, ArrowForward } from "@material-ui/icons";
 
 const styles = (theme) => ({
   ...imagesStyles,
@@ -72,6 +74,8 @@ export default function OOTD(props) {
   //Quotes
   const [quote, setQuote] = useState("");
   const [author, setAuthor] = useState("");
+  const [outfit, setOutfit] = useState(false);
+  const [timesClicked, settimesClicked] = useState(0);
   useEffect(() => {
     fetch("http://quotes.rest/qod.json?category=inspire")
       .then((res) => res.json())
@@ -88,6 +92,15 @@ export default function OOTD(props) {
   };
   const handleClose = () => {
     setOpen(false);
+  };
+  const showOOTD = () => {
+    settimesClicked(timesClicked + 1);
+    if (timesClicked === 2) {
+      setOutfit(false);
+      settimesClicked(0);
+    } else {
+      setOutfit(true);
+    }
   };
   const classes = useStyles();
   const classe = useToolsStyles();
@@ -120,6 +133,7 @@ export default function OOTD(props) {
             >
               <img
                 src={Casual}
+                onClick={showOOTD}
                 alt="Casual Outfit"
                 className={
                   classes.imgRaised +
@@ -208,12 +222,25 @@ export default function OOTD(props) {
                 </span>
                 ...
               </DialogTitle>
-              <DialogContent>
-              </DialogContent>
+              <DialogContent></DialogContent>
             </Dialog>
           </CardBody>
         </Card>
-        <div></div>
+        <div>
+          {outfit ? (
+            <div>
+              <img src={Work} alt="1" />
+              <Add />
+              <img src={Work} alt="2" />
+              <Add />
+              <img src={Work} alt="3" />
+              <Add />
+              <img src={Work} alt="4" />
+              <ArrowForward />
+              <img src={Match} alt="The Perfect Match" />
+            </div>
+          ) : null}
+        </div>
         <Card>
           <CardHeader color="success">
             <span role="img" aria-labelledby="sun">

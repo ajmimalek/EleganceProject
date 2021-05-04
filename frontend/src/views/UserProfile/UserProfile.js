@@ -81,6 +81,10 @@ const styles = {
       borderBottom: `2px solid #bf1922`,
     },
   },
+  upload: {
+    textAlign: "center",
+    marginTop: "-5px",
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -89,6 +93,7 @@ export default function UserProfile() {
   const history = useHistory();
   const [picture, setPicture] = useState(DefaultAvatar);
   const [Url, setURL] = useState("");
+  const [updating, setUpdating] = useState(false);
   //Form Inputs
   const formik = useFormik({
     initialValues: {
@@ -129,7 +134,6 @@ export default function UserProfile() {
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
             },
           }
         )
@@ -210,6 +214,7 @@ export default function UserProfile() {
                 <ImageUpload
                   filename={picture}
                   onChange={(e) => {
+                    setUpdating(true);
                     //Upload picture to cloudinary
                     const data = new FormData();
                     data.append("file", e.target.files[0]);
@@ -227,6 +232,7 @@ export default function UserProfile() {
                         console.log(data);
                         setURL(data.url);
                         toast.success("✔ File Uploaded Successfully");
+                        setUpdating(false);
                       })
                       .catch((err) => {
                         console.log(err);
@@ -235,6 +241,9 @@ export default function UserProfile() {
                     setPicture(URL.createObjectURL(e.target.files[0]));
                   }}
                 />
+                {updating ? (
+                  <p className={classes.upload}>Uploading Picture...</p>
+                ) : null}
                 <GridContainer>
                   <GridItem xs={12} sm={12} md={12}>
                     <CustomInput
