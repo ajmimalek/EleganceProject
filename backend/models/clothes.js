@@ -1,14 +1,60 @@
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var Clothes =new Schema ({
+let Clothes = new Schema(
+  {
+    title: {
+      type: String,
+      required: false,
+      trim: false
+    },
+    description: {
+      type: String,
+      required: false,
+      trim: false
+    },
+    type: {
+      type: String,
+      required: false,
+      trim: false
+    },
+    color: {
+      type: String,
+      required: false,
+      trim: false
+    },
+    size: {
+      type: String,
+      required: false,
+      trim: false
+    },
+    brand: {
+      type: String,
+      required: false,
+      trim: false
+    },
+    sell: {
+      type: Number,
+      required: false,
+      trim: false
+    },
+    user: [{
+      type: Schema.Types.ObjectId,
+      ref: "User",
 
-    IdClothes : Number,
-    brand : String,
-    clothesImage : String,
-    undersized : Boolean,
-
-
-}
+    }],
+    clothes_path: {
+      type: String,
+      required: true
+    },
+    clothes_mimetype: {
+      type: String,
+      required: true
+    }
+  },
+  {
+    timestamps: true
+  }
 );
-module.exports = mongoose.model('clothes', Clothes);
+
+module.exports = mongoose.model('Clothes', Clothes);

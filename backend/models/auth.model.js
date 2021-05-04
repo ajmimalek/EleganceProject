@@ -5,8 +5,8 @@ const crypto = require("crypto");
 var Schema = mongoose.Schema;
 //Object.freeze() permet de geler un objet, c'est-à-dire qu'on empêche d'ajouter de nouvelles propriétés, de supprimer ou d'éditer des propriétés existantes.
 const Genders = Object.freeze({
-  Male: "male",
-  Female: "female",
+  Male: "Male",
+  Female: "Female",
 });
 var userSchema = new Schema(
   {
@@ -47,7 +47,7 @@ var userSchema = new Schema(
     preferences: String,
     image: String,
     Phone: Number,
-    City: String,
+    city: String,
   },
   {
     // The timestamps option tells mongoose to assign createdAt and updatedAt fields to your schema.

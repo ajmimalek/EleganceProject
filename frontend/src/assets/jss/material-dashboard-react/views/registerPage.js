@@ -1,23 +1,25 @@
 import { primaryColor } from "assets/jss/material-dashboard-react";
+import { grayColor } from "assets/jss/material-dashboard-react";
 import { container } from "assets/jss/material-dashboard-react.js";
 
 const signupPageStyle = (theme) => ({
   formControl: {
     marginLeft: theme.spacing(2),
     marginTop: "5px",
-    width: "35%",
+    width: "30%",
     float: "right!important",
   },
+  phone: {
+    marginLeft: "45px",
+    marginTop: "-20px",
+    width: "30%",
+  },
   city: {
-    display: "block",
+    display: "grid",
     marginLeft: "auto",
     marginRight: "auto",
-    marginTop: "5px",
+    marginTop: "10px",
     width: "50%",
-    "& #gps": {
-      marginTop: "-64px",
-      marginLeft: "-50px",
-    },
   },
   container: {
     ...container,
@@ -29,23 +31,29 @@ const signupPageStyle = (theme) => ({
     paddingBottom: "200px",
   },
   name: {
-    marginTop: "10px",
-    width: "45%",
+    marginTop: "-20px",
+    width: "30%",
+  },
+  helper: {
+    marginTop: "-10px",
+  },
+  select: {
+    "&:after": {
+      borderColor: "#bf1922",
+    },
+    "&:hover:not(.Mui-disabled):not(.Mui-focused):not(.Mui-error):before": {
+      // hover
+      borderBottom: `2px solid #bf1922`,
+    },
   },
   mail: {
-    marginTop: "10px",
+    marginTop: "-20px",
     width: "30%",
   },
   password: {
-    marginTop: "10px",
+    marginTop: "-20px",
     width: "30%",
-    marginLeft: "25px",
-    float: "right!important",
-    [theme.breakpoints.down("sm")]: {
-       display: "flex",
-       flexFlow: "row nowrap",
-       marginLeft: "15px",
-    },
+    marginLeft: "30px",
   },
   cardHidden: {
     opacity: "0",
@@ -94,17 +102,6 @@ const signupPageStyle = (theme) => ({
     padding: "20px 0",
     marginBottom: "15px",
   },
-  socialIcons: {
-    maxWidth: "44px",
-    marginTop: "0",
-    width: "100%",
-    transform: "none",
-    left: "0",
-    top: "0",
-    height: "100%",
-    lineHeight: "41px",
-    fontSize: "20px",
-  },
   divider: {
     marginTop: "30px",
     marginBottom: "0px",
@@ -116,17 +113,8 @@ const signupPageStyle = (theme) => ({
     borderRadius: "6px",
     justifyContent: "center !important",
   },
-  socialLine: {
-    marginTop: "1rem",
-    textAlign: "center",
-    padding: "0",
-  },
   inputIconsColor: {
     color: "#495057",
-  },
-  remember: {
-    color: "#495057",
-    marginTop: "10px",
   },
 });
 

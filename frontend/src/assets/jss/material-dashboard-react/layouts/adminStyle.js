@@ -5,19 +5,6 @@ import {
 } from "assets/jss/material-dashboard-react.js";
 
 const appStyle = (theme) => ({
-  suspense: {
-    marginTop: "50%",
-    "& > img": {
-      width: "200px",
-      display: "block",
-      marginLeft: "auto",
-      marginRight: "auto",
-    },
-    "& > p": {
-      textAlign: "center",
-      fontWeight: "bold",
-    }
-  },
   wrapper: {
     position: "relative",
     top: "0",

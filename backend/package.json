@@ -6,23 +6,31 @@
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.14.0",
     "@sendgrid/mail": "^6.5.5",
+    "axios": "^0.21.1",
     "body-parser": "^1.19.0",
+    "commonjs": "0.0.1",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
+    "enum": "^3.0.4",
     "express": "~4.16.1",
+    "express-fileupload": "^1.2.1",
     "express-jwt": "^5.3.1",
     "express-validator": "^6.4.0",
     "fs-extra": "^9.1.0",
     "google-auth-library": "^6.0.0",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
+    "material-ui-dropzone": "^3.5.0",
     "mongoose": "^5.12.2",
     "morgan": "~1.9.1",
+    "multer": "^1.4.2",
     "node-fetch": "^2.6.0",
-    "puppeteer": "^8.0.0"
+    "path": "^0.12.7",
+    "puppeteer": "^9.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
