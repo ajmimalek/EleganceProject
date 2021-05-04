@@ -91,7 +91,6 @@ export default function DetailsClothes(props) {
               size: values.size,
               brand: values.brand,
               id
-            
             })
             // Clear values after submitting form
             .then((res) => {

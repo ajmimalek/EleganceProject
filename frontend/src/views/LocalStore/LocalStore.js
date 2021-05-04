@@ -34,6 +34,9 @@ import IconButton from "@material-ui/core/IconButton";
 import Close from "@material-ui/icons/Close";
 // core components
 import Slide from "@material-ui/core/Slide";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { toast, ToastContainer } from "react-toastify";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
@@ -50,11 +53,57 @@ export default function LocalStore() {
   const [errorMsg, setErrorMsg] = useState("");
   const [modalSell, setModalSell] = useState(false);
   const [checked, setChecked] = React.useState([]);
-  const [price, setprice] = useState(null);
-  const handleChangePrice = (e) => {
-    const { price, value } = e.currentTarget;
-    setprice(value);
-  };
+  const [Uprice, setprice] = useState(null);
+  
+
+
+
+
+
+
+//Form Inputs
+const formik = useFormik({
+  initialValues: {
+    price: ""
+    
+  },
+  validationSchema: yupSchema,
+  // Submit data to backend
+  onSubmit: (values, onSubmitProps) => {
+  
+    formik.setFieldValue("textChange", "Updating");
+    console.log(URL);
+    
+    // pass values to backend.
+    axios
+      .post(
+        `${process.env.REACT_APP_API_URL_CLOTHES}/UpdateClothes`,
+        {
+          sell: values.price,
+          Id
+          //image: JSON.stringify({data : values.image}),
+       
+        }
+      )
+      .then((res) => {
+        onSubmitProps.resetForm();
+        getAllSellClothesUser();     
+        toast.success("✔ Price Updated Successfully");
+        setModalSell(false);
+        onSubmitProps.setSubmitting(false);
+           
+     
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("⚠️ " + err.message);
+      });
+  },
+});
+
+
+
+
 
   //handle slidre range price
   const handleInputChange = (value) => {
@@ -119,23 +168,7 @@ export default function LocalStore() {
   });
   const [Id, SetID] = useState(null);
 
-  const handleSelSubmit = async (event) => {
-    event.preventDefault();
-
-    try {
-      const sell = price;
-
-      const data = {
-        sell,
-        Id,
-      };
-
-      setErrorMsg("");
-      await axios.post(
-        `${process.env.REACT_APP_API_URL_CLOTHES}/sellClothes`,
-        data
-      );
-      const getFilesListUser = async () => {
+      const getAllSellClothesUser = async () => {
         try {
           const { data } = await axios.get(
             `${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesUser/` +
@@ -148,11 +181,6 @@ export default function LocalStore() {
         }
       };
 
-      getFilesListUser();
-    } catch (error) {
-      error.response && setErrorMsg(error.response.data);
-    }
-  };
 
   const classes = useStyless();
   const Cardclasses = useCardStyles();
@@ -225,7 +253,7 @@ export default function LocalStore() {
   };
 
   function deleteClothes(Id) {
-    axios.post("http://localhost:9000/clothes/delete/" + Id);
+    axios.post("http://localhost:9000/clothes/delete/"+ Id);
 
     const getFilesListUser = async () => {
       try {
@@ -302,7 +330,6 @@ export default function LocalStore() {
                       my store
                     </Button>
                   </h4>
-
                   <Dialog
                     classes={{
                       root: classes.center,
@@ -360,7 +387,7 @@ export default function LocalStore() {
                                   Size: {size}
                                 </p>
 
-                                <b>25148752</b>
+                                
                                 <div className={classes.sliderFilter}>
                                   <IconButton
                                     aria-label="update"
@@ -369,10 +396,30 @@ export default function LocalStore() {
                                   >
                                     <UpdateIcon
                                       fontSize="small"
-                                      onClick={() => SetID(_id)}
+                                      onClick={() =>{ 
+                                        formik.setValues({
+                                          price: sell
+                                          
+                                      
+                                        });
+                                        setprice(sell);
+                                        SetID(_id);
+                                      
+                                      }}
                                     />
                                   </IconButton>
-                                  <Dialog
+
+                                  <IconButton
+                                    aria-label="delete"
+                                    onClick={() => deleteClothes(_id)}
+                                    className={classes.margin}
+                                  >
+                                    <DeleteIcon fontSize="small" />
+                                  </IconButton>
+
+
+{/*modal update price*/}
+<Dialog
                                     classes={{
                                       root: classes.center,
                                       paper: classes.modalSell,
@@ -407,47 +454,48 @@ export default function LocalStore() {
                                       id="modal-slide-description"
                                       className={classes.modalBody}
                                     >
-                                      <Form
-                                        className="search-form"
-                                        onSubmit={handleSelSubmit}
-                                      >
+                                      <form onSubmit={formik.handleSubmit}>
                                         <Row>
                                           <Col>
                                             <Form.Group controlId="title">
                                               <CustomInput
-                                                labelText="add your new price"
-                                                name="price"
+                                               
+                                            
+                                                id="price"
+                                                error={formik.errors.price ? true : false}
                                                 formControlProps={{
                                                   fullWidth: true,
                                                 }}
                                                 inputProps={{
-                                                  onChange: (e) =>
-                                                    handleChangePrice(e),
+                                                  value: formik.values.price,
+                                                  onChange: formik.handleChange("price"),
                                                   multiline: true,
                                                   rows: 2,
                                                 }}
                                               />
+                                             
                                             </Form.Group>
                                           </Col>
                                         </Row>
                                         <Button
                                           color="primary"
                                           type="submit"
-                                          onClick={() => setModalSell(false)}
+                                         
                                         >
                                           Update Price
                                         </Button>
-                                      </Form>
+                                      </form>
                                     </DialogContent>
                                   </Dialog>
 
-                                  <IconButton
-                                    aria-label="delete"
-                                    onClick={() => deleteClothes(_id)}
-                                    className={classes.margin}
-                                  >
-                                    <DeleteIcon fontSize="small" />
-                                  </IconButton>
+
+
+
+
+
+
+
+
                                 </div>
                               </CardBody>
                             </Card>
@@ -914,7 +962,7 @@ export default function LocalStore() {
                 <CardBody>
                   <div className={classes.ClothesList}>
                     {filesList.length > 0 ? (
-                      filesList.map(({ _id, sell, title, size }) => (
+                      filesList.map(({ _id, sell, title, size,phone }) => (
                         <Card className={classes.ClothesItem}>
                           <img
                             className={Cardclasses.cardImgTop}
@@ -939,7 +987,7 @@ export default function LocalStore() {
                               Size: {size}
                             </p>
 
-                            <b>25148752</b>
+                            <b>{phone}</b>
                           </CardBody>
                         </Card>
                       ))
@@ -956,3 +1004,12 @@ export default function LocalStore() {
     </>
   );
 }
+const yupSchema = Yup.object({
+ 
+  price: Yup.string().matches(
+    /^[0-9]/,
+    "Price must containes only number"
+  )
+    .required("Price is required"),
+ 
+});
