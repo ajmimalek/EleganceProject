@@ -12,7 +12,7 @@ const imageUploadStyle = {
   },
   picture: {
     width: "20%",
-    height: "25%",
+    height: "20%",
     backgroundColor: "#999999",
     border: "4px solid #CCCCCC",
     color: "#FFFFFF",
@@ -60,5 +60,5 @@ export default function ImageUpload(props) {
 
 ImageUpload.propTypes = {
   filename: PropTypes.string,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
 };

@@ -18,19 +18,18 @@ exports.readController = (req, res) => {
 };
 
 exports.updateController = (req, res) => {
-  console.log("UPDATE USER - req.user", req.user, "UPDATE DATA", req.body);
+    console.log("UPDATE USER - req.user", req.user, "UPDATE DATA", req.body);
+    const { FullName, email, Gender, city, Phone, image } = req.body;
+    const { _id } = req.user;
 
-  const { FullName, email, Gender, city, Phone, image } = req.body;
-  const { _id } = req.user;
-
-  User.findByIdAndUpdate(req.user._id, { $set: req.body }, (err, data) => {
-    if (err) {
-      console.log("USER UPDATE ERROR", err);
-      return res.status(400).json({
-        error: "User update failed",
-      });
-    } else {
-      res.json({
+    User.findByIdAndUpdate(req.user._id, { $set: req.body }, (err, data) => {
+      if (err) {
+        console.log("USER UPDATE ERROR", err);
+        return res.status(400).json({
+          error: "User update failed",
+        });
+      } else {
+        res.json({
           _id,
           FullName,
           email,
@@ -38,8 +37,7 @@ exports.updateController = (req, res) => {
           city,
           Phone,
           Gender,
-      });
-      console.log("Student updated successfully ! ", data);
-    }
-  });
+        });
+      }
+    });
 };

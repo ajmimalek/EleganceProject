@@ -1,5 +1,4 @@
 var createError = require("http-errors");
-console.log("require createError");
 var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
@@ -24,8 +23,8 @@ if (process.env.NODE_ENV === "development") {
   //Morgan give information about each request.
   //Cors it's allow to deal with react for localhost at port 3000 without any problem
 }
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Load routes
@@ -37,8 +36,12 @@ app.use("/clothes", clothesRoutes);
 app.use("/api", authRouter);
 app.use("/api", userRouter);
 
-if (process.env.NODE_ENV === "development") {
-  console.log("d5lna f dev");
+
+  // catch 404 and forward to error handler
+  app.use(function (req, res, next) {
+    next(createError(404));
+  });
+
   // error handler
   app.use(function (err, req, res, next) {
     // set locals, only providing error in development
@@ -49,13 +52,7 @@ if (process.env.NODE_ENV === "development") {
     res.status(err.status || 500);
     res.json({ message: err.message });
   });
-  // catch 404 and forward to error handler
-  app.use(function (req, res, next) {
-    console.log("neeext");
-    next(createError(404));
-  });
-}
-
+  
 //connection mongoose
 const connect = mongoose
   .connect(`${process.env.MONGO_URI}`, {
@@ -68,7 +65,6 @@ const connect = mongoose
 mongoose.set("useCreateIndex", true);
 //Serving React Files
 if (process.env.NODE_ENV === "production") {
-  console.log("d5lna f prod");
   //we give server access to react application (the production mode 'build')
   app.use(express.static(path.join(__dirname, "../frontend/build")));
   //whenever we reach a get route in url, we send data into index.html

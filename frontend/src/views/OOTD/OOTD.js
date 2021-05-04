@@ -22,9 +22,6 @@ import Toolstyles from "assets/jss/material-dashboard-react/components/tasksStyl
 import Quote from "components/Typography/Quote";
 import { isAuth } from "helpers/auth";
 import { Redirect } from "react-router";
-var CanvasJSReact = require("../../assets/js/canvasjs.react");
-var CanvasJS = CanvasJSReact.CanvasJS;
-var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const styles = (theme) => ({
   ...imagesStyles,
@@ -72,32 +69,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function OOTD(props) {
-  //Charts
-  const options = {
-    exportEnabled: true,
-    animationEnabled: true,
-    title: {
-      text: "Website Traffic Sources",
-    },
-    data: [
-      {
-        type: "pie",
-        startAngle: 75,
-        toolTipContent: "<b>{label}</b>: {y}%",
-        showInLegend: "true",
-        legendText: "{label}",
-        indexLabelFontSize: 16,
-        indexLabel: "{label} - {y}%",
-        dataPoints: [
-          { y: 18, label: "Direct" },
-          { y: 49, label: "Organic Search" },
-          { y: 9, label: "Paid Search" },
-          { y: 5, label: "Referral" },
-          { y: 19, label: "Social" },
-        ],
-      },
-    ],
-  };
   //Quotes
   const [quote, setQuote] = useState("");
   const [author, setAuthor] = useState("");
@@ -238,10 +209,6 @@ export default function OOTD(props) {
                 ...
               </DialogTitle>
               <DialogContent>
-                {/*<CanvasJSChart
-                  options={options}
-                  onRef={ref => this.chart = ref} />
-                You can get reference to the chart instance as shown above using onRef. This allows you to access all chart properties and methods*/}
               </DialogContent>
             </Dialog>
           </CardBody>

@@ -87,10 +87,12 @@ const useStyles = makeStyles(styles);
 
 export default function UserProfile() {
   const history = useHistory();
+  const [picture, setPicture] = useState(DefaultAvatar);
+  const [Url, setURL] = useState("");
   //Form Inputs
   const formik = useFormik({
     initialValues: {
-      image: DefaultAvatar,
+      image: "",
       name: "",
       phone: "",
       gender: "",
@@ -107,6 +109,7 @@ export default function UserProfile() {
       const token = getCookie("token");
       console.log(token);
       formik.setFieldValue("textChange", "Updating");
+      console.log(URL);
       setLoading(true);
       // pass values to backend.
       axios
@@ -120,11 +123,13 @@ export default function UserProfile() {
             city: values.city,
             Phone: values.phone,
             preferences: values.preferences,
-            image: values.image,
+            //image: JSON.stringify({data : values.image}),
+            image: Url,
           },
           {
             headers: {
               Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
             },
           }
         )
@@ -165,8 +170,8 @@ export default function UserProfile() {
           preferences,
           image,
         } = res.data;
+        setPicture(image);
         formik.setValues({
-          image: image,
           name: FullName,
           phone: Phone,
           gender: Gender,
@@ -203,13 +208,31 @@ export default function UserProfile() {
             <form onSubmit={formik.handleSubmit}>
               <CardBody>
                 <ImageUpload
-                  filename={formik.values.image}
-                  onChange={(event) => {
-                    formik.setFieldValue(
-                      "image",
-                      URL.createObjectURL(event.target.files[0])
-                    );
-                    console.log(event.target.files[0]);
+                  filename={picture}
+                  onChange={(e) => {
+                    //Upload picture to cloudinary
+                    const data = new FormData();
+                    data.append("file", e.target.files[0]);
+                    data.append("upload_preset", "elegance");
+                    data.append("cloud_name", "elegance");
+                    fetch(
+                      "https://api.cloudinary.com/v1_1/elegance/image/upload",
+                      {
+                        method: "post",
+                        body: data,
+                      }
+                    )
+                      .then((res) => res.json())
+                      .then((data) => {
+                        console.log(data);
+                        setURL(data.url);
+                        toast.success("✔ File Uploaded Successfully");
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
+                    formik.setFieldValue("image", e.target.files[0]);
+                    setPicture(URL.createObjectURL(e.target.files[0]));
                   }}
                 />
                 <GridContainer>
