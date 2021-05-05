@@ -33,6 +33,7 @@ app.use(cookieParser());
 
 // Load routes
 const authRouter = require("./routes/auth.route");
+const storeRouter = require("./routes/store.route");
 const userRouter = require("./routes/user.route");
 //clothes Routes
 app.use("/clothes", clothesRoutes);
@@ -40,8 +41,9 @@ app.use("/user", userRoutes);
 // Use Routes
 app.use("/api", authRouter);
 app.use("/api/user", userRouter);
+app.use("/store",storeRouter);
 
-
+if (process.env.NODE_ENV === "development") {
   // catch 404 and forward to error handler
   app.use(function (req, res, next) {
     next(createError(404));
@@ -57,6 +59,7 @@ app.use("/api/user", userRouter);
     res.status(err.status || 500);
     res.json({ message: err.message });
   });
+}
   
 //connection mongoose
 const connect = mongoose
@@ -66,10 +69,12 @@ const connect = mongoose
   })
   .then(() => console.log("Connected to db "))
   .catch((err) => console.log("catched error " + err));
+  mongoose.set("useCreateIndex", true);
 
 mongoose.set("useCreateIndex", true);
 //Serving React Files
 if (process.env.NODE_ENV === "production") {
+  console.log("en mode production");
   //we give server access to react application (the production mode 'build')
   app.use(express.static(path.join(__dirname, "../frontend/build")));
   //whenever we reach a get route in url, we send data into index.html
