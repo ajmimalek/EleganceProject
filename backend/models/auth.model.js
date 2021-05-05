@@ -44,7 +44,10 @@ var userSchema = new Schema(
       type: String,
       enum: Object.values(Genders),
     },
-    preferences: String,
+    preferences: {
+      type: String,
+      trim: true
+    },
     image: String,
     Phone: Number,
     city: String,

@@ -2,8 +2,12 @@ import React from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import { Helmet } from "react-helmet";
+
 import { createBrowserHistory } from 'history';
 import "views/Store/Store.css";
+
+import "views/Store/Store.css"
+
 import Button from "components/CustomButtons/Button.js";
 import { AttachMoney } from "@material-ui/icons";
 import Budget from "views/Store/Budget";
@@ -60,6 +64,7 @@ const styles = {
     }
   }
 };
+
 const history = createBrowserHistory();
 
 const useStyles = makeStyles((theme) => ({
@@ -71,6 +76,11 @@ const useStyles = makeStyles((theme) => ({
     flex: 1,
   },
 }));
+
+
+
+//const history = createBrowserHistory();
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });

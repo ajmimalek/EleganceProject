@@ -36,6 +36,31 @@ const upload = multer({
 router.post('/sellClothes', async (req, res) => {
 
   try {
+    const { Id, sell,phone } = req.body;
+    Clothes.findByIdAndUpdate(
+      Id,
+      { sell: sell,phone: phone },
+      function (err) {
+        if (err) {
+          res.send(err);
+          return;
+        }
+        res.send({ data: "Record has been Updated..!!" });
+      });
+  } catch (error) {
+    res.status(400).send('Error while uploading file. Try fff again later.');
+  }
+},
+  (error, req, res, next) => {
+    if (error) {
+      res.status(500).send(error.message);
+    }
+  }
+);
+/* PUT API sell clothes */
+router.post('/UpdateClothes', async (req, res) => {
+
+  try {
     const { Id, sell } = req.body;
     Clothes.findByIdAndUpdate(
       Id,

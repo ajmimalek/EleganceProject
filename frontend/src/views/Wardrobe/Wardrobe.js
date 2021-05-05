@@ -44,7 +44,7 @@ import SearchBar from 'material-ui-search-bar';
 import { Tooltip } from '@material-ui/core';
 import Color from "../../assets/img/couleur.jpg";
 import Toolstyles from "assets/jss/material-dashboard-react/components/tasksStyle.js";
-import Size from "../../assets/img/size-guide.png";
+import Size from "../../assets/img/size-guide.jpg";
 import Type from "../../assets/img/type.jpg";
 import CardIcon from 'components/Card/CardIcon';
 import { Language } from '@material-ui/icons';
@@ -68,7 +68,7 @@ const Wardrobe = (props) => {
   const [modalDetails, setModalDetails] = useState(false);
   const [Id, setID] = useState(null);
 
-
+  const [phone,setPhone]=useState(isAuth().Phone);
   const [Image, setImage] = useState(null);
   const [Title, setTitle] = useState(null);
   const [SizeC, setSizeC] = useState(null);
@@ -89,18 +89,6 @@ const Wardrobe = (props) => {
   const [isPreviewAvailable, setIsPreviewAvailable] = useState(false); // state to show preview only for images
   const dropRef = useRef(); // React ref for managing the hover state of droppable area
 
-  const handleInputChange = (event) => {
-    setState({
-      ...state,
-      [event.target.name]: event.target.value,
-    });
-  };
-
-  const [price, setprice] = useState(null);
-  const handleChangePrice = e => {
-    const { price, value } = e.currentTarget;
-    setprice(value);
-  };
   
   const handleToggle = value => {
     const currentIndex = checked.indexOf(value);
@@ -200,7 +188,8 @@ onSubmit: (values, onSubmitProps) => {
       
 
         sell: values.price,
-        Id
+        Id,
+        phone
       
       })
       // Clear values after submitting form
@@ -228,27 +217,6 @@ onSubmit: (values, onSubmitProps) => {
 });
 
 
-  const [id, setId] = useState(null);
-
-  const handleSelSubmit = async (event) => {
-    event.preventDefault();
-
-    try {
-      const sell = price;
-
-      const data = {
-        sell,
-        Id,
-      };
-
-      setErrorMsg("");
-      await axios.post(`${process.env.REACT_APP_API_URL_CLOTHES}/sellClothes`, data);
-
-      props.history.push("/list");
-    } catch (error) {
-      error.response && setErrorMsg(error.response.data);
-    }
-  };
 
   function deleteClothes(Id) {
     swal({
@@ -963,7 +931,8 @@ search();
                     id="modal-slide-description"
                     className={classes.modalBody}
                   >
-
+ <div className={classes.ClothesList}>
+   <div>
 <img
                             className={Cardclasses.cardImgTop}
                             data-src="holder.js/100px180/"
@@ -972,13 +941,15 @@ search();
                             src={'http://localhost:9000/clothes/download/' + IdDetails}
                             data-holder-rendered="true"
                           />
-                          <h4>{Title}</h4>
-                          <h4>{TypeC}</h4>
-                          <h4>{DescriptionC}</h4>
-                          <h4>{BrandC}</h4>
+                          </div>
+                          <div>
+                          <h4 color="red">Name: {Title}</h4>
+                          <h4>Type: {TypeC}</h4>
+                          <h4>Description: {DescriptionC}</h4>
+                          <h4>Brand: {BrandC}</h4>
+                          </div>
                           
-                          
-                          
+                          </div>
                     
                   </DialogContent>
                 </Dialog>
@@ -1076,7 +1047,7 @@ search();
 const yupSchema = Yup.object({
 
     price: Yup.string()
-    .required("City field cannot be empty")
+    .required("Price field cannot be empty")
     .matches(/^[0-9]/, "Price must containes only number"),
   
 });

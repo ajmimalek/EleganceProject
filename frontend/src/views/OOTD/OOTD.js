@@ -6,11 +6,12 @@ import CardBody from "components/Card/CardBody";
 import Card from "components/Card/Card";
 import CardHeader from "components/Card/CardHeader";
 import imagesStyles from "assets/jss/material-dashboard-react/components/imagesStyles";
-import Casual from "../../assets/img/Context/casual.jpeg";
+import Casual from "../../assets/img/Context/casual.jpg";
 import Party from "../../assets/img/Context/party.jpg";
 import Seminar from "../../assets/img/Context/Seminar.jpg";
 import Work from "../../assets/img/Context/Work.jpg";
-import { rotateIn } from "react-animations";
+import Match from "../../assets/img/perfect_match.gif";
+import { rotateIn, bounceInUp } from "react-animations";
 import {
   Dialog,
   DialogContent,
@@ -22,10 +23,7 @@ import Toolstyles from "assets/jss/material-dashboard-react/components/tasksStyl
 import Quote from "components/Typography/Quote";
 import { isAuth } from "helpers/auth";
 import { Redirect } from "react-router";
-import {
-  Chart,
-  PieSeries
-} from '@devexpress/dx-react-chart-material-ui';
+import { Add, ArrowForward } from "@material-ui/icons";
 
 const styles = (theme) => ({
   ...imagesStyles,
@@ -61,22 +59,26 @@ const styles = (theme) => ({
     },
   },
   "@keyframes rotateIn": rotateIn,
+  match:{
+    height: "150px",
+    width: "150px",
+  },
+  center:{
+    textAlign: "center",
+  },
+  spacement:{
+    marginLeft: "3%",
+    animation: "$bounceInUp 2s",
+  },
+  up: {
+    marginBottom: "70px",
+  },
+  "@keyframes bounceInUp": bounceInUp,
 });
 
 const useToolsStyles = makeStyles(Toolstyles);
 
 const useStyles = makeStyles(styles);
-
-const data = [
-  { country: "Russia", area: 12 },
-  { country: "Canada", area: 7 },
-  { country: "USA", area: 7 },
-  { country: "China", area: 7 },
-  { country: "Brazil", area: 6 },
-  { country: "Australia", area: 5 },
-  { country: "India", area: 2 },
-  { country: "Others", area: 55 },
-];
 
 // Slide animation for work context Dialog
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -84,10 +86,11 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function OOTD(props) {
-  const [chartData, setChartData] = useState(data);
   //Quotes
   const [quote, setQuote] = useState("");
   const [author, setAuthor] = useState("");
+  const [outfit, setOutfit] = useState(false);
+  const [timesClicked, settimesClicked] = useState(0);
   useEffect(() => {
     fetch("http://quotes.rest/qod.json?category=inspire")
       .then((res) => res.json())
@@ -104,6 +107,15 @@ export default function OOTD(props) {
   };
   const handleClose = () => {
     setOpen(false);
+  };
+  const showOOTD = () => {
+    settimesClicked(timesClicked + 1);
+    if (timesClicked > 1) {
+      setOutfit(false);
+      settimesClicked(0);
+    } else {
+      setOutfit(true);
+    }
   };
   const classes = useStyles();
   const classe = useToolsStyles();
@@ -136,6 +148,7 @@ export default function OOTD(props) {
             >
               <img
                 src={Casual}
+                onClick={showOOTD}
                 alt="Casual Outfit"
                 className={
                   classes.imgRaised +
@@ -156,6 +169,7 @@ export default function OOTD(props) {
             >
               <img
                 src={Party}
+                onClick={showOOTD}
                 alt="outfit for Parties"
                 className={
                   classes.imgRaised +
@@ -176,6 +190,7 @@ export default function OOTD(props) {
             >
               <img
                 src={Seminar}
+                onClick={showOOTD}
                 alt="outfit for Seminars"
                 className={
                   classes.imgRaised +
@@ -224,15 +239,25 @@ export default function OOTD(props) {
                 </span>
                 ...
               </DialogTitle>
-              <DialogContent>
-                <Chart data={chartData}>
-                  <PieSeries valueField="area" argumentField="country" />
-                </Chart>
-              </DialogContent>
+              <DialogContent></DialogContent>
             </Dialog>
           </CardBody>
         </Card>
-        <div></div>
+        <div>
+          {outfit ? (
+            <div className={classes.center}>
+              <img className={classes.spacement} src={Work} alt="1" />
+              <Add className={classes.spacement + " " + classes.up} />
+              <img className={classes.spacement} src={Work} alt="2" />
+              <Add className={classes.spacement + " " + classes.up} />
+              <img className={classes.spacement} src={Work} alt="3" />
+              <Add className={classes.spacement + " " + classes.up} />
+              <img className={classes.spacement} src={Work} alt="4" />
+              <ArrowForward className={classes.spacement + " " + classes.up} />
+              <img src={Match} alt="The Perfect Match" className={classes.match + " " + classes.spacement} />
+            </div>
+          ) : null}
+        </div>
         <Card>
           <CardHeader color="success">
             <span role="img" aria-labelledby="sun">

@@ -8,6 +8,11 @@ let Clothes = new Schema(
       required: false,
       trim: false
     },
+    phone: {
+      type: String,
+      required: false,
+      trim: false
+    },
     description: {
       type: String,
       required: false,
