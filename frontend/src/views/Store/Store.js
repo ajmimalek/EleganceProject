@@ -13,7 +13,6 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import "rc-slider/assets/index.css";
-import Slide from "@material-ui/core/Slide";
 import Carde from "./Card";
 import img1 from "../../assets/img/shirt.jpg";
 import img2 from "../../assets/img/cap.jpg";
@@ -21,6 +20,18 @@ import img3 from "../../assets/img/shoes.jpg";
 import img4 from "../../assets/img/trousers.jpg";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
+import Dialog from "@material-ui/core/Dialog";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import Typography from "@material-ui/core/Typography";
+import CloseIcon from "@material-ui/icons/Close";
+import Button from "@material-ui/core/Button";
+import elegance from "assets/img/Elegance Logo.png";
+
+import { useState, useEffect } from "react";
+import styled from "styled-components";
+import Slide from "@material-ui/core/Slide";
 
 const styles = {
   cardCategoryWhite: {
@@ -52,6 +63,9 @@ const styles = {
   },
 };
 const history = createBrowserHistory();
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -62,13 +76,73 @@ const useStyles = makeStyles((theme) => ({
     flex: 1,
   },
 }));
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+const Loader = styled.div`
+  margin-top: 30%;
+  & > p {
+    text-align: center;
+    font-weight: bold;
+  }
+`;
+const Spinner = styled.svg`
+  animation: rotate 2s linear infinite;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  align-self: center;
+  width: 50px;
+  height: 50px;
+  & .path {
+    stroke: black;
+    stroke-linecap: round;
+    animation: dash 1.5s ease-in-out infinite;
+  }
+  @keyframes rotate {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes dash {
+    0% {
+      stroke-dasharray: 1, 150;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -35;
+    }
+    100% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -124;
+    }
+  }
+`;
 
 export default function Store(props) {
   const classes = useStyles();
   const { ...rest } = props;
+  const [loading, setLoading] = useState(false);
+  const [listClothes, setListeClothes] = useState([]);
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = (type) => {
+    setLoading(true);
+    axios
+      .get(`${process.env.REACT_APP_STORE_URL}/` + type)
+      .then((res) => {
+        setLoading(false);
+        setListeClothes(res.data);
+        console.log(res.data);
+      })
+      .catch();
+    setOpen(true);
+  };
+
+
+  
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <>
       <div className="Store">
@@ -99,13 +173,20 @@ export default function Store(props) {
                             title="T-shirt"
                             imagesrc={img1}
                             body="The fashion industry encompass many different smaller and more niche industries. Often people think of it as just retail/online stores, design houses and brands, and fashion magazines. However, there are other craftspeople and industries in the manufacturing of clothes"
+                            onClick={(e) => {
+                              console.log("tshirt clicked");
+                              handleClickOpen("tshirt");
+                            }}
                           />
                         </div>
                         <div className="col-md-3">
                           <Carde
                             title="Accessoires"
                             imagesrc={img2}
-                            body="The fashion industry encompass many different smaller and more niche industries. Often people think of it as just retail/online stores, design houses and brands, and fashion magazines. However, there are other craftspeople and industries in the manufacturing of clothes"
+                            body="Then industry encompass many diffe fashiorent smaller and more niche industries. Often people think of it as just retail/online stores, design houses and brands, and fashion magazines. However, there are other craftspeople and industries in the manufacturing of clothes"
+                            onClick={() => {
+                              handleClickOpen("accessoires");
+                            }}
                           />
                         </div>
                         <div className="col-md-3">
@@ -113,6 +194,9 @@ export default function Store(props) {
                             title="Shoes"
                             imagesrc={img3}
                             body="The fashion industry encompass many different smaller and more niche industries. Often people think of it as just retail/online stores, design houses and brands, and fashion magazines. However, there are other craftspeople and industries in the manufacturing of clothes"
+                            onClick={() => {
+                              handleClickOpen("shoes");
+                            }}
                           />
                         </div>
                         <div className="col-md-3">
@@ -120,8 +204,81 @@ export default function Store(props) {
                             title="Trousers"
                             imagesrc={img4}
                             body="The fashion industry encompass many different smaller and more niche industries. Often people think of it as just retail/online stores, design houses and brands, and fashion magazines. However, there are other craftspeople and industries in the manufacturing of clothes"
+                            onClick={() => {
+                              handleClickOpen("trousers");
+                            }}
                           />
                         </div>
+                        <Dialog
+                      fullScreen
+                      open={open}
+                      onClose={handleClose}
+                      TransitionComponent={Transition}
+                    >
+                      <AppBar className={classes.appBar}>
+                        <Toolbar>
+                          <IconButton
+                            edge="start"
+                            color="inherit"
+                            onClick={handleClose}
+                            aria-label="close"
+                          >
+                            <CloseIcon />
+                          </IconButton>
+                          <Typography variant="h6" className={classes.title}>
+                            <img
+                              className="elegance"
+                              alt="elegance emoji"
+                              src={elegance}
+                            />
+                          </Typography>
+                        </Toolbar>
+                      </AppBar>
+
+                      {console.log("listClothes", listClothes)}
+                      {listClothes.map(({ Image, Price, Title }) => (
+                        <>
+                          <div className="image-container">
+                            <img src={Image} />
+                          </div>
+                          <div className="card-content">
+                            <div className="card-title">
+                              <h3>
+                                <strong>{Title}</strong>
+                              </h3>
+                            </div>
+                            <div className="card-body">
+                              <p>
+                                <strong>{Price}</strong>
+                              </p>
+                              <Button
+                                variant="outlined"
+                                color="primary"
+                                target="_blank"
+                                href="https://shopa.tn/categorie/mode-homme/vetements-homme/pulls-gilets-homme/"
+                              >
+                                Check in Website
+                              </Button>
+                            </div>
+                          </div>
+                        </>
+                      ))}
+                      {loading ? (
+                        <Loader>
+                          <Spinner viewBox="0 0 50 50">
+                            <circle
+                              className="path"
+                              cx="25"
+                              cy="25"
+                              r="20"
+                              fill="none"
+                              strokeWidth="2"
+                            />
+                          </Spinner>
+                          <p>Exploaring the web, please wait...</p>{" "}
+                        </Loader>
+                      ) : null}
+                    </Dialog>
                       </div>
                     </div>
                   </CardBody>

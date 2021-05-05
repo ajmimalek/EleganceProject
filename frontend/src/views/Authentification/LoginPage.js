@@ -26,14 +26,12 @@ import MailSent from "assets/img/mailsent.gif";
 import EleganceLogo from "../../assets/img/Elegance Logo.png";
 import { Helmet } from "react-helmet";
 import { Facebook, Mail } from "@material-ui/icons";
-import CheckBox from "components/CheckBox/CheckBox";
 import {
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  FormControlLabel,
   Slide,
 } from "@material-ui/core";
 import { useFormik } from "formik";
@@ -43,6 +41,8 @@ import axios from "axios";
 import { authenticate } from "helpers/auth";
 import { toast, ToastContainer } from "react-toastify";
 import { isAuth } from "helpers/auth";
+import { GoogleLogin } from "react-google-login";
+import FacebookLogin from "react-facebook-login";
 
 const useStyles = makeStyles(styles);
 
@@ -68,6 +68,65 @@ export default function LoginPage(props) {
   }, 700);
   const classes = useStyles();
   const { ...rest } = props;
+
+  //send Facebook token
+  const sendFacebookToken = (userID, accessToken) => {
+    axios
+      .post(`${process.env.REACT_APP_API_URL}/facebooklogin`, {
+        userID,
+        accessToken,
+      })
+      .then((res) => {
+        console.log(res.data);
+        informParent(res);
+      })
+      .catch((error) => {
+        console.log("FACEBOOK SIGNIN ERROR", error.response);
+        toast.error("⚠️ Facebook Login Error");
+      });
+  };
+
+  //send google token
+  const sendGoogleToken = (tokenId) => {
+    axios
+      .post(`${process.env.REACT_APP_API_URL}/googlelogin`, {
+        idToken: tokenId,
+      })
+      .then((res) => {
+        console.log(res.data);
+        informParent(res);
+      })
+      .catch((error) => {
+        console.log("GOOGLE SIGNIN ERROR", error.response);
+        toast.error("⚠️ Google Login Error");
+      });
+  };
+
+  // If success we need to authenticate user and redirect
+  const informParent = (response) => {
+    authenticate(response, () => {
+      //if authenticate but not admin redirect to /user
+      // if admin redirect to /admin
+      // Add this when we fix the admin path
+      /*isAuth() && isAuth().role === 'admin'
+              ? history.push('/admin')
+              : history.push('/private'); */
+      // Adding this temporarily
+      history.push("/admin/wardrobe");
+    });
+  };
+
+  //Get response from google
+  const responseGoogle = (response) => {
+    console.log("Google Login Response : ", response);
+    sendGoogleToken(response.tokenId);
+  };
+
+  //Get response from Facebook
+  const responseFacebook = (response) => {
+    console.log(response);
+    sendFacebookToken(response.userID, response.accessToken);
+  };
 
   // Form Inputs
   const formik = useFormik({
@@ -131,6 +190,7 @@ export default function LoginPage(props) {
     // Submit data to backend
     onSubmit: (values, onSubmitProps) => {
       formikForgot.setFieldValue("textChange", "Getting New Password");
+      setLoading(true);
       console.log(values.textChange);
       // pass values to backend.
       axios
@@ -143,12 +203,13 @@ export default function LoginPage(props) {
           onSubmitProps.resetForm();
           setLoading(true);
           toast.success(`📧 Please check your email`);
+          setLoading(false);
         })
         .catch((err) => {
           console.log(err.response);
           toast.error("⚠️ " + err.response.data.errors);
         });
-    }
+    },
   });
   console.log("Forgot Form values : ", formikForgot.values);
 
@@ -182,24 +243,23 @@ export default function LoginPage(props) {
                   <CardHeader color="primary" className={classes.cardHeader}>
                     <h4>Login</h4>
                     <div className={classes.socialLine}>
-                      <Button
-                        justIcon
-                        href="#pablo"
-                        target="_blank"
-                        color="transparent"
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        <Facebook />
-                      </Button>
-                      <Button
-                        justIcon
-                        href="#pablo"
-                        target="_blank"
-                        color="transparent"
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        <Icon className="fa fa-google" />
-                      </Button>
+                      <FacebookLogin
+                        appId={`${process.env.REACT_APP_FACEBOOK_CLIENT}`} //Facebook app id
+                        autoLoad={false} //true : when open login page it will go to login with facebook.
+                        fields="name,email,picture"
+                        onClick={onclick}
+                        //scope="public_profile,user_friends,user_gender,user_location"
+                        callback={responseFacebook}
+                        cssClass={classes.facebook}
+                        icon={<Facebook />}
+                      />
+                      <GoogleLogin
+                        clientId={`${process.env.REACT_APP_GOOGLE_CLIENT}`}
+                        buttonText="START WITH GOOGLE"
+                        onSuccess={responseGoogle}
+                        onFailure={responseGoogle}
+                        cookiePolicy={"single_host_origin"}
+                      />
                     </div>
                   </CardHeader>
                   <p className={classes.divider}>Or Be Classical</p>

@@ -6,7 +6,7 @@ import CardBody from "components/Card/CardBody";
 import Card from "components/Card/Card";
 import CardHeader from "components/Card/CardHeader";
 import imagesStyles from "assets/jss/material-dashboard-react/components/imagesStyles";
-import Casual from "../../assets/img/Context/casual.jpeg";
+import Casual from "../../assets/img/Context/casual.jpg";
 import Party from "../../assets/img/Context/party.jpg";
 import Seminar from "../../assets/img/Context/Seminar.jpg";
 import Work from "../../assets/img/Context/Work.jpg";
@@ -20,6 +20,11 @@ import {
 } from "@material-ui/core";
 import Toolstyles from "assets/jss/material-dashboard-react/components/tasksStyle.js";
 import Quote from "components/Typography/Quote";
+import { isAuth } from "helpers/auth";
+import { Redirect } from "react-router";
+var CanvasJSReact = require("../../assets/js/canvasjs.react");
+var CanvasJS = CanvasJSReact.CanvasJS;
+var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const styles = (theme) => ({
   ...imagesStyles,
@@ -43,7 +48,7 @@ const styles = (theme) => ({
     marginRight: "6%",
     marginLeft: "5%",
     "&:hover": {
-      animation : "$rotateIn 2s",
+      animation: "$rotateIn 2s",
     },
     [theme.breakpoints.up("lg")]: {
       marginRight: "140px",
@@ -67,6 +72,32 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function OOTD(props) {
+  //Charts
+  const options = {
+    exportEnabled: true,
+    animationEnabled: true,
+    title: {
+      text: "Website Traffic Sources",
+    },
+    data: [
+      {
+        type: "pie",
+        startAngle: 75,
+        toolTipContent: "<b>{label}</b>: {y}%",
+        showInLegend: "true",
+        legendText: "{label}",
+        indexLabelFontSize: 16,
+        indexLabel: "{label} - {y}%",
+        dataPoints: [
+          { y: 18, label: "Direct" },
+          { y: 49, label: "Organic Search" },
+          { y: 9, label: "Paid Search" },
+          { y: 5, label: "Referral" },
+          { y: 19, label: "Social" },
+        ],
+      },
+    ],
+  };
   //Quotes
   const [quote, setQuote] = useState("");
   const [author, setAuthor] = useState("");
@@ -94,6 +125,7 @@ export default function OOTD(props) {
       <Helmet>
         <title>Elegance App - Outfit Of The Day</title>
       </Helmet>
+      {isAuth() ? null : <Redirect to="/login" />}
       <div>
         <Card>
           <CardHeader color="primary">
@@ -205,10 +237,16 @@ export default function OOTD(props) {
                 </span>
                 ...
               </DialogTitle>
-              <DialogContent></DialogContent>
+              <DialogContent>
+                {/*<CanvasJSChart
+                  options={options}
+                  onRef={ref => this.chart = ref} />
+                You can get reference to the chart instance as shown above using onRef. This allows you to access all chart properties and methods*/}
+              </DialogContent>
             </Dialog>
           </CardBody>
         </Card>
+        <div></div>
         <Card>
           <CardHeader color="success">
             <span role="img" aria-labelledby="sun">

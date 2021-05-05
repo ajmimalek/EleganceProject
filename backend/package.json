@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "nodemon ./bin/www",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix ../frontend && npm run build --prefix ../frontend"
   },
   "dependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.14.0",
@@ -30,7 +31,8 @@
     "multer": "^1.4.2",
     "node-fetch": "^2.6.0",
     "path": "^0.12.7",
-    "puppeteer": "^9.0.0"
+    "puppeteer": "^9.0.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"

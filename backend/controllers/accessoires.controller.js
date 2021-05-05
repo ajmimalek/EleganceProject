@@ -20,7 +20,7 @@ async function getLinks() {
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
   await page.setDefaultNavigationTimeout(0);
-  await page.goto("https://shopa.tn/produit/sac-a-main-saumon-pour-femme-2/");
+  await page.goto("https://shopa.tn/categorie/mode-homme/accessoires-homme/");
   const Links = await page.$$eval(
     ".clearfix .custom-product-thumbnail a",
     (allAs) => allAs.map((a) => a.href)

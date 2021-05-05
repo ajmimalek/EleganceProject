@@ -96,8 +96,21 @@ const signupPageStyle = {
   socialLine: {
     marginTop: "1rem",
     textAlign: "center",
-    padding: "0",
-
+  },
+  facebook: {
+     height: "47px",
+     marginRight: "10px",
+     backgroundColor: "#3A5A97",
+     display: "inline-flex",
+     alignItems: "center",
+     color: "white",
+     borderRadius: "2px",
+     padding: "0 3 3 0",
+     border: "1px solid transparent",
+     boxShadow: "rgba(0, 0, 0, 0.24) 0px 2px 2px 0px, rgba(0, 0, 0, 0.24) 0px 0px 1px 0px",
+     "&:hover": {
+        backgroundColor: "#4e71ba",
+     },
   },
   inputIconsColor: {
     color: "#495057"

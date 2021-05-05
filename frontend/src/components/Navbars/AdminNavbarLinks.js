@@ -29,6 +29,7 @@ import {
 import dummyContents from "variables/dummyContents";
 import { isAuth } from "helpers/auth";
 import { useHistory } from "react-router";
+import { signout } from "helpers/auth";
 
 const useStyles = makeStyles(styles);
 
@@ -60,6 +61,11 @@ export default function AdminNavbarLinks() {
       setOpenProfile(event.currentTarget);
     }
   };
+  const handleLogOut = (event) => {
+    event.preventDefault();
+    signout();
+    history.push("/");
+  }
   const handleCloseProfile = () => {
     setOpenProfile(null);
   };
@@ -234,7 +240,7 @@ export default function AdminNavbarLinks() {
           className={classes.buttonLink}
           color="inherit"
         >
-          <Avatar src={profile} alt="Rebirth"></Avatar>
+          <Avatar src={isAuth() ? isAuth().image : profile} alt="Rebirth"></Avatar>
           <Hidden mdUp implementation="css">
             <p onClick={handleCloseNotification} className={classes.linkText}>
               My Profile
@@ -289,7 +295,7 @@ export default function AdminNavbarLinks() {
                     </a>
                     <Divider light />
                     <MenuItem
-                      onClick={handleCloseProfile}
+                      onClick={handleLogOut}
                       className={classes.dropdownItem}
                     >
                       <ExitToApp /> &nbsp; Log Out

@@ -34,8 +34,8 @@ const styles = {
 const useStyles = makeStyles(styles);
 function Budget() {
   const classes = useStyles();
-  const [valueMin, setValueMin]=useState(50);
-  const [valueMax, setValueMax]=useState(150);
+  const [valueMin, setValueMin]=useState(10);
+  const [valueMax, setValueMax]=useState(100);
   const handleInputChange = (value) => {
     setValueMin(value[0]);
     setValueMax(value[1]);
@@ -47,7 +47,7 @@ function Budget() {
           <Range
             min={0}
             max={500}
-            defaultValue={[50 , 150]}
+            defaultValue={[10 , 100]}
             ariaLabelGroupForHandles
             onChange={handleInputChange}
           />
