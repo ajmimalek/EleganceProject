@@ -610,16 +610,17 @@ export default function UserProfile() {
                 }}
               />
               <br></br>
-              {userList.map(({ _id, FullName, v }) => {
+              {userList.map(({ _id, FullName, image,v }) => {
                 return (
                   <div className={classesUser.pictureContainer}>
                     <div className={classesUser.picture}>
                       <img
-                        src={DefaultAvatar}
+                        src={image}
                         className={classesUser.pictureSrc}
                         id="wizardPicturePreview"
                         title=""
                       />
+                      
                     </div>
                     <b>{FullName}</b>
                     <br></br>
