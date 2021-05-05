@@ -3,7 +3,6 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Helmet } from "react-helmet";
 import { createBrowserHistory } from "history";
-import "views/Store/Store.css";
 import { AttachMoney } from "@material-ui/icons";
 import Budget from "views/Store/Budget";
 // @material-ui/icons
@@ -32,6 +31,8 @@ import elegance from "assets/img/Elegance Logo.png";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Slide from "@material-ui/core/Slide";
+
+
 
 const styles = {
   cardCategoryWhite: {
@@ -82,6 +83,7 @@ const Loader = styled.div`
     text-align: center;
     font-weight: bold;
   }
+
 `;
 const Spinner = styled.svg`
   animation: rotate 2s linear infinite;
@@ -116,6 +118,50 @@ const Spinner = styled.svg`
     }
   }
 `;
+const CardContainer = styled.div`
+  width: 230px;
+  overflow: hidden;
+  box-shadow: 0px 0px 15px -5px;
+  transition: 0.5s;
+  animation: ease-in;
+  & :hover {
+    transform: scale(1.1);
+    box-shadow: 0px 0px 15px 0px;
+  }
+ 
+}
+`;
+const CardImage = styled.div`
+& img{
+  overflow: hidden;
+  height: 240px;
+}
+
+`;
+const CardContent = styled.div`
+
+  margin: 1rem;
+  margin-top: 0.5rem;
+
+`;
+const CardTitle = styled.div`
+& h3{
+  margin: 0;
+  padding: 0;
+}
+
+  margin-bottom: 0.5rem;
+
+`;
+const CardBodyy = styled.div`
+& p{
+  margin: 0;
+  padding: 0;
+}
+
+`;
+
+
 
 export default function Store(props) {
   const classes = useStyles();
@@ -172,7 +218,6 @@ export default function Store(props) {
                           <Carde
                             title="T-shirt"
                             imagesrc={img1}
-                            body="The fashion industry encompass many different smaller and more niche industries. Often people think of it as just retail/online stores, design houses and brands, and fashion magazines. However, there are other craftspeople and industries in the manufacturing of clothes"
                             onClick={(e) => {
                               console.log("tshirt clicked");
                               handleClickOpen("tshirt");
@@ -183,7 +228,7 @@ export default function Store(props) {
                           <Carde
                             title="Accessoires"
                             imagesrc={img2}
-                            body="Then industry encompass many diffe fashiorent smaller and more niche industries. Often people think of it as just retail/online stores, design houses and brands, and fashion magazines. However, there are other craftspeople and industries in the manufacturing of clothes"
+                           
                             onClick={() => {
                               handleClickOpen("accessoires");
                             }}
@@ -193,7 +238,7 @@ export default function Store(props) {
                           <Carde
                             title="Shoes"
                             imagesrc={img3}
-                            body="The fashion industry encompass many different smaller and more niche industries. Often people think of it as just retail/online stores, design houses and brands, and fashion magazines. However, there are other craftspeople and industries in the manufacturing of clothes"
+                           
                             onClick={() => {
                               handleClickOpen("shoes");
                             }}
@@ -203,7 +248,7 @@ export default function Store(props) {
                           <Carde
                             title="Trousers"
                             imagesrc={img4}
-                            body="The fashion industry encompass many different smaller and more niche industries. Often people think of it as just retail/online stores, design houses and brands, and fashion magazines. However, there are other craftspeople and industries in the manufacturing of clothes"
+                           
                             onClick={() => {
                               handleClickOpen("trousers");
                             }}
@@ -225,12 +270,12 @@ export default function Store(props) {
                           >
                             <CloseIcon />
                           </IconButton>
-                          <Typography variant="h6" className={classes.title}>
-                            <img
-                              className="elegance"
-                              alt="elegance emoji"
-                              src={elegance}
-                            />
+                          
+                          <Typography     variant="h6" className={classes.title}>
+
+                            <img  height= "50px" alt="elegance emoji" src={elegance}>
+                              
+                              </img>
                           </Typography>
                         </Toolbar>
                       </AppBar>
@@ -238,16 +283,16 @@ export default function Store(props) {
                       {console.log("listClothes", listClothes)}
                       {listClothes.map(({ Image, Price, Title }) => (
                         <>
-                          <div className="image-container">
+                          <CardImage>
                             <img src={Image} />
-                          </div>
-                          <div className="card-content">
-                            <div className="card-title">
+                          </CardImage>
+                          <CardContent>
+                            <CardTitle>
                               <h3>
                                 <strong>{Title}</strong>
                               </h3>
-                            </div>
-                            <div className="card-body">
+                            </CardTitle>
+                            <CardBodyy>
                               <p>
                                 <strong>{Price}</strong>
                               </p>
@@ -259,8 +304,8 @@ export default function Store(props) {
                               >
                                 Check in Website
                               </Button>
-                            </div>
-                          </div>
+                            </CardBodyy>
+                          </CardContent>
                         </>
                       ))}
                       {loading ? (
