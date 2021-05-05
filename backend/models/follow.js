@@ -19,6 +19,11 @@ let follow = new Schema(
         required: false,
         trim: false
       },
+      Image: {
+        type: String,
+        required: false,
+        trim: false
+      },
 },
 {
   timestamps: true

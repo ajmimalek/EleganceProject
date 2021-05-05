@@ -19,14 +19,12 @@ import IconButton from "@material-ui/core/IconButton";
 import Button from "components/CustomButtons/Button.js";
 import profile from "../../assets/img/faces/marc.jpg";
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
-import { Avatar, Hidden,  ListItemText } from "@material-ui/core";
+import { Avatar, Hidden } from "@material-ui/core";
 import {
   AccountCircle,
   ExitToApp,
   Feedback,
-  Settings,
 } from "@material-ui/icons";
-import dummyContents from "variables/dummyContents";
 import { isAuth } from "helpers/auth";
 import { useHistory } from "react-router";
 import { signout } from "helpers/auth";
@@ -253,7 +251,7 @@ export default function AdminNavbarLinks() {
                 <ClickAwayListener onClickAway={handleCloseNotification}>
                   <MenuList role="menu">
                 { FollowList.map(
-                            ({ _id,NameUserFollowing }) => (
+                            ({ _id,NameUserFollowing, Image }) => (
                               <>
                               <MenuItem
                               onClick={handleCloseNotification}
@@ -262,7 +260,7 @@ export default function AdminNavbarLinks() {
                               <div className={classes.messageInfo}>
                                 <Avatar
                                   alt="User Name"
-                                  
+                                  src={Image}
                                   className={classes.avatar}
                                 /><b>{NameUserFollowing }: </b> Family member request 
                                 

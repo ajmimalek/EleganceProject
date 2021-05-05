@@ -1,12 +1,11 @@
 import React from "react";
 // @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
 // @material-ui/icons
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import { Helmet } from "react-helmet";
 
-const styles = {
+/*const styles = {
   cardCategoryWhite: {
     "&,& a,& a:hover,& a:focus": {
       color: "rgba(255,255,255,.62)",
@@ -72,7 +71,7 @@ const styles = {
     textAlign: "center"
   }
 };
-
+*/
 //const useStyles = makeStyles(styles);
 
 export default function MyDashboard() {

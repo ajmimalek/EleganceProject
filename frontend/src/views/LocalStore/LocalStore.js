@@ -113,7 +113,7 @@ const formik = useFormik({
     console.log(value[0], value[1]);
     const getFilesList = async () => {
       try {
-        if (selectedValue != null && checked != 0) {
+        if (selectedValue !== null && checked !== 0) {
           const { data } = await axios.post(
             `${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothingAndSize/` +
               value[1] +
@@ -125,7 +125,7 @@ const formik = useFormik({
           );
           setErrorMsg("");
           setFilesList(data);
-        } else if (checked != 0) {
+        } else if (checked !== 0) {
           const { data } = await axios.post(
             `${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothing/` +
               value[1] +
@@ -135,7 +135,7 @@ const formik = useFormik({
           );
           setErrorMsg("");
           setFilesList(data);
-        } else if (selectedValue != null) {
+        } else if (selectedValue !== null) {
           const { data } = await axios.get(
             `${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothes/` +
               value[1] +
@@ -163,9 +163,6 @@ const formik = useFormik({
 
     getFilesList();
   };
-  const [state, setState] = useState({
-    sell: "",
-  });
   const [Id, SetID] = useState(null);
 
       const getAllSellClothesUser = async () => {
@@ -211,7 +208,7 @@ const formik = useFormik({
           );
           setErrorMsg("");
           setFilesList(data);
-          if (newChecked.length == 0) {
+          if (newChecked.length === 0) {
             const { data } = await axios.get(
               `${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothes/` +
                 valueMax +
@@ -233,7 +230,7 @@ const formik = useFormik({
           );
           setErrorMsg("");
           setFilesList(data);
-          if (newChecked.length == 0) {
+          if (newChecked.length === 0) {
             const { data } = await axios.get(
               `${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothes/` +
                 valueMax +
@@ -312,6 +309,7 @@ const formik = useFormik({
         <title>Elegance App - Local Store</title>
       </Helmet>
       <div>
+      <ToastContainer autoClose={5000} />
         {isAuth() ? null : <Redirect to="/login" />}
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
@@ -319,7 +317,7 @@ const formik = useFormik({
               <CardHeader color="primary">
                 <div className={classes.addStore}>
                   <h4 className={Cardclasses.cardTitleWhite}>
-                    Ariana's Store{" "}
+                    {isAuth().city} Store{" "}
                     <Button
                       className={classes.addClothes}
                       color="primary"
@@ -556,7 +554,7 @@ const formik = useFormik({
                           try {
                             const Value = "s";
 
-                            if (checked.length != 0) {
+                            if (checked.length !== 0) {
                               const { data } = await axios.post(
                                 `${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothingAndSize/` +
                                   valueMax +
@@ -611,7 +609,7 @@ const formik = useFormik({
                           try {
                             const Value = "m";
                             console.log("vvvalue", Value);
-                            if (checked.length != 0) {
+                            if (checked.length !== 0) {
                               const { data } = await axios.post(
                                 `${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothingAndSize/` +
                                   valueMax +
@@ -665,7 +663,7 @@ const formik = useFormik({
                         const getFilesList = async () => {
                           try {
                             const Value = "l";
-                            if (checked.length != 0) {
+                            if (checked.length !== 0) {
                               const { data } = await axios.post(
                                 `${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothingAndSize/` +
                                   valueMax +
@@ -720,7 +718,7 @@ const formik = useFormik({
                           try {
                             const Value = "xl";
                             console.log("vvvalue", Value);
-                            if (checked.length != 0) {
+                            if (checked.length !== 0) {
                               const { data } = await axios.post(
                                 `${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothingAndSize/` +
                                   valueMax +
@@ -775,7 +773,7 @@ const formik = useFormik({
                           try {
                             const Value = "xxl";
                             console.log("vvvalue", checked.length);
-                            if (checked.length != 0) {
+                            if (checked.length !== 0) {
                               const { data } = await axios.post(
                                 `${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothingAndSize/` +
                                   valueMax +
@@ -830,7 +828,7 @@ const formik = useFormik({
                           try {
                             const Value = "xxxl";
                             console.log("vvvalue", Value);
-                            if (checked.length != 0) {
+                            if (checked.length !== 0) {
                               const { data } = await axios.post(
                                 `${process.env.REACT_APP_API_URL_CLOTHES}/getAllSellClothesByClothingAndSize/` +
                                   valueMax +

@@ -236,7 +236,6 @@ export default function UserProfile() {
 
   const [idUserConected, SetIdUserConected] = useState(isAuth()._id);
   const [NameUserConected, SetNameUserConected] = useState(isAuth().FullName);
-  const [testFollow, SetTestFollow] = useState(false);
 
   const [userList, setUserList] = useState([]);
 
@@ -247,10 +246,12 @@ export default function UserProfile() {
   function handleOnfollow(FullName) {
     const follow = async () => {
       try {
+        const Img = isAuth().image;
         const data = {
           idUserConected,
           IdUserFollowers,
           NameUserConected,
+          Img,
         };
         await axios.post(`${process.env.REACT_APP_API_URL_USER}/follow`, data);
       } catch (error) {
@@ -610,12 +611,13 @@ export default function UserProfile() {
                 }}
               />
               <br></br>
-              {userList.map(({ _id, FullName, v }) => {
+              {userList.map(({ _id, FullName, v, image }) => {
                 return (
                   <div className={classesUser.pictureContainer}>
                     <div className={classesUser.picture}>
                       <img
-                        src={DefaultAvatar}
+                        alt="MyPic"
+                        src={image}
                         className={classesUser.pictureSrc}
                         id="wizardPicturePreview"
                         title=""

@@ -3,7 +3,6 @@ import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
 import GridListTileBar from "@material-ui/core/GridListTileBar";
 import IconButton from "@material-ui/core/IconButton";
-import profile from "../../assets/img/faces/marc.jpg";
 import React, { useState, useEffect } from "react";
 import SearchBar from "material-ui-search-bar";
 import { Redirect } from "react-router";
@@ -165,9 +164,9 @@ export default function FamilyWardrobe() {
               />
               <br></br>
               <GridList className={classesUser.gridList} cols={7}>
-                {FollowList.map(({ NameUserFollowing, UserFollowing }) => (
+                {FollowList.map(({ NameUserFollowing, UserFollowing, Image }) => (
                   <GridListTile key={NameUserFollowing}>
-                    <img src={profile} alt={NameUserFollowing} />
+                    <img src={Image} alt={NameUserFollowing} />
 
                     <GridListTileBar
                       actionIcon={

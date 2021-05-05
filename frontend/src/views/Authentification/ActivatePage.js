@@ -63,7 +63,7 @@ export default function ActivatePage(props) {
 
     console.log("data : ", token, FullName);
   }, [params]);
-  const { FullName, token, show } = formData;
+  const { FullName, token } = formData;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -132,7 +132,6 @@ export default function ActivatePage(props) {
                     </CardBody>
                     <CardFooter className={classes.cardFooter}>
                       <Button
-                        type="button"
                         color="success"
                         className={classes.button}
                         type="submit"

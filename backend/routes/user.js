@@ -50,14 +50,14 @@ router.post('/follow/:id', async (req, res) => {
 router.post('/follow', async (req, res) => {
   try {
   
-    const { idUserConected,IdUserFollowers,NameUserConected } = req.body;
+    const { idUserConected,IdUserFollowers,NameUserConected, Img } = req.body;
     console.log("jjjj",idUserConected,IdUserFollowers);
     const follow = new Follow({
       UserFollowers: IdUserFollowers,
       UserFollowing: idUserConected,
       state:"Requested",
-      NameUserFollowing:NameUserConected
-    
+      NameUserFollowing:NameUserConected,
+      Image: Img,
     });
 
     await follow.save();
