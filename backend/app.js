@@ -39,7 +39,7 @@ app.use("/clothes", clothesRoutes);
 app.use("/user", userRoutes);
 // Use Routes
 app.use("/api", authRouter);
-app.use("/api", userRouter);
+app.use("/api/user", userRouter);
 
 
   // catch 404 and forward to error handler

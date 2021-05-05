@@ -214,6 +214,7 @@ export default function UserProfile() {
           image,
         } = res.data;
         setPicture(image);
+        setURL(image);
         formik.setValues({
           name: FullName,
           phone: Phone,

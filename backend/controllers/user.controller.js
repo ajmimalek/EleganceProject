@@ -41,3 +41,13 @@ exports.updateController = (req, res) => {
       }
     });
 };
+
+exports.outfitController = async (req, res) => {
+  const userId = req.params.id;
+  await axios
+      .get(`${process.env.REACT_APP_API_URL_CLOTHES}/getAllClothes/` + userId )
+      .then(data => {
+
+      } )
+      .catch(err => console.log(err));
+};

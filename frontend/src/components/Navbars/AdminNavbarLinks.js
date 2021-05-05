@@ -62,7 +62,7 @@ export default function AdminNavbarLinks() {
   const handleLogOut = (event) => {
     event.preventDefault();
     signout();
-    history.push("/");
+    history.push("/login");
   }
   const handleCloseProfile = () => {
     setOpenProfile(null);

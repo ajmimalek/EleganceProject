@@ -7,13 +7,16 @@ const { requireSignin } = require("../controllers/auth.controller");
 const {
   readController,
   updateController,
+  outfitController,
 } = require("../controllers/user.controller");
 
-router.get("/user/:id", requireSignin, readController);
+router.get("/:id", requireSignin, readController);
 router.put(
-  "/user/update/:id",
+  "/update/:id",
   requireSignin,
   updateController
 );
+router.get("/outfit", requireSignin, outfitController);
+
 
 module.exports = router;

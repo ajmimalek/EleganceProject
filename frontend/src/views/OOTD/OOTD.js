@@ -13,10 +13,6 @@ import Work from "../../assets/img/Context/Work.jpg";
 import Match from "../../assets/img/perfect_match.gif";
 import { rotateIn, bounceInUp } from "react-animations";
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Slide,
   Tooltip,
 } from "@material-ui/core";
 import Toolstyles from "assets/jss/material-dashboard-react/components/tasksStyle.js";
@@ -80,12 +76,8 @@ const useToolsStyles = makeStyles(Toolstyles);
 
 const useStyles = makeStyles(styles);
 
-// Slide animation for work context Dialog
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
-export default function OOTD(props) {
+export default function OOTD() {
   //Quotes
   const [quote, setQuote] = useState("");
   const [author, setAuthor] = useState("");
@@ -100,14 +92,6 @@ export default function OOTD(props) {
         setAuthor(data.contents.quotes[0].author);
       });
   }, []);
-  // Open for dialog
-  const [open, setOpen] = React.useState(false);
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
   const showOOTD = () => {
     settimesClicked(timesClicked + 1);
     if (timesClicked > 1) {
@@ -212,7 +196,7 @@ export default function OOTD(props) {
               <img
                 src={Work}
                 alt="Get Ready for work to impress"
-                onClick={handleClickOpen}
+                onClick={showOOTD}
                 className={
                   classes.imgRaised +
                   " " +
@@ -224,23 +208,6 @@ export default function OOTD(props) {
                 }
               />
             </Tooltip>
-            <Dialog
-              open={open}
-              onClose={handleClose}
-              TransitionComponent={Transition}
-              keepMounted
-              aria-labelledby="alert-dialog-slide-title"
-              aria-describedby="alert-dialog-slide-description"
-            >
-              <DialogTitle id="alert-dialog-slide-title">
-                Choose your field of work{" "}
-                <span role="img" aria-labelledby="money">
-                  🤑
-                </span>
-                ...
-              </DialogTitle>
-              <DialogContent></DialogContent>
-            </Dialog>
           </CardBody>
         </Card>
         <div>
